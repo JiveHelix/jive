@@ -33,7 +33,6 @@
 #pragma once
 
 #include <type_traits>
-#include <cstdlib>
 
 namespace jive
 {
@@ -68,18 +67,18 @@ public:
     static_assert((align_ & (align_ - 1)) == 0);
 
     static constexpr auto align = align_;
+
     using type = T;
 
     Buffer(size_t elementCount)
         :
         byteCount_(detail::GetAlignedByteCount<T, align>(elementCount)),
         elementCount_(elementCount),
-        data_(static_cast<T *>(aligned_alloc(align, this->byteCount_)))
+        data_(
+            static_cast<T *>(
+                ::operator new(this->byteCount_, std::align_val_t{align})))
     {
-        if (this->data_ == nullptr)
-        {
-            throw std::bad_alloc{};
-        }
+
     }
     
     template<typename InputStream>
