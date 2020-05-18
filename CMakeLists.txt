@@ -1,5 +1,10 @@
 cmake_minimum_required(VERSION 3.15)
 
+# detect whether jive has been added as a subproject
+if(NOT DEFINED PROJECT_NAME)
+  set(NOT_SUBPROJECT ON)
+endif()
+
 include(cmake/DefineProjectOnce.cmake)
 
 define_project_once(jive)
@@ -11,7 +16,7 @@ if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
     include(cmake/Standalone.cmake)
 endif()
 
-if(ENABLE_TESTING)
+if(ENABLE_TESTING AND NOT_SUBPROJECT)
     enable_testing()
     message(
         "Building Tests. "
