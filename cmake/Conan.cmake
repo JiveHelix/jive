@@ -1,5 +1,6 @@
 macro(run_conan)
 
+message("Run conan")
 # Download automatically, you can also just copy the conan.cmake file
 if(NOT EXISTS "${CMAKE_BINARY_DIR}/conan.cmake")
     message(
@@ -17,10 +18,14 @@ conan_add_remote(
     NAME bincrafters
     URL https://api.bintray.com/conan/bincrafters/public-conan)
 
+conan_add_remote(
+    NAME conan-center
+    URL https://conan.bintray.com)
+
 conan_cmake_run(
   REQUIRES
   ${CONAN_EXTRA_REQUIRES}
-  catch2/2.11.0
+  catch2/2.12.1
   OPTIONS
   ${CONAN_EXTRA_OPTIONS}
   BASIC_SETUP

@@ -11,22 +11,30 @@ define_project_once(jive)
 
 project(jive CXX)
 
-if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
+if(JIVE_NOT_SUBPROJECT)
     # This is the top-level project
     include(cmake/Standalone.cmake)
-endif()
-
-if(ENABLE_TESTING AND JIVE_NOT_SUBPROJECT)
-    enable_testing()
-    message(
-        "Building Tests. "
-        "Be sure to check out test/constexpr_tests for constexpr testing")
-    add_subdirectory(test)
+    option(ENABLE_UNITY "Enable Unity builds of projects" OFF)
 endif()
 
 add_subdirectory(jive)
 
-option(ENABLE_UNITY "Enable Unity builds of projects" OFF)
+
+if (JIVE_NOT_SUBPROJECT)
+
+
+
+    if(ENABLE_TESTING)
+        enable_testing()
+        add_subdirectory(test)
+    endif()
+
+elseif(RECURSIVE_BUILD_TESTS AND ENABLE_TESTING)
+
+    # A parent project has requested tests.
+    add_subdirectory(test)
+
+endif()
 
 if(ENABLE_UNITY)
   # Add for any project you want to apply unity builds for

@@ -53,7 +53,13 @@ size_t GetAlignedByteCount(size_t count)
 
 } // end namespace detail
 
-template<typename T, size_t align_ = alignof(T)>
+
+inline constexpr auto minimumAlign = sizeof(void *);
+
+
+template<
+    typename T,
+    size_t align_ = (alignof(T) < minimumAlign) ? minimumAlign : alignof(T)>
 class Buffer
 {
 public:
@@ -87,8 +93,8 @@ public:
         Buffer buffer(elementCount);
 
         inputStream.read(
-            static_cast<char *>(buffer.Get()),
-            elementCount * sizeof(T));
+            reinterpret_cast<char *>(buffer.Get()),
+            static_cast<std::streamsize>(elementCount * sizeof(T)));
         
         return buffer;
     }

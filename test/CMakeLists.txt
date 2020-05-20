@@ -5,12 +5,12 @@ else()
   include(${CONAN_CATCH2_ROOT}/lib/cmake/Catch2/Catch.cmake)
 endif()
 
-add_library(catch_main STATIC catch_main.cpp)
-target_link_libraries(catch_main PUBLIC CONAN_PKG::catch2)
-target_link_libraries(catch_main PRIVATE project_options)
+add_library(jive_catch_main STATIC catch_main.cpp)
+target_link_libraries(jive_catch_main PUBLIC CONAN_PKG::catch2)
+target_link_libraries(jive_catch_main PRIVATE project_options)
 
 add_executable(
-    tests
+    jive_tests
     angles_tests.cpp
     binary_io_tests.cpp
     buffer_tests.cpp
@@ -25,18 +25,18 @@ add_executable(
     to_integer_tests.cpp)
 
 target_link_libraries(
-    tests
+    jive_tests
     PRIVATE
     project_warnings
     project_options
-    catch_main
+    jive_catch_main
     jive)
 
 # automatically discover tests that are defined in catch based test files you
 # can modify the unittests. TEST_PREFIX to whatever you want, or use different
 # for different binaries
 catch_discover_tests(
-    tests
+    jive_tests
     TEST_PREFIX
     "unittests."
     EXTRA_ARGS)

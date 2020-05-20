@@ -23,8 +23,8 @@
 namespace jive
 {
 
-template<typename T>
-bool WillOverflow(double value)
+template<typename T, typename S>
+bool WillOverflow(S value)
 {
     if ((value > std::numeric_limits<T>::max())
             || (value < std::numeric_limits<T>::min()))
@@ -40,8 +40,8 @@ struct CheckOverflow {};
 struct NoCheckOverflow {};
 
 
-template<typename T, typename Overflow = CheckOverflow>
-T RoundIfIntegral(double value)
+template<typename T, typename S, typename Overflow = CheckOverflow>
+T RoundIfIntegral(S value)
 {
     if constexpr (std::is_integral<T>::value)
     {
@@ -62,40 +62,40 @@ T RoundIfIntegral(double value)
 }
 
 
-template<typename T>
-auto MultiplyRounded(double scale, T value) -> T
+template<typename S, typename T>
+auto MultiplyRounded(S scale, T value) -> T
 {
-    return RoundIfIntegral<T>(scale * static_cast<double>(value));
+    return RoundIfIntegral<T>(scale * static_cast<S>(value));
 }
 
-template<typename T>
-auto MultiplyRounded(NoCheckOverflow, double scale, T value) -> T
+template<typename S, typename T>
+auto MultiplyRounded(NoCheckOverflow, S scale, T value) -> T
 {
-    return RoundIfIntegral<T, NoCheckOverflow>(
-        scale * static_cast<double>(value));
+    return RoundIfIntegral<T, S, NoCheckOverflow>(
+        scale * static_cast<S>(value));
 }
 
 
-template<typename T, typename ...U>
-auto MultiplyRounded(double scale, T first, U ...values) -> std::tuple<T, U...>
+template<typename S, typename T, typename ...U>
+auto MultiplyRounded(S scale, T first, U ...values) -> std::tuple<T, U...>
 {
     return std::make_tuple(
-        RoundIfIntegral<T>(scale * static_cast<double>(first)),
+        RoundIfIntegral<T>(scale * static_cast<S>(first)),
         RoundIfIntegral<decltype(values)>(
-            scale * static_cast<double>(values))...);
+            scale * static_cast<S>(values))...);
 }
 
-template<typename T, typename ...U>
+template<typename S, typename T, typename ...U>
 auto MultiplyRounded(
     NoCheckOverflow,
-    double scale,
+    S scale,
     T first,
     U ...values) -> std::tuple<T, U...>
 {
     return std::make_tuple(
-        RoundIfIntegral<T, NoCheckOverflow>(scale * static_cast<double>(first)),
-        RoundIfIntegral<decltype(values), NoCheckOverflow>(
-            scale * static_cast<double>(values))...);
+        RoundIfIntegral<T, S, NoCheckOverflow>(scale * static_cast<S>(first)),
+        RoundIfIntegral<decltype(values), S, NoCheckOverflow>(
+            scale * static_cast<S>(values))...);
 }
 
 } // end namespace jive
