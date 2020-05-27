@@ -35,7 +35,7 @@ class Property
 public:
     explicit Property(T &value): value_{value} {}
 
-    // Implicit converstion to const reference of wrapped value.
+    // Implicit conversion to const reference of wrapped value.
     operator const T & () const { return this->value_; }
 
     // Explicit conversion to const reference using call operator.

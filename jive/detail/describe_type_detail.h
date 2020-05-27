@@ -143,17 +143,11 @@ struct DescribeNumeric<T, std::enable_if_t<std::is_integral_v<T>>>
 };
 
 
-/** Specialize for char and unsigned char **/
+/** Specialize for bool **/
 template<>
-struct DescribeNumeric<char>
+struct DescribeNumeric<bool>
 {
-    static constexpr std::string_view value = "char";
-};
-
-template<>
-struct DescribeNumeric<unsigned char>
-{
-    static constexpr std::string_view value = "unsigned char";
+    static constexpr std::string_view value = "bool";
 };
 
 
