@@ -12,16 +12,15 @@
 
 #pragma once
 
-#include <functional>
 #include <type_traits>
 
 /**
 
 Any class that contains a Property will have it's assignment operators
-implicitly deleted, because Property wraps T by reference. Assignment operators
-will have to be created explicitly, but do not copy the instances of Property
-in your assignment operators; they still reference their respective instance
-members
+implicitly deleted, because Property wraps Owner by reference. Assignment
+operators will have to be created explicitly, but do not copy the instances of
+Property in your assignment operators; they still reference their respective
+instance members
 
 **/
 
@@ -29,55 +28,79 @@ namespace jive
 {
 
 
-template<typename T>
-class Property
+template<typename T, typename Owner, T Owner::* Member>
+struct PropertyTraits
 {
-public:
-    explicit Property(T &value): value_{value} {}
-
-    // Implicit conversion to const reference of wrapped value.
-    operator const T & () const { return this->value_; }
-
-    // Explicit conversion to const reference using call operator.
-    const T & operator()() const { return this->value_; }
-
-    bool operator==(const T &other) const { return (this->value_ == other); }
-    bool operator!=(const T &other) const { return (this->value_ != other); }
-    bool operator<(const T &other) const { return (this->value_ < other); }
-    bool operator<=(const T &other) const { return (this->value_ <= other); }
-    bool operator>(const T &other) const { return (this->value_ > other); }
-    bool operator>=(const T &other) const { return (this->value_ >= other); }
-
-protected:
-    T &value_;
+    using type = T;
+    using owner = Owner;
+    constexpr static auto member = Member;
 };
 
 
-template<typename T>
-using OnAssign = std::function<void (T)>;
+template<typename Traits>
+class Property
+{
+public:
+    using T = typename Traits::type;
+    using Owner = typename Traits::owner;
+    constexpr static auto member = Traits::member;
+
+    explicit Property(Owner &owner): owner_{owner} {}
+
+    // Implicit conversion to const reference of wrapped value.
+    operator const T & () const { return this->owner_.*member; }
+
+    // Explicit conversion to const reference using call operator.
+    const T & operator()() const { return this->owner_.*member; }
+
+    bool operator==(const T &other) const { return ((*this)() == other); }
+    bool operator!=(const T &other) const { return ((*this)() != other); }
+    bool operator<(const T &other) const { return ((*this)() < other); }
+    bool operator<=(const T &other) const { return ((*this)() <= other); }
+    bool operator>(const T &other) const { return ((*this)() > other); }
+    bool operator>=(const T &other) const { return ((*this)() >= other); }
+
+protected:
+    Owner &owner_;
+};
 
 
-template<typename T, typename Base = Property<T>>
+template<
+    typename T,
+    typename Owner,
+    T Owner::* Member,
+    void(Owner::*OnAssign)(void)>
+struct AssignableTraits
+{
+    using type = T;
+    using owner = Owner;
+    constexpr static auto member = Member;
+    constexpr static auto onAssign = OnAssign;
+};
+
+
+template<typename Traits, typename Base = Property<Traits>>
 class AssignableProperty: public Base
 {
 public:
-    explicit AssignableProperty(T &value, OnAssign<T> &&onAssign = [](T) {})
+    using T = typename Traits::type;
+    using Owner = typename Traits::owner;
+    constexpr static auto member = Traits::member;
+    constexpr static auto OnAssign = Traits::onAssign;
+
+    explicit AssignableProperty(Owner &owner)
         :
-        Base(value),
-        onAssign_{std::move(onAssign)}
+        Base(owner)
     {
 
     }
 
     AssignableProperty & operator=(T other)
     {
-        this->value_ = other;
-        this->onAssign_(other);
+        this->owner_.*member = other;
+        (this->owner_.*(OnAssign))();
         return *this;
     }
-
-protected:
-    OnAssign<T> onAssign_;
 };
 
 
