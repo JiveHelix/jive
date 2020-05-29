@@ -57,7 +57,7 @@ NumericString::NumericString(const std::string &value)
     :
     value_(value)
 {
-    if (value.size() > 0)
+    if (!value.empty())
     {
         auto chunkBegin = value.begin();
         auto it = chunkBegin;

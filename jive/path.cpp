@@ -313,7 +313,7 @@ void MakeDirectories(const std::string &pathname)
 
     subDirectories.pop_front();
      
-    while (subDirectories.size() > 0)
+    while (!subDirectories.empty())
     {
         pathsToCreate.emplace_back(
             path::Join(pathsToCreate.back(), subDirectories.front()));
