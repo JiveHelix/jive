@@ -41,7 +41,7 @@ using BaseDuration = Nanoseconds<int64_t>;
 class TimeValue
 {
 public:
-    typedef BaseDuration::rep type;
+    using Type = BaseDuration::rep;
 
     // Construct initialized to zero.
     TimeValue()
@@ -197,6 +197,8 @@ std::string GetNowIso8601();
 
 namespace std
 {
+    // Overloading std::max and std::abs requires ignoring case requirements.
+    // NOLINTNEXTLINE(readability-identifier-naming)
     inline jive::TimeValue max(
         const jive::TimeValue &first,
         const jive::TimeValue &second)
@@ -204,6 +206,7 @@ namespace std
         return (first > second) ? first : second;
     }
 
+    // NOLINTNEXTLINE(readability-identifier-naming)
     inline jive::TimeValue abs(const jive::TimeValue &timeValue)
     {
         return jive::TimeValue(

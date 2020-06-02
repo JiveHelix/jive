@@ -28,10 +28,10 @@ inline constexpr const char *colonTimeFormat = "%Y-%m-%dT%H:%M:%S";
 inline constexpr const size_t maxFormattedLength = 32;
 
 
-class MonotonicSystemClock_
+class MonotonicSystemClock
 {
 public:
-    MonotonicSystemClock_()
+    MonotonicSystemClock()
         :
         monotonicOffset_(
             std::chrono::system_clock::now().time_since_epoch()
@@ -51,12 +51,12 @@ private:
     BaseDuration monotonicOffset_;
 };
 
-MonotonicSystemClock_ monotonicSystemClock_;
+MonotonicSystemClock monotonicSystemClock;
 
 
 TimeValue TimeValue::GetNow()
 {
-    return monotonicSystemClock_.GetNow();
+    return monotonicSystemClock.GetNow();
 }
 
 double TimeValue::GetNowDouble()
@@ -67,7 +67,7 @@ double TimeValue::GetNowDouble()
 
 TimeValue &TimeValue::SetToNow()
 {
-    *this = monotonicSystemClock_.GetNow();
+    *this = monotonicSystemClock.GetNow();
     return *this;
 }
 

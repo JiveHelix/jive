@@ -150,7 +150,7 @@ std::string FastFormatter(const char *format, ...)
 
 
 template<size_t N>
-constexpr size_t GetFormatterCount_(const char (&format)[N])
+constexpr size_t GetFormatterCount(const char (&format)[N])
 {
     bool lastWasFormatter = false;
     size_t count = 0;
@@ -198,13 +198,13 @@ constexpr size_t GetArgCount(Types&&...)
 #define FORMATTER(format, ...) \
     jive::Formatter<DEFAULT_FORMATTED_LENGTH>(format, ##__VA_ARGS__); \
     static_assert( \
-        jive::GetFormatterCount_(format) == jive::GetArgCount(__VA_ARGS__), \
+        jive::GetFormatterCount(format) == jive::GetArgCount(__VA_ARGS__), \
         "Argument count does not match the format string.")
 
 
 #define FAST_FORMATTER(count, format, ...) \
     jive::FastFormatter<count>(format, ##__VA_ARGS__); \
     static_assert( \
-        jive::GetFormatterCount_(format) == jive::GetArgCount(__VA_ARGS__), \
+        jive::GetFormatterCount(format) == jive::GetArgCount(__VA_ARGS__), \
         "Argument count does not match the format string.")
 #endif

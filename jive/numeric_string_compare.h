@@ -43,8 +43,6 @@ public:
 
     explicit operator const std::string & () const { return this->value_; }
 
-    const char * c_str() const { return this->value_.c_str(); }
-
 private:
     std::string value_;
     std::vector<Chunk> chunks_;
