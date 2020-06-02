@@ -33,18 +33,18 @@ private:
 class NumericString
 {
 public:
-    NumericString(): value_(), chunks_() {}
+    NumericString() = default;
 
     NumericString(const std::string &value);
 
     bool operator<(const NumericString &other) const;
-    
+
     bool operator==(const NumericString &other) const;
 
     explicit operator const std::string & () const { return this->value_; }
 
     const char * c_str() const { return this->value_.c_str(); }
-    
+
 private:
     std::string value_;
     std::vector<Chunk> chunks_;

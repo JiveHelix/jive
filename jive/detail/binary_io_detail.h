@@ -29,7 +29,7 @@ struct IsArithmeticAndNotAPointer
 /*
  * Enabler for generic Write/Read that can serialize/deserialize arbitrary
  * objects.
- * 
+ *
  *  1. All arithmetic types except pointers are allowed.
  *  2. std::string is allowed
  *  3. Allows any standard layout struct. (Even if it contains pointers, so be

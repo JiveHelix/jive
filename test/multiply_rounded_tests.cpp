@@ -35,7 +35,7 @@ TEMPLATE_TEST_CASE(
             random(
                 CastLimits<TestType, double>::Min(),
                 CastLimits<TestType, double>::Max())));
-    
+
     STATIC_REQUIRE(std::is_same_v<decltype(value), TestType>);
     STATIC_REQUIRE(std::is_same_v<decltype(scale), double>);
 
@@ -70,7 +70,7 @@ TEMPLATE_TEST_CASE(
             random(
                 CastLimits<TestType, double>::Min(),
                 CastLimits<TestType, double>::Max())));
-    
+
     STATIC_REQUIRE(std::is_same_v<decltype(value), TestType>);
     STATIC_REQUIRE(std::is_same_v<decltype(scale), double>);
 
@@ -106,11 +106,12 @@ TEMPLATE_TEST_CASE(
                 random(
                     CastLimits<TestType>::Min(),
                     CastLimits<TestType>::Max()))));
-    
+
     // Choose a scale that is expected to cause overflow
+    static constexpr auto scaleFactor = 1.5;
     auto valueAsDouble = static_cast<double>(value);
     auto maximumValue = CastLimits<TestType, double>::Max();
-    auto scaleToCauseOverflow = (maximumValue * 1.5) / valueAsDouble;
+    auto scaleToCauseOverflow = (maximumValue * scaleFactor) / valueAsDouble;
 
     REQUIRE_THROWS_AS(
         jive::MultiplyRounded(scaleToCauseOverflow, value),
@@ -124,8 +125,10 @@ TEST_CASE(
 {
     auto values = GENERATE(take(10, chunk(5, random(-5000, 5000))));
     REQUIRE(values.size() == 5);
-        
-    auto scale = GENERATE(take( 10, random(-3.0, 3.0)));
+
+    constexpr auto rangeLow = -3.0;
+    constexpr auto rangeHigh = 3.0;
+    auto scale = GENERATE(take( 10, random(rangeLow, rangeHigh)));
 
     auto aValue = static_cast<int16_t>(values[0]);
     auto bValue = static_cast<int32_t>(values[1]);
@@ -150,7 +153,7 @@ TEST_CASE(
         scale * static_cast<double>(dValue));
 
     auto eExpected = scale * static_cast<double>(eValue);
-    
+
     STATIC_REQUIRE(std::is_same_v<decltype(aValue), decltype(aExpected)>);
     STATIC_REQUIRE(std::is_same_v<decltype(bValue), decltype(bExpected)>);
     STATIC_REQUIRE(std::is_same_v<decltype(cValue), decltype(cExpected)>);

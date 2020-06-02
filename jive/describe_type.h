@@ -1,10 +1,10 @@
 /**
   * @file describe_type.h
-  * 
+  *
   * @brief Provides a string representation of any type. For fundamental types
   * and common STL containers, the name is created statically by DescribeType.
   * For integral types, the format is int8_t, uint8_t, int16_t, uint16_t, etc.
-  * 
+  *
   * @author Jive Helix (jivehelix@gmail.com)
   * @date 12 May 2020
   * @copyright Jive Helix

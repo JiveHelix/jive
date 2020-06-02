@@ -1,8 +1,8 @@
 /**
   * @file time_value.h
-  * 
+  *
   * @brief A class for storing and manipulating time values.
-  * 
+  *
   * @author Jive Helix (jivehelix@gmail.com)
   * @date 14 Nov 2017
   *
@@ -43,7 +43,6 @@ class TimeValue
 public:
     typedef BaseDuration::rep type;
 
-public:
     // Construct initialized to zero.
     TimeValue()
         :
@@ -92,7 +91,7 @@ public:
         }
         else
         {
-            // The requested type is floating-point. 
+            // The requested type is floating-point.
             return Seconds<T>(this->nanoseconds_).count();
         }
     }
@@ -117,7 +116,7 @@ public:
         }
         else
         {
-            // The requested type is floating-point. 
+            // The requested type is floating-point.
             Microseconds<T>(this->nanoseconds_).count();
         }
     }
@@ -141,7 +140,7 @@ public:
     {
         return this->GetAsSeconds<double>() / other.GetAsSeconds<double>();
     }
-    
+
     bool operator==(const TimeValue &other) const;
     bool operator!=(const TimeValue &other) const;
     bool operator<(const TimeValue &other) const;
@@ -175,23 +174,23 @@ public:
 
     BaseDuration GetDuration() const
     {
-        return this->nanoseconds_;    
+        return this->nanoseconds_;
     }
 
 private:
     std::string GetAsIso8601_(const char *timeFormat) const;
 
-private:
     BaseDuration nanoseconds_;
 };
 
 
 std::ostream &operator<<(
     std::ostream &outputStream,
-    const TimeValue &timeStamp);
+    const TimeValue &timeValue);
 
 
 std::string GetNowIso8601();
+
 
 } // end namespace jive
 

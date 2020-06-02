@@ -56,7 +56,7 @@ public:
     }
 
 private:
-    FunctionT undoOperation_; 
+    FunctionT undoOperation_;
 };
 
 } // end namespace detail

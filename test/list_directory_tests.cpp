@@ -31,6 +31,6 @@ TEST_CASE(
     // Directory listing is not required to be ordered.
     std::sort(result.begin(), result.end());
     std::sort(fileNames.begin(), fileNames.end());
-    
+
     REQUIRE(result == fileNames);
 }

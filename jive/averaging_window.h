@@ -63,30 +63,30 @@ public:
 
         this->CheckIsFull_();
     }
-    
+
     bool GetIsFull() const { return this->isFull_; }
-    
+
     T GetAverage() const
     {
         return this->sum_ / elementCount;
     }
-    
+
     double GetAverageAsDouble() const
     {
         return static_cast<double>(this->sum_) / elementCount;
     }
-    
+
     double GetVariance(double average) const
     {
         double sumOfSquaredDifferences = 0;
-        
+
         for (T element: this->elements_)
         {
             double difference = element - average;
             sumOfSquaredDifferences += (difference * difference);
         }
 
-        return sumOfSquaredDifferences / elementCount; 
+        return sumOfSquaredDifferences / elementCount;
     }
 
     double GetVariance() const
@@ -114,14 +114,14 @@ public:
 
     T GetMinimum() const
     {
-        const T *begin = &this->elements_[0]; 
+        const T *begin = &this->elements_[0];
         const T *end = begin + elementCount;
         return *std::min_element(begin, end);
     }
 
     T GetMaximum() const
     {
-        const T *begin = &this->elements_[0]; 
+        const T *begin = &this->elements_[0];
         const T *end = begin + elementCount;
         return *std::max_element(begin, end);
     }

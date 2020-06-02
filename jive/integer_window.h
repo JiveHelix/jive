@@ -1,9 +1,9 @@
 /**
   * @file integer_window.h
-  * 
+  *
   * @brief Stores a power-of-two length array of integers, and uses right shift
   * to compute the average from the sum.
-  * 
+  *
   * @author Jive Helix (jivehelix@gmail.com)
   * @date 29 Apr 2018
   * @copyright Jive Helix

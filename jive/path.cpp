@@ -1,8 +1,8 @@
 /**
   * @file path.cpp
-  * 
+  *
   * @brief Tools for file system path manipulation.
-  * 
+  *
   * @author Jive Helix (jivehelix@gmail.com)
   * @copyright 2011-2018 Jive Helix
   *
@@ -37,7 +37,7 @@ template<typename InputIterator>
 static std::string Join(InputIterator first, InputIterator last)
 {
     std::string result = strings::Join(first, last, pathSeparator);
-    auto GetAdjacentPathSeparator = 
+    auto GetAdjacentPathSeparator =
         [](const char &first, const char &second)->bool
         {
             return first == second && first == pathSeparator;
@@ -84,51 +84,51 @@ std::string Join(const std::string& path1, const std::string& path2)
 std::string Base(const std::string& filename)
 {
     std::string::size_type pos = filename.find_last_of(pathSeparator);
+
     if (pos == std::string::npos)
     {
         return filename;
-    } else
-    {
-        return filename.substr(pos + 1);
     }
+
+    return filename.substr(pos + 1);
 }
 
 std::string Directory(const std::string& filename)
 {
     std::string::size_type pos = filename.find_last_of(pathSeparator);
+
     if (pos == std::string::npos)
     {
         return "";
-    } else
-    {
-        return filename.substr(0, pos);
     }
+
+    return filename.substr(0, pos);
 }
 
 std::pair<std::string, std::string> Split(const std::string& filename)
 {
     std::string::size_type pos = filename.find_last_of(pathSeparator);
+
     if (pos == std::string::npos)
     {
         return std::make_pair("", filename);
-    } else
-    {
-        return std::make_pair(
-            filename.substr(0, pos),
-            filename.substr(pos + 1));
     }
+
+    return std::make_pair(
+        filename.substr(0, pos),
+        filename.substr(pos + 1));
 }
 
 std::pair<std::string, std::string> SplitExtension(const std::string& filename)
 {
     std::string::size_type pos = filename.find_last_of('.');
+
     if (pos == std::string::npos)
     {
         return std::make_pair(filename, "");
-    } else
-    {
-        return std::make_pair(filename.substr(0, pos), filename.substr(pos));
     }
+
+    return std::make_pair(filename.substr(0, pos), filename.substr(pos));
 }
 
 std::string MakeUniqueSystemName(const std::string &systemName)
@@ -137,9 +137,10 @@ std::string MakeUniqueSystemName(const std::string &systemName)
     auto splitExt = SplitExtension(dirBase.second);
     uint32_t suffix = 0;
     std::string uniqueName(systemName);
-    while (path::Exists(uniqueName)) 
+
+    while (path::Exists(uniqueName))
     {
-        uniqueName = 
+        uniqueName =
             splitExt.first + "-" + std::to_string(++suffix) + splitExt.second;
 
         if (dirBase.first.length())
@@ -154,16 +155,16 @@ std::string MakeUniqueSystemName(const std::string &systemName)
 }
 
 
-bool Exists(const std::string &someName)
+bool Exists(const std::string &name)
 {
     static struct stat st;
-    return (stat(someName.c_str(), &st) == 0);
+    return (stat(name.c_str(), &st) == 0);
 }
 
-bool IsFifo(const std::string &fileName)
+bool IsFifo(const std::string &name)
 {
     struct stat st;
-    if (stat(fileName.c_str(), &st) == 0)
+    if (stat(name.c_str(), &st) == 0)
     {
         // Something with this name exists
         if (S_ISFIFO(st.st_mode))
@@ -176,10 +177,10 @@ bool IsFifo(const std::string &fileName)
     return false;
 }
 
-bool IsFile(const std::string &fileName)
+bool IsFile(const std::string &name)
 {
     struct stat st;
-    if (stat(fileName.c_str(), &st) == 0)
+    if (stat(name.c_str(), &st) == 0)
     {
         // Something with this name exists
         if (S_ISREG(st.st_mode))
@@ -192,10 +193,10 @@ bool IsFile(const std::string &fileName)
     return false;
 }
 
-bool IsDirectory(const std::string &fileName)
+bool IsDirectory(const std::string &name)
 {
     struct stat st;
-    if (stat(fileName.c_str(), &st) == 0)
+    if (stat(name.c_str(), &st) == 0)
     {
         // Something with this name exists
         if (S_ISDIR(st.st_mode))
@@ -210,7 +211,9 @@ bool IsDirectory(const std::string &fileName)
 
 void MakeFifo(const std::string &fifoName)
 {
-    if (mkfifo(fifoName.c_str(), 0644) < 0)
+    static constexpr mode_t mode{0644};
+
+    if (mkfifo(fifoName.c_str(), mode) != 0)
     {
         throw PathError(
             "MakeFifo(" + fifoName + ") failed: " + std::strerror(errno));
@@ -254,7 +257,7 @@ void MakeDirectory(const std::string &pathName)
             if (!IsDirectory(pathName))
             {
                 throw PathError(
-                    "Failed to create directory " + pathName 
+                    "Failed to create directory " + pathName
                     + ". File already exists.");
             }
         }
@@ -277,43 +280,44 @@ void MakeDirectory(const std::string &pathName)
 
 void MakeDirectories(const std::string &pathname)
 {
-    if (!pathname.size())
+    if (pathname.empty())
     {
         return;
     }
 
     auto subDirectoryVector = strings::Split(pathname, pathSeparator);
 
-    if (subDirectoryVector.size() == 0)
+    if (subDirectoryVector.empty())
     {
         return;
     }
-    
+
     std::deque<std::string> subDirectories(
         subDirectoryVector.begin(),
         subDirectoryVector.end());
 
     std::deque<std::string> pathsToCreate;
-    
-    if (subDirectories.front() == "")
+
+    if (subDirectories.front().empty())
     {
         // path is absolute, beginning with '/'
         // strings::Split left an empty string in the front representing that
         // nothing came before the initial '/'
         subDirectories.pop_front();
-        
+
         // The first directory needs to be begin with a '/'
         pathsToCreate.emplace_back(
             std::string(1, pathSeparator) + subDirectories.front());
-    } else
+    }
+    else
     {
         // relative path
         pathsToCreate.emplace_back(subDirectories.front());
     }
 
     subDirectories.pop_front();
-     
-    while (subDirectories.size() > 0)
+
+    while (!subDirectories.empty())
     {
         pathsToCreate.emplace_back(
             path::Join(pathsToCreate.back(), subDirectories.front()));
@@ -321,7 +325,7 @@ void MakeDirectories(const std::string &pathname)
         subDirectories.pop_front();
     }
 
-    for (auto subdir: pathsToCreate)
+    for (const auto &subdir: pathsToCreate)
     {
         MakeDirectory(subdir);
     }

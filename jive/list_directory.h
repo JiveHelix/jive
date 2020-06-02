@@ -1,8 +1,8 @@
 /**
   * @file list_directory.h
-  * 
+  *
   * @brief List all files in a directory.
-  * 
+  *
   * @author Jive Helix (jivehelix@gmail.com)
   * @copyright 2011-2018 Jive Helix
   *

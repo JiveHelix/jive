@@ -27,7 +27,7 @@ public:
         this->isFull_ = false;
         this->index_.Reset();
     }
-    
+
     bool IsEmpty()
     {
         return (!this->isFull_ && this->index_ == 0);
@@ -36,7 +36,7 @@ public:
     void AddValue(T value)
     {
         this->elements_[this->index_++] = value;
-        
+
         if (!this->isFull_)
         {
             if (this->index_ == 0)
@@ -63,7 +63,7 @@ public:
             return CircularIndex<N>();
         }
     }
-    
+
     CircularIndex<N> EndIndex()
     {
         return this->index_;
@@ -80,7 +80,7 @@ public:
         auto stop = this->EndIndex();
 
         T sum{};
-        
+
         if (!this->isFull_)
         {
             if (0 == this->index_)
@@ -92,7 +92,7 @@ public:
 
         do
         {
-            sum += this->elements_[index++];    
+            sum += this->elements_[index++];
         }
         while (index != stop);
 

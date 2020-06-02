@@ -1,8 +1,8 @@
 /**
   * @file strings.h
-  * 
+  *
   * @brief String manipulation utilities.
-  * 
+  *
   * @author Jive Helix (jivehelix@gmail.com)
   * @copyright 2011-2018 Jive Helix
   *
@@ -91,12 +91,12 @@ template<typename ContainerT = std::vector<std::string>>
 ContainerT SplitOnWhiteSpace(const std::string &input);
 
 
-/*  
+/*
  * Creates one string constructed by concatenating InputIterator with token
  * inserted between. This is the complementary function to Split.
  *
  * @param InputIterator must dereference to a std::string or to any object that
- * can be a right hand operand to ostream::operator<< 
+ * can be a right hand operand to ostream::operator<<
  */
 template<typename InputIterator, typename TokenT>
 std::string Join(

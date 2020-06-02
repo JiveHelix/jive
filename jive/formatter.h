@@ -13,16 +13,16 @@
  ** Skips runtime checks. May segfault if the buffer size is insufficient.
  ** Prefer the safe version unless you have a good reason to need the speed.
  **     -- Bad. Possible segfault --
- **     std::string formatted = 
+ **     std::string formatted =
  **         FastFormatter<10>("%d %s\n", 42, "is the answer");
  **
  **     -- Better because 18 is exactly the right size. --
- **     std::string formatted = 
+ **     std::string formatted =
  **         FastFormatter<18>("%d %s\n", 42, "is the answer");
  **
  **     -- Best because we have some margin in case someone changes the format
  **         string. --
- **     std::string formatted = 
+ **     std::string formatted =
  **         FastFormatter<32>("%d %s\n", 42, "is the answer");
  **/
 
@@ -48,7 +48,7 @@ std::string Formatter(const char *format, ...)
 {
     std::string result;
     result.resize(charCount);
-    
+
     va_list args;
     va_start(args, format);
 
@@ -60,7 +60,7 @@ std::string Formatter(const char *format, ...)
             args);
 
     va_end(args);
-    
+
     if (formatResult < 0)
     {
         throw std::runtime_error(
@@ -74,7 +74,7 @@ std::string Formatter(const char *format, ...)
         // The formatted output was truncated.
         // Allocate more space, and do it again.
         result.resize(formattedCharCount + 1);
-        
+
         va_list argsForSecondAttempt;
         va_start(argsForSecondAttempt, format);
 
@@ -86,7 +86,7 @@ std::string Formatter(const char *format, ...)
 
         va_end(argsForSecondAttempt);
     }
-    
+
     // resize to length smaller than capacity does not free/allocate memory.
     result.resize(formattedCharCount);
 
@@ -117,7 +117,7 @@ std::string FastFormatter(const char *format, ...)
     va_start(args, format);
 
     // Use vsprintf instead of vsnprintf because it is faster.
-    int formatResult = 
+    int formatResult =
         vsprintf(&result[0], format, args);
 
     va_end(args);
@@ -128,7 +128,7 @@ std::string FastFormatter(const char *format, ...)
     }
 
     size_t formattedCharCount = static_cast<size_t>(formatResult);
-    
+
 #ifndef NDEBUG
     if (static_cast<unsigned int>(formattedCharCount) > charCount)
     {
@@ -153,9 +153,9 @@ template<size_t N>
 constexpr size_t GetFormatterCount_(const char (&format)[N])
 {
     bool lastWasFormatter = false;
-    size_t count = 0; 
+    size_t count = 0;
 
-    for (auto i = 0u; i < N; ++i)
+    for (auto i = 0U; i < N; ++i)
     {
         if (format[i] == '%')
         {

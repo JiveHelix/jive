@@ -1,9 +1,9 @@
 /**
   * @file id_bytes.h
-  * 
+  *
   * @brief Wrap a templated number of bytes in a struct to use as a marker in
   * binary files.
-  * 
+  *
   * @author Jive Helix (jivehelix@gmail.com)
   * @copyright 2017-2020 Jive Helix
   *

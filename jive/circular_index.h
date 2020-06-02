@@ -1,10 +1,10 @@
 /**
   * @file circular_index.h
-  * 
+  *
   * @brief CircularIndex behaves like size_t, except that it cannot be modified
   * except by pre/post increment. wrapCount determines the value at which the
   * index wraps back to the start.
-  * 
+  *
   * @author Jive Helix (jivehelix@gmail.com)
   * @date 27 Feb 2018
   * @copyright Jive Helix
@@ -96,7 +96,7 @@ public:
     CircularIndex & operator-=(size_t addend)
     {
         size_t modulusAddend = addend % wrapCount;
-            
+
         // modulusAddend is guaranteed to be less than wrapCount
         // Add wrapCount before subtracting to ensure that we never go less
         // than zero. (Similar to operator--.

@@ -35,7 +35,7 @@ TEST_CASE("strings::Make creates a string without nullbytes", "[strings]")
 TEST_CASE("strings::Split separates string on token", "[strings]")
 {
     std::string value{"foo.bar,car.wibble,wobble.frob"};
-    
+
     SECTION("Split on '.'")
     {
         auto split = jive::strings::Split(value, '.');
@@ -114,7 +114,7 @@ TEST_CASE(
     "[strings]")
 {
     std::string value{"foo.bar  car\n\t .wibble,wobble\f.\rfrob\n"};
-    
+
     auto split = jive::strings::SplitOnWhiteSpace(value);
 
     CHECK(split.size() == 6);

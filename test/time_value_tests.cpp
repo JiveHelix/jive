@@ -36,11 +36,11 @@ TEMPLATE_PRODUCT_TEST_CASE(
 {
     using rep = typename TestType::rep;
     using bounds = DurationLimits<TestType>;
-    
+
     auto value = GENERATE(take( 100, random(bounds::lower, bounds::upper)));
-    
+
     STATIC_REQUIRE(std::is_same_v<decltype(value), rep>);
-    
+
     // We do not know the TestType, but we can use it to convert to a known
     // type, using the chrono::duration class.
     TestType valueAsDuration{value};
@@ -48,7 +48,7 @@ TEMPLATE_PRODUCT_TEST_CASE(
         valueAsNanoseconds{valueAsDuration};
 
     auto timeValue = jive::TimeValue(valueAsDuration);
-    
+
     REQUIRE(timeValue.GetNanoseconds() == valueAsNanoseconds.count());
 }
 
@@ -72,7 +72,7 @@ TEMPLATE_PRODUCT_TEST_CASE(
 
     TestType firstAsDuration{first};
     TestType secondAsDuration{second};
-    
+
     jive::TimeValue left{firstAsDuration};
     jive::TimeValue right{secondAsDuration};
 
@@ -83,13 +83,13 @@ TEMPLATE_PRODUCT_TEST_CASE(
     {
         auto result = left + right;
         auto expectedDuration = checkLeft + checkRight;
-        REQUIRE(result.GetDuration() == expectedDuration); 
+        REQUIRE(result.GetDuration() == expectedDuration);
     }
 
     SECTION("Subtraction")
     {
         auto result = left - right;
         auto expectedDuration = checkLeft - checkRight;
-        REQUIRE(result.GetDuration() == expectedDuration); 
+        REQUIRE(result.GetDuration() == expectedDuration);
     }
 }

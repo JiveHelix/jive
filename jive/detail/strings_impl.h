@@ -20,14 +20,14 @@ ContainerT SplitOnWhiteSpace(const std::string &input)
     ContainerT result;
     auto it = input.begin();
     auto spaceIt = it;
-    
+
     while (true)
     {
         // Find the next occurrence of whitespace
         spaceIt = std::find_if(
             it,
             input.end(),
-            [](std::string::const_reference character)->bool
+            [](std::string::const_reference character) -> bool
             {
                 return isspace(character);
             });
@@ -39,35 +39,33 @@ ContainerT SplitOnWhiteSpace(const std::string &input)
             // We didn't find any more whitespace.
             return result;
         }
-        else
-        {
-            // Skip over the whitespace
-            it = std::find_if(
-                spaceIt, 
-                input.end(),
-                [](std::string::const_reference character)->bool
-                {
-                    return !isspace(character);
-                });
 
-            if (it == input.end())
+        // Skip over the whitespace
+        it = std::find_if(
+            spaceIt,
+            input.end(),
+            [](std::string::const_reference character) -> bool
             {
-                // We skipped over whitespace at the end of the string, which
-                // requires an empty entry in the result.
-                result.emplace_back("");
-                return result;
-            }
+                return !isspace(character);
+            });
+
+        if (it == input.end())
+        {
+            // We skipped over whitespace at the end of the string, which
+            // requires an empty entry in the result.
+            result.emplace_back("");
+            return result;
         }
     }
 }
 
 
-/*  
+/*
  * Creates one string constructed by concatenating InputIterator with token
  * inserted between. This is the complementary function to Split.
  *
  * @param InputIterator must dereference to a std::string or to any object that
- * can be a right hand operand to ostream::operator<< 
+ * can be a right hand operand to ostream::operator<<
  */
 template<typename InputIterator, typename TokenT>
 std::string Join(
@@ -89,12 +87,12 @@ std::string Join(
     size_t tokenSize = detail::GetTokenSize(token);
     while (it != penultimate)
     {
-        resultSize += (it++)->size(); 
+        resultSize += (it++)->size();
         resultSize += tokenSize;
     }
 
     resultSize += it->size();
-    
+
     std::string result;
     result.reserve(resultSize);
 
@@ -102,7 +100,7 @@ std::string Join(
     {
         result += *first++;
         result += token;
-    } 
+    }
 
     // Add the last string without a final token.
     result += *first;

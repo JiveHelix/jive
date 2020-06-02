@@ -1,6 +1,6 @@
 /**
   * @file transaction.h
-  * 
+  *
   * @brief Performs a series of function calls, and stores an undo function to
   * roll back any operations in the event of failure.
   *

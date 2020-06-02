@@ -1,8 +1,8 @@
 /**
   * @file endian_tools.h
-  * 
+  *
   * @brief Templated functions for simple endian conversions.
-  * 
+  *
   * @author Jive Helix (jivehelix@gmail.com)
   * @date 14 Nov 2017
   * @copyright Jive Helix
@@ -69,12 +69,12 @@ inline bool HostIsBigEndian()
  * based on argument type. Note that there are 24 specializations for four
  * basic functions. T is any signed or unsigned integer with 8, 16, 32, or 64
  * bits, or any floating-point type.
- * 
+ *
  *     T LittleEndianToHost(T)
  *     T BigEndianToHost(T)
  *     T HostToLittleEndian(T)
  *     T HostToBigEndian(T)
- * 
+ *
  * Also provided are overloads for each function accepting void *. Because it is
  * impossible to deduce T when passing void * as the argument, the template
  * parameter must be passed explicitly.
@@ -110,7 +110,7 @@ template<
         EnableIntegralNotPointer<T, 4>::value, int>::type = 0>
 T LittleEndianToHost(const T &value)
 {
-    return static_cast<T>(le32toh(value));    
+    return static_cast<T>(le32toh(value));
 }
 
 template<
@@ -119,7 +119,7 @@ template<
         EnableIntegralNotPointer<T, 8>::value, int>::type = 0>
 T LittleEndianToHost(const T &value)
 {
-    return static_cast<T>(le64toh(value));    
+    return static_cast<T>(le64toh(value));
 }
 
 template<
@@ -128,7 +128,7 @@ template<
         EnableIntegralNotPointer<T, 2>::value, int>::type = 0>
 T BigEndianToHost(const T &value)
 {
-    return static_cast<T>(be16toh(value));    
+    return static_cast<T>(be16toh(value));
 }
 
 template<
@@ -137,7 +137,7 @@ template<
         EnableIntegralNotPointer<T, 4>::value, int>::type = 0>
 T BigEndianToHost(const T &value)
 {
-    return static_cast<T>(be32toh(value));    
+    return static_cast<T>(be32toh(value));
 }
 
 template<
@@ -146,7 +146,7 @@ template<
         EnableIntegralNotPointer<T, 8>::value, int>::type = 0>
 T BigEndianToHost(const T &value)
 {
-    return static_cast<T>(be64toh(value));    
+    return static_cast<T>(be64toh(value));
 }
 
 template<
@@ -155,7 +155,7 @@ template<
         EnableIntegralNotPointer<T, 2>::value, int>::type = 0>
 T HostToLittleEndian(const T &value)
 {
-    return static_cast<T>(htole16(value));    
+    return static_cast<T>(htole16(value));
 }
 
 template<
@@ -164,7 +164,7 @@ template<
         EnableIntegralNotPointer<T, 4>::value, int>::type = 0>
 T HostToLittleEndian(const T &value)
 {
-    return static_cast<T>(htole32(value));    
+    return static_cast<T>(htole32(value));
 }
 
 template<
@@ -173,7 +173,7 @@ template<
         EnableIntegralNotPointer<T, 8>::value, int>::type = 0>
 T HostToLittleEndian(const T &value)
 {
-    return static_cast<T>(htole64(value));    
+    return static_cast<T>(htole64(value));
 }
 
 template<
@@ -182,7 +182,7 @@ template<
         EnableIntegralNotPointer<T, 2>::value, int>::type = 0>
 T HostToBigEndian(const T &value)
 {
-    return static_cast<T>(htobe16(value));    
+    return static_cast<T>(htobe16(value));
 }
 
 template<
@@ -191,7 +191,7 @@ template<
         EnableIntegralNotPointer<T, 4>::value, int>::type = 0>
 T HostToBigEndian(const T &value)
 {
-    return static_cast<T>(htobe32(value));    
+    return static_cast<T>(htobe32(value));
 }
 
 template<
@@ -200,7 +200,7 @@ template<
         EnableIntegralNotPointer<T, 8>::value, int>::type = 0>
 T HostToBigEndian(const T &value)
 {
-    return static_cast<T>(htobe64(value));    
+    return static_cast<T>(htobe64(value));
 }
 
 template<typename T>
@@ -218,7 +218,7 @@ template<
         std::is_floating_point<T>::value, int>::type = 0>
 T LittleEndianToHost(const T &value)
 {
-#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__    
+#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
     // Host is already little endian.
     return value;
 #else
@@ -233,7 +233,7 @@ template<
         std::is_floating_point<T>::value, int>::type = 0>
 T BigEndianToHost(const T &value)
 {
-#if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__    
+#if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
     // Host is already big endian.
     return value;
 #else
@@ -248,10 +248,10 @@ template<
         std::is_floating_point<T>::value, int>::type = 0>
 T HostToBigEndian(const T &value)
 {
-#if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__    
+#if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
     // Host is already big endian.
     return value;
-#else 
+#else
     return ReverseByteOrder(value);
 #endif
 }
@@ -262,10 +262,10 @@ template<
         std::is_floating_point<T>::value, int>::type = 0>
 T HostToLittleEndian(const T &value)
 {
-#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__    
+#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
     // Host is already little endian.
     return value;
-#else 
+#else
     return ReverseByteOrder(value);
 #endif
 }
@@ -295,7 +295,7 @@ T HostToBigEndian(void *data)
     return HostToBigEndian(*static_cast<T *>(data));
 }
 
-/* These are defined as pass-through methods for single byte values. 
+/* These are defined as pass-through methods for single byte values.
  * These shouldn't be used if you know that the value is a single byte, but
  * they are here to allow flexibility in templated functions that accept both
  * single- and multi-byte values.
