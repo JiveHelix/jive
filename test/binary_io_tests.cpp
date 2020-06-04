@@ -78,7 +78,7 @@ TEMPLATE_TEST_CASE(
         take(
             100,
             random<size_t>(
-                0, 
+                0,
                 std::min(
                     static_cast<TestType>(jive::Power<2, 20>()),
                     std::numeric_limits<TestType>::max()))));

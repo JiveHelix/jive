@@ -1,8 +1,8 @@
 /**
   * @file describe_type_detail.h
-  * 
+  *
   * @brief Most of the implementation of describe_type.h
-  * 
+  *
   * @author Jive Helix (jivehelix@gmail.com)
   * @date 12 May 2020
   * @copyright Jive Helix

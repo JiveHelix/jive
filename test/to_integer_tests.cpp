@@ -17,7 +17,7 @@
         static constexpr std::string_view asDec = #asDec_;          \
         static constexpr std::string_view asOct = #asOct_;          \
         static constexpr std::string_view asHex = #asHex_;          \
-        static constexpr auto value = asDec_;                       \
+        static constexpr auto value = (asDec_);                     \
     };                                                              \
     template<typename T>                                            \
     struct _n ## asDec_                                             \
@@ -26,7 +26,7 @@
         static constexpr std::string_view asDec = "-" #asDec_;      \
         static constexpr std::string_view asOct = "-" #asOct_;      \
         static constexpr std::string_view asHex = "-" #asHex_;      \
-        static constexpr auto value = - asDec_;                     \
+        static constexpr auto value = -(asDec_);                    \
     }
 
 
@@ -36,6 +36,9 @@ MAKE_TEST_VALUES(56, 70, 38);
 MAKE_TEST_VALUES(105, 151, 69);
 MAKE_TEST_VALUES(119, 167, 77);
 
+static constexpr int base8 = 8;
+static constexpr int base10 = 10;
+static constexpr int base16 = 16;
 
 TEMPLATE_PRODUCT_TEST_CASE(
     "Convert strings to signed integers",
@@ -45,9 +48,9 @@ TEMPLATE_PRODUCT_TEST_CASE(
 {
     using type = typename TestType::type;
 
-    auto valueFromDec = jive::ToInteger<type, 10>(TestType::asDec);
-    auto valueFromOct = jive::ToInteger<type, 8>(TestType::asOct);
-    auto valueFromHex = jive::ToInteger<type, 16>(TestType::asHex);
+    auto valueFromDec = jive::ToInteger<type, base10>(TestType::asDec);
+    auto valueFromOct = jive::ToInteger<type, base8>(TestType::asOct);
+    auto valueFromHex = jive::ToInteger<type, base16>(TestType::asHex);
 
     REQUIRE(valueFromDec == TestType::value);
     REQUIRE(valueFromOct == TestType::value);
@@ -62,9 +65,9 @@ TEMPLATE_PRODUCT_TEST_CASE(
 {
     using type = typename TestType::type;
 
-    auto valueFromDec = jive::ToInteger<type, 10>(TestType::asDec);
-    auto valueFromOct = jive::ToInteger<type, 8>(TestType::asOct);
-    auto valueFromHex = jive::ToInteger<type, 16>(TestType::asHex);
+    auto valueFromDec = jive::ToInteger<type, base10>(TestType::asDec);
+    auto valueFromOct = jive::ToInteger<type, base8>(TestType::asOct);
+    auto valueFromHex = jive::ToInteger<type, base16>(TestType::asHex);
 
     REQUIRE(valueFromDec == TestType::value);
     REQUIRE(valueFromOct == TestType::value);

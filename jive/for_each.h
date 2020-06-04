@@ -1,8 +1,8 @@
 /**
   * @file for_each.h
-  * 
+  *
   * @brief Calls a function for each item in a std::tuple.
-  * 
+  *
   * @author Jive Helix (jivehelix@gmail.com)
   * @date 01 May 2020
   * @copyright Jive Helix
@@ -48,7 +48,7 @@ void ForEach(Tuple &&tuple, Function &&function)
 {
     constexpr auto itemCount = std::tuple_size<
         typename std::remove_reference<decltype(tuple)>::type>::value;
-    
+
     ForEach(
         std::forward<Tuple>(tuple),
         std::forward<Function>(function),

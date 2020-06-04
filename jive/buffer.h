@@ -1,6 +1,6 @@
 /**
   * @file buffer.h
-  * 
+  *
   * @brief A sized region of memory that is never default initialized.
   *
   * Useful to create a managed and sized buffer when you don't want to pay for
@@ -17,7 +17,7 @@
         // ::new (p) U();
         // where p is zero-initialized.
     }
-  * 
+  *
   * The advantage of Buffer's approach is there is no overhead to call
   * construct for each member of the buffer.
   *
@@ -45,7 +45,7 @@ size_t GetAlignedByteCount(size_t count)
 {
     auto byteCount = count * sizeof(T);
     auto error = byteCount % align;
-    
+
     return (error == 0)
         ? byteCount
         : byteCount + (align - error);
@@ -86,7 +86,7 @@ public:
     {
 
     }
-    
+
     template<typename InputStream>
     static Buffer FromStream(size_t elementCount, InputStream &inputStream)
     {
@@ -95,7 +95,7 @@ public:
         inputStream.read(
             reinterpret_cast<char *>(buffer.Get()),
             static_cast<std::streamsize>(elementCount * sizeof(T)));
-        
+
         return buffer;
     }
 
@@ -106,14 +106,14 @@ public:
 
     Buffer(const Buffer &) = delete;
 
-    Buffer(Buffer &&other)
+    Buffer(Buffer &&other) noexcept
         :
         elementCount_(other.elementCount_),
         data_(other.data_)
     {
         other.data_ = nullptr;
     }
-    
+
     size_t GetElementCount() const { return this->elementCount_; }
 
     size_t GetByteCount() const { return this->elementCount_ * sizeof(T); }
@@ -121,7 +121,7 @@ public:
     size_t GetAllocatedByteCount() const { return this->byteCount_; }
 
     const T * Get() const { return this->data_; }
-    
+
     T * Get() { return this->data_; }
 
 private:

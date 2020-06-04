@@ -17,7 +17,7 @@ namespace detail
 
 inline size_t GetTokenSize(const std::string &token)
 {
-    return token.size(); 
+    return token.size();
 }
 
 
@@ -31,7 +31,7 @@ inline size_t GetTokenSize(char)
  * @param limit The max count of tokens to parse.
  * @ return If limit is less than the count of tokens in the string, the last
  * string in the return ContainerT will contain the unprocessed portion of the
- * stream. Use limit=-1 to parse every occurence of token. 
+ * stream. Use limit=-1 to parse every occurence of token.
  */
 template<typename ContainerT, typename TokenT>
 ContainerT SplitToContainer(

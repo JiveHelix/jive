@@ -22,8 +22,11 @@ TEMPLATE_TEST_CASE(
     TestType value{};
     TestType otherValue{};
 
+    static constexpr uint8_t maxByteValue =
+        std::numeric_limits<uint8_t>::max();
+
     auto generator =
-        Catch::Generators::RandomIntegerGenerator<uint8_t>(0, 255);
+        Catch::Generators::RandomIntegerGenerator<uint8_t>(0, maxByteValue);
 
     for (size_t index = 0; index < sizeof(TestType); ++index)
     {

@@ -1,8 +1,8 @@
 /**
-  * @author Jive Helix (jivehelix@gmail.com)
-  * @copyright 2020 Jive Helix
-  * Licensed under the MIT license. See LICENSE file.
-  */
+ * @author Jive Helix (jivehelix@gmail.com)
+ * @copyright 2020 Jive Helix
+ * Licensed under the MIT license. See LICENSE file.
+ */
 #include <catch2/catch.hpp>
 
 #include "jive/angles.h"
@@ -11,55 +11,57 @@
 #include <tuple>
 #include <iostream>
 
-// Use the Catçh `_a` literal use approximate equality for floats.
-using namespace Catch::literals;
-
-// (radians, degrees)
-inline constexpr std::array<std::tuple<double, double>, 17> radiansAndDegrees
+TEST_CASE("Convert between radians and degrees", "[angles]")
 {
-    std::make_tuple(-2 * M_PI, -360.0),
-    std::make_tuple(-7 * M_PI / 4, -315.0),
-    std::make_tuple(-3 * M_PI / 2, -270.0),
-    std::make_tuple(-5 * M_PI / 4, -225.0),
-    std::make_tuple(-M_PI, -180.0),
-    std::make_tuple(-3 * M_PI / 4, -135.0),
-    std::make_tuple(-M_PI / 2, -90.0),
-    std::make_tuple(-M_PI / 4, -45.0),
-    std::make_tuple(0, 0.0),
-    std::make_tuple(M_PI / 4, 45.0),
-    std::make_tuple(M_PI / 2, 90.0),
-    std::make_tuple(3 * M_PI / 4, 135.0),
-    std::make_tuple(M_PI, 180.0),
-    std::make_tuple(5 * M_PI / 4, 225.0),
-    std::make_tuple(3 * M_PI / 2, 270.0),
-    std::make_tuple(7 * M_PI / 4, 315.0),
-    std::make_tuple(2 * M_PI, 360.0)
-};
+    using Angles = jive::Angles<double>;
 
-TEST_CASE("Convert single value to degrees", "[angles]")
-{
-    for (auto [radians, degrees]: radiansAndDegrees)
+    const size_t angleCount = 12;
+
+    double radians = -2 * Angles::pi;
+    double radiansStep = Angles::pi / static_cast<double>(angleCount);
+
+    double degrees = -Angles::fullRotationDegrees;
+
+    double degreesStep = Angles::halfRotationDegrees
+        / static_cast<double>(angleCount);
+
+    // Catch's default Approx does nothing when the argument is zero.
+    // Give it an explicit margin when we are testing for zero.
+    static constexpr double marginNearZero = 1e-13;
+    static auto approxZero = Approx(0.0).margin(marginNearZero);
+
+    for (size_t count = 0; count < 2 * angleCount + 1; ++count)
     {
-        REQUIRE(jive::ToDegrees(radians) == Approx(degrees));
+        if (std::abs(degrees) < marginNearZero)
+        {
+            REQUIRE(jive::ToDegrees(radians) == approxZero);
+            REQUIRE(jive::ToRadians(degrees) == approxZero);
+        }
+        else
+        {
+            REQUIRE(jive::ToDegrees(radians) == Approx(degrees));
+            REQUIRE(jive::ToRadians(degrees) == Approx(radians));
+        }
+
+        radians += radiansStep;
+        degrees += degreesStep;
     }
 }
 
-TEST_CASE("Convert single value to radians", "[angles]")
-{
-    for (auto [radians, degrees]: radiansAndDegrees)
-    {
-        REQUIRE(jive::ToRadians(degrees) == Approx(radians));
-    }
-}
-
-TEST_CASE("Convert multiple values to degrees", "[angles]")
+TEST_CASE("Convert multiple values to degrees", "[Angles]")
 {
     // Multple angles (with different types) can be converted in the same
     // variadic call to jive::ToDegrees(...)
+    using Angles = jive::Angles<double>;
+    static constexpr auto chunkSize = 5;
+    static constexpr auto testCount = 100;
+    static constexpr double lowerBound = -4 * Angles::pi;
+    static constexpr double upperBound = 4 * Angles::pi;
 
-    auto values = GENERATE(take(100, chunk(5, random(-4 * M_PI, 4 * M_PI))));
+    auto values = GENERATE(
+        take(testCount, chunk(chunkSize, random(lowerBound, upperBound))));
 
-    REQUIRE(values.size() == 5);
+    REQUIRE(values.size() == chunkSize);
 
     double aRadians = values.at(0);
     double bRadians = values.at(1);
@@ -73,14 +75,23 @@ TEST_CASE("Convert multiple values to degrees", "[angles]")
     float dDegrees;
     double eDegrees;
 
-    std::tie(aDegrees, bDegrees, cDegrees, dDegrees, eDegrees) =
-        jive::ToDegrees(aRadians, bRadians, cRadians, dRadians, eRadians);
+    std::tie(aDegrees, bDegrees, cDegrees, dDegrees, eDegrees) = jive::
+        ToDegrees(aRadians, bRadians, cRadians, dRadians, eRadians);
 
-    auto aExpected = Approx(180.0 * values.at(0) / M_PI);
-    auto bExpected = Approx(180.0 * values.at(1) / M_PI);
-    auto cExpected = Approx(static_cast<float>(180.0 * values.at(2) / M_PI));
-    auto dExpected = Approx(static_cast<float>(180.0 * values.at(3) / M_PI));
-    auto eExpected = Approx(180.0 * values.at(4) / M_PI);
+    auto aExpected = Approx(
+        Angles::halfRotationDegrees * values.at(0) / Angles::pi);
+
+    auto bExpected = Approx(
+        Angles::halfRotationDegrees * values.at(1) / Angles::pi);
+
+    auto cExpected = Approx(static_cast<float>(
+        Angles::halfRotationDegrees * values.at(2) / Angles::pi));
+
+    auto dExpected = Approx(static_cast<float>(
+        Angles::halfRotationDegrees * values.at(3) / Angles::pi));
+
+    auto eExpected = Approx(
+        Angles::halfRotationDegrees * values.at(4) / Angles::pi);
 
     REQUIRE(aDegrees == aExpected);
     REQUIRE(bDegrees == bExpected);
@@ -93,7 +104,15 @@ TEST_CASE("Convert multiple values to radians", "[angles]")
 {
     // Multple angles (with different types) can be converted in the same
     // variadic call to jive::ToRadians(...)
-    auto values = GENERATE(take(100, chunk(5, random(-720.0, 720.0))));
+    using Angles = jive::Angles<double>;
+
+    static constexpr auto chunkSize = 5;
+    static constexpr auto testCount = 100;
+    static constexpr double lowerBound = -2 * Angles::fullRotationDegrees;
+    static constexpr double upperBound = 2 * Angles::fullRotationDegrees;
+
+    auto values = GENERATE(
+        take(testCount, chunk(chunkSize, random(lowerBound, upperBound))));
 
     REQUIRE(values.size() == 5);
 
@@ -109,14 +128,23 @@ TEST_CASE("Convert multiple values to radians", "[angles]")
     double dRadians;
     float eRadians;
 
-    std::tie(aRadians, bRadians, cRadians, dRadians, eRadians) =
-        jive::ToRadians(aDegrees, bDegrees, cDegrees, dDegrees, eDegrees);
+    std::tie(aRadians, bRadians, cRadians, dRadians, eRadians) = jive::
+        ToRadians(aDegrees, bDegrees, cDegrees, dDegrees, eDegrees);
 
-    auto aExpected = Approx(M_PI * values.at(0) / 180.0);
-    auto bExpected = Approx(static_cast<float>(M_PI * values.at(1) / 180.0));
-    auto cExpected = Approx(M_PI * values.at(2) / 180.0);
-    auto dExpected = Approx(M_PI * values.at(3) / 180.0);
-    auto eExpected = Approx(static_cast<float>(M_PI * values.at(4) / 180.0));
+    auto aExpected = Approx(
+        Angles::pi * values.at(0) / Angles::halfRotationDegrees);
+
+    auto bExpected = Approx(static_cast<float>(
+        Angles::pi * values.at(1) / Angles::halfRotationDegrees));
+
+    auto cExpected = Approx(
+        Angles::pi * values.at(2) / Angles::halfRotationDegrees);
+
+    auto dExpected = Approx(
+        Angles::pi * values.at(3) / Angles::halfRotationDegrees);
+
+    auto eExpected = Approx(static_cast<float>(
+        Angles::pi * values.at(4) / Angles::halfRotationDegrees));
 
     REQUIRE(aRadians == aExpected);
     REQUIRE(bRadians == bExpected);

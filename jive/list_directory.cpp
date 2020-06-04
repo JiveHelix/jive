@@ -1,8 +1,8 @@
 /**
   * @file list_directory.cpp
-  * 
+  *
   * @brief List all files in a directory.
-  * 
+  *
   * @author Jive Helix (jivehelix@gmail.com)
   * @copyright 2011-2018 Jive Helix
   *
@@ -36,7 +36,7 @@ public:
     {
         closedir(this->dir_);
     }
-    
+
     /// Allows ManagedDir to be used directly where a DIR * is epxected.
     operator DIR * () { return this->dir_; }
 

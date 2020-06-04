@@ -1,8 +1,8 @@
 /**
   * @file path.h
-  * 
+  *
   * @brief Tools for file system path manipulation.
-  * 
+  *
   * @author Jive Helix (jivehelix@gmail.com)
   * @copyright 2011-2018 Jive Helix
   *
@@ -40,27 +40,27 @@ std::string Join(std::initializer_list<std::string> il);
 
 std::string Join(const std::string& path1, const std::string& path2);
 
-std::string Base(const std::string& filename);
+std::string Base(const std::string& fileName);
 
-std::string Directory(const std::string& filename);
+std::string Directory(const std::string& fileName);
 
-std::pair<std::string, std::string> Split(const std::string& filename); 
+std::pair<std::string, std::string> Split(const std::string& fileName);
 
-bool Exists(const std::string &someName);
+bool Exists(const std::string &name);
 
-bool IsFifo(const std::string &fifoName);
+bool IsFifo(const std::string &name);
 
-bool IsFile(const std::string &fileName);
+bool IsFile(const std::string &name);
 
-bool IsDirectory(const std::string &directoryName);
+bool IsDirectory(const std::string &name);
 
-void MakeFifo(const std::string &fifoName);
+void MakeFifo(const std::string &name);
 
 /*
  * @return std::pair, first = stem, second = .extension
  */
 std::pair<std::string, std::string>
-SplitExtension(const std::string& filename);
+SplitExtension(const std::string& name);
 
 /*
  *  Appends an index to systemName until it finds a systemName that ! Exists

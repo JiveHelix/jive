@@ -1,8 +1,8 @@
 /**
   * @file math_templates.h
-  * 
+  *
   * @brief Compile-time math functions.
-  * 
+  *
   * @author Jive Helix (jivehelix@gmail.com)
   * @date 29 Apr 2018
   * @copyright Jive Helix

@@ -13,11 +13,11 @@
 
 /** std::span will be available in c++20, with more features than implemented
  ** here. Until then, the interface of this class closely matches the proposed
- ** span class. The standard span class 
+ ** span class. The standard span class
  **
  ** span provides a view of array data, allowing functions to return views of
  ** array data with sizes set at compile time.
- ** 
+ **
  **/
 
 namespace std

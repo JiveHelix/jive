@@ -31,7 +31,7 @@ template<
 struct Concatenate<
     first,
     std::index_sequence<firstIndex...>,
-    second, 
+    second,
     std::index_sequence<secondIndex...>>
 {
     // expand each string view into a char array.

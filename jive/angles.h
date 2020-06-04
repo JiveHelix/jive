@@ -12,10 +12,39 @@ namespace jive
 {
 
 
+inline constexpr long double pi = 3.14159265358979323846L;
+inline constexpr long double halfRotationDegrees = 180.0L;
+inline constexpr long double fullRotationDegrees = 360.0L;
+inline constexpr long double degreesPerRadian = halfRotationDegrees / pi;
+inline constexpr long double radiansPerDegree = pi / halfRotationDegrees;
+
+
+template<typename T>
+struct Angles
+{
+    static_assert(std::is_floating_point_v<T>);
+
+    static constexpr T pi = static_cast<T>(::jive::pi);
+
+    static constexpr T halfRotationDegrees =
+        static_cast<T>(::jive::halfRotationDegrees);
+
+    static constexpr T fullRotationDegrees =
+        static_cast<T>(::jive::fullRotationDegrees);
+
+    static constexpr T degreesPerRadian =
+        static_cast<T>(::jive::degreesPerRadian);
+
+    static constexpr T radiansPerDegree =
+        static_cast<T>(::jive::radiansPerDegree);
+};
+
+
+
 template<typename T>
 auto ToDegrees(T radians) -> T
 {
-    return radians * static_cast<T>(180.0 / M_PI);
+    return radians * Angles<T>::degreesPerRadian;
 }
 
 
@@ -29,7 +58,7 @@ auto ToDegrees(T radians, U ...otherRadians) -> std::tuple<T, U...>
 template<typename T>
 auto ToRadians(T degrees) -> T
 {
-    return degrees * static_cast<T>(M_PI / 180.0);
+    return degrees * Angles<T>::radiansPerDegree;
 }
 
 

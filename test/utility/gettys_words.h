@@ -156,21 +156,19 @@ inline constexpr std::array<std::string_view, 138> gettysWords{
 
 class RandomGettysWords
 {
-public:
-    RandomGettysWords(): randomDevice_{}
-    {
-
-    }
-    
-    std::string MakeWords(size_t wordCount)
-    {
+private:
         // Average word length in gettysWords is 4.27 characters, with
         // a maximum of 12 characters.
         // Pre-allocate the result string to probably avoid having to
         // re-allocate.
         // A space will be added between each word, so figure on 6 characters
         // per word.
-        size_t estimated = 6 * wordCount; 
+        static constexpr auto averageWordLength = 6;
+
+public:
+    std::string MakeWords(size_t wordCount)
+    {
+        size_t estimated = averageWordLength * wordCount;
         std::string result;
         result.reserve(estimated);
         this->Make_(result, wordCount);
@@ -179,21 +177,14 @@ public:
 
     std::string MakeLetters(size_t maxLetterCount)
     {
-
-        // Average word length in gettysWords is 4.27 characters, with
-        // a maximum of 12 characters.
-        // Pre-allocate the result string to probably avoid having to
-        // re-allocate.
-        // A space will be added between each word, so figure on 6 characters
-        // per word.
-        size_t wordCount = maxLetterCount / 6; 
+        size_t wordCount = maxLetterCount / averageWordLength;
         std::string result;
         result.reserve(maxLetterCount);
         this->Make_(result, wordCount);
 
         if (result.size() > maxLetterCount)
         {
-            result.resize(maxLetterCount);    
+            result.resize(maxLetterCount);
         }
 
         return result;
@@ -225,7 +216,7 @@ public:
 
             words.emplace_back(word);
         }
-        
+
         return words;
     }
 
@@ -250,11 +241,9 @@ private:
         while (wordCount--)
         {
             result += gettysWords[distribution(generator)];
-            result += ' '; 
+            result += ' ';
         }
     }
 
-
-private:
     std::random_device randomDevice_;
 };

@@ -1,8 +1,8 @@
 /**
   * @file binary_io.h
-  * 
+  *
   * @brief Convenience functions for reading and writing values as binary data.
-  * 
+  *
   * @author Jive Helix (jivehelix@gmail.com)
   * @copyright 2011-2020 Jive Helix
   *
@@ -34,7 +34,7 @@ CREATE_EXCEPTION(BinaryIoError, std::runtime_error);
 
 
 /**
-  * Read and Write function objects that are already associated with an open 
+  * Read and Write function objects that are already associated with an open
   * file, descriptor, or stream. Both read/write function objects process
   * the exact count requested or throw.
   * ReadFunction accepts target data as the first argument. This is where the
@@ -66,7 +66,7 @@ T Read(std::istream &inputStream);
 template<
     typename T,
     typename std::enable_if_t<detail::EnableBinaryIo<T>::value, int> = 0>
-T Read(ReadFunction readFunction);
+T Read(const ReadFunction &readFunction);
 
 template<
     typename T,
@@ -76,7 +76,7 @@ void Write(std::ostream &outputStream, const T &value);
 template<
     typename T,
     typename std::enable_if_t<detail::EnableBinaryIo<T>::value, int> = 0>
-void Write(WriteFunction writeFunction, const T &value);
+void Write(const WriteFunction &writeFunction, const T &value);
 
 
 /*
@@ -85,9 +85,9 @@ void Write(WriteFunction writeFunction, const T &value);
  * @param readFunction The function object backed by a file, pipe, or stream
  * @param byteCount The number of bytes to skip.
  * @remark Thread-safe because dummyBytes is never read.
- * 
+ *
  */
-void Skip(ReadFunction readFunction, size_t byteCount);
+void Skip(const ReadFunction &readFunction, size_t byteCount);
 
 
 template<typename CountType = uint32_t>
@@ -101,6 +101,6 @@ std::string ReadString(std::istream &inputStream);
 
 } // end namespace io
 
-} // end namespace jive 
+} // end namespace jive
 
 #include "jive/detail/binary_io_impl.h"

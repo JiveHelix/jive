@@ -42,7 +42,7 @@ template<typename Duration>
 struct DurationLimits
 {
     using T = typename Duration::rep;
-    
+
     static constexpr T upper =
         (Duration(TypeLimit<T>::max()) > Limits<T>::upper)
         ? Duration(Limits<T>::upper).count()

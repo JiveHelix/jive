@@ -34,10 +34,8 @@ bool Chunk::operator<(const Chunk &other) const
     {
         return this->valueAsInt_ < other.valueAsInt_;
     }
-    else
-    {
-        return this->valueAsString_ < other.valueAsString_;
-    }
+
+    return this->valueAsString_ < other.valueAsString_;
 }
 
 bool Chunk::operator>(const Chunk &other) const
@@ -46,10 +44,8 @@ bool Chunk::operator>(const Chunk &other) const
     {
         return this->valueAsInt_ > other.valueAsInt_;
     }
-    else
-    {
-        return this->valueAsString_ > other.valueAsString_;
-    }
+
+    return this->valueAsString_ > other.valueAsString_;
 }
 
 
@@ -73,7 +69,7 @@ NumericString::NumericString(const std::string &value)
                 this->chunks_.emplace_back(
                     std::string(chunkBegin, it),
                     isDigit);
-                
+
                 isDigit = thisIsDigit;
                 chunkBegin = it;
             }
@@ -102,7 +98,8 @@ bool NumericString::operator<(const NumericString &other) const
         {
             return true;
         }
-        else if (*thisChunk > *otherChunk)
+
+        if (*thisChunk > *otherChunk)
         {
             return false;
         }
@@ -110,7 +107,7 @@ bool NumericString::operator<(const NumericString &other) const
         thisChunk++;
         otherChunk++;
     }
-    
+
     // Each side compared equal until now
     // Let the shorter side win.
     return (this->chunks_.size() < other.chunks_.size());

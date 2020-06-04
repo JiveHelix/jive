@@ -1,8 +1,8 @@
 /**
   * @file eigen.h
-  * 
+  *
   * @brief A few convenience functions for working with Eigen.
-  * 
+  *
   * @author Jive Helix (jivehelix@gmail.com)
   * @date 19 May 2020
   * Licensed under the MIT license. See LICENSE file.

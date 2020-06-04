@@ -17,9 +17,9 @@ template<
     typename std::enable_if_t<detail::EnableBinaryIo<T>::value, int>>
 T Read(std::istream &inputStream)
 {
-    T object;
-    inputStream.read(reinterpret_cast<char *>(&object), sizeof(T));
-    return object;
+    T value;
+    inputStream.read(reinterpret_cast<char *>(&value), sizeof(T));
+    return value;
 }
 
 /** Read specialization for std::string **/
@@ -32,7 +32,7 @@ inline std::string Read<std::string>(std::istream &inputStream)
     {
         throw BinaryIoError("Failed to extract string.");
     }
-    
+
     size_t resultLength = static_cast<size_t>(stringLength);
     char buffer[256]{};
     inputStream.read(&buffer[0], stringLength);
@@ -42,31 +42,34 @@ inline std::string Read<std::string>(std::istream &inputStream)
 template<
     typename T,
     typename std::enable_if_t<detail::EnableBinaryIo<T>::value, int>>
-void Write(std::ostream &os, const T &object)
+void Write(std::ostream &outputStream, const T &value)
 {
-    os.write(reinterpret_cast<const char *>(&object), sizeof(T));
+    outputStream.write(reinterpret_cast<const char *>(&value), sizeof(T));
 }
 
 /** Write specialization for std::string **/
 template<>
 inline void Write<std::string>(
-    std::ostream &os,
-    const std::string &message)
+    std::ostream &outputStream,
+    const std::string &value)
 {
-    if (message.size() > 255)
+    static constexpr auto maximumSize = std::numeric_limits<uint8_t>::max();
+    const auto valueSize = value.size();
+
+    if (valueSize > maximumSize)
     {
         throw std::length_error("String length is limited to 256 characters");
     }
-    
-    uint8_t stringSize = static_cast<uint8_t>(message.size());
-    os.put(static_cast<char>(stringSize));
-    os.write(message.c_str(), stringSize);
+
+    uint8_t stringSize = static_cast<uint8_t>(valueSize);
+    outputStream.put(static_cast<char>(stringSize));
+    outputStream.write(value.c_str(), stringSize);
 }
 
 template<
     typename T,
     typename std::enable_if_t<detail::EnableBinaryIo<T>::value, int>>
-T Read(ReadFunction readFunction)
+T Read(const ReadFunction &readFunction)
 {
     T value;
     readFunction(&value, sizeof(T), 1);
@@ -76,13 +79,13 @@ T Read(ReadFunction readFunction)
 template<
     typename T,
     typename std::enable_if_t<detail::EnableBinaryIo<T>::value, int>>
-void Write(WriteFunction writeFunction, const T &value)
+void Write(const WriteFunction &writeFunction, const T &value)
 {
     writeFunction(&value, sizeof(T), 1);
 }
 
 template<>
-inline std::string Read<std::string>(ReadFunction readFunction)
+inline std::string Read<std::string>(const ReadFunction &readFunction)
 {
     uint8_t stringSize;
     readFunction(&stringSize, 1, 1);
@@ -93,17 +96,20 @@ inline std::string Read<std::string>(ReadFunction readFunction)
 
 template<>
 inline void Write<std::string>(
-    WriteFunction writeFunction,
-    const std::string &message)
+    const WriteFunction &writeFunction,
+    const std::string &value)
 {
-    if (message.size() > 255)
+    static constexpr auto maximumSize = std::numeric_limits<uint8_t>::max();
+    const auto valueSize = value.size();
+
+    if (valueSize > maximumSize)
     {
         throw std::length_error("String length is limited to 255 characters");
     }
-    
-    uint8_t stringSize = static_cast<uint8_t>(message.size());
+
+    uint8_t stringSize = static_cast<uint8_t>(valueSize);
     writeFunction(&stringSize, 1, 1);
-    writeFunction(message.c_str(), 1, stringSize);
+    writeFunction(value.c_str(), 1, stringSize);
 }
 
 
@@ -113,9 +119,9 @@ inline void Write<std::string>(
  * @param readFunction The function object backed by a file, pipe, or stream
  * @param byteCount The number of bytes to skip.
  * @remark Thread-safe because dummyBytes is never read.
- * 
+ *
  */
-inline void Skip(ReadFunction readFunction, size_t byteCount)
+inline void Skip(const ReadFunction &readFunction, size_t byteCount)
 {
     static uint8_t dummyBytes[256];
     while (byteCount > 0)
@@ -171,4 +177,4 @@ std::string ReadString(std::istream &inputStream)
 
 } // end namespace io
 
-} // end namespace jive 
+} // end namespace jive

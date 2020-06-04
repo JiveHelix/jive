@@ -1,8 +1,8 @@
 /**
   * @file time_value.cpp
-  * 
+  *
   * @brief A class for storing and manipulating time values.
-  * 
+  *
   * @author Jive Helix (jivehelix@gmail.com)
   * @date 14 Nov 2017
   * @copyright Jive Helix
@@ -28,10 +28,10 @@ inline constexpr const char *colonTimeFormat = "%Y-%m-%dT%H:%M:%S";
 inline constexpr const size_t maxFormattedLength = 32;
 
 
-class MonotonicSystemClock_
+class MonotonicSystemClock
 {
 public:
-    MonotonicSystemClock_()
+    MonotonicSystemClock()
         :
         monotonicOffset_(
             std::chrono::system_clock::now().time_since_epoch()
@@ -51,12 +51,12 @@ private:
     BaseDuration monotonicOffset_;
 };
 
-MonotonicSystemClock_ monotonicSystemClock_;
+MonotonicSystemClock monotonicSystemClock;
 
 
 TimeValue TimeValue::GetNow()
 {
-    return monotonicSystemClock_.GetNow();
+    return monotonicSystemClock.GetNow();
 }
 
 double TimeValue::GetNowDouble()
@@ -67,7 +67,7 @@ double TimeValue::GetNowDouble()
 
 TimeValue &TimeValue::SetToNow()
 {
-    *this = monotonicSystemClock_.GetNow();
+    *this = monotonicSystemClock.GetNow();
     return *this;
 }
 
@@ -147,12 +147,14 @@ timeval TimeValue::GetAsTimeval() const
     // Allow tv_sec to truncate.
     tv.tv_sec = static_cast<std::time_t>(
         this->nanoseconds_.count() / BaseDuration::period::den);
-    
-    int64_t remainderNanoseconds =
-        this->nanoseconds_.count() % BaseDuration::period::den;
 
-    tv.tv_usec =
-        static_cast<suseconds_t>(std::round(remainderNanoseconds / 1.0e3));
+    double remainderNanoseconds = static_cast<double>(
+        this->nanoseconds_.count() % BaseDuration::period::den);
+
+    static constexpr double nanosecondsPerMicrosecond = 1000.0;
+
+    tv.tv_usec = static_cast<suseconds_t>(std::round(
+        remainderNanoseconds / nanosecondsPerMicrosecond));
 
     return tv;
 }
@@ -164,7 +166,7 @@ timespec TimeValue::GetAsTimespec() const
     // Allow tv_sec to truncate.
     ts.tv_sec = static_cast<std::time_t>(
         this->nanoseconds_.count() / BaseDuration::period::den);
-    
+
     int64_t remainderNanoseconds =
         this->nanoseconds_.count() % BaseDuration::period::den;
 
@@ -177,9 +179,10 @@ std::ostream &operator<<(
     std::ostream &outputStream,
     const TimeValue &timeValue)
 {
+    static constexpr auto microsecondWidth = 6;
     timeval tv = timeValue.GetAsTimeval();
     outputStream << std::dec << tv.tv_sec << "."
-        << std::setfill('0') << std::setw(6) << tv.tv_usec;
+        << std::setfill('0') << std::setw(microsecondWidth) << tv.tv_usec;
 
     return outputStream;
 }
@@ -202,7 +205,7 @@ std::string TimeValue::GetAsIso8601_(const char *timeFormat) const
         &formattedTime[0],
         maxFormattedLength - 1,
         timeFormat,
-        &utcTime); 
+        &utcTime);
 
     if (count == 0)
     {
@@ -242,7 +245,7 @@ std::string TimeValue::GetAsIso8601Precise(size_t decimalCount) const
         &formattedTime[0],
         maxFormattedLength,
         hyphenTimeFormat,
-        &utcTime); 
+        &utcTime);
 
     if (count == 0)
     {
@@ -252,9 +255,11 @@ std::string TimeValue::GetAsIso8601Precise(size_t decimalCount) const
     formattedTime.resize(count);
 
     // Pad the nanoseconds to the left with zeros
-    std::string nanosecondString = jive::FastFormatter<10>("%09ld", ts.tv_nsec);
+    std::string nanosecondString = jive::FastFormatter<16>("%09ld", ts.tv_nsec);
 
-    if (decimalCount < 9)
+    static constexpr size_t nanosecondsWidth = 9;
+
+    if (decimalCount < nanosecondsWidth)
     {
         strings::Concatenate(
             &formattedTime,

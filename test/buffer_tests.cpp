@@ -31,11 +31,16 @@ struct BufferTypes
     static constexpr auto enable = (Align::value >= alignof(T));
 };
 
+namespace test
+{
+
 using _8 = Align<8>;
 using _16 = Align<16>;
 using _32 = Align<32>;
 using _64 = Align<64>;
 using _128 = Align<128>;
+
+} // end namespace test
 
 #define MAKE_TYPE(name, type)               \
 template<typename Align>                      \
@@ -68,7 +73,7 @@ TEMPLATE_PRODUCT_TEST_CASE(
      Float,
      Double,
      Trivial),
-    (_8, _16, _32, _64, _128))
+    (test::_8, test::_16, test::_32, test::_64, test::_128))
 {
     if constexpr(TestType::enable)
     {
@@ -76,16 +81,16 @@ TEMPLATE_PRODUCT_TEST_CASE(
             take(
                 20,
                 random(size_t{1}, size_t{jive::Power<2, 20>()})));
-        
+
         using Type = typename TestType::type;
         constexpr auto align = TestType::align;
-        
+
         try
         {
             auto buffer = jive::Buffer<Type, align>(elementCount);
 
             REQUIRE(
-                reinterpret_cast<uintptr_t>(buffer.Get()) % TestType::align == 0);
+                reinterpret_cast<uintptr_t>(buffer.Get()) % align == 0);
 
             REQUIRE(buffer.GetElementCount() == elementCount);
             REQUIRE(buffer.GetByteCount()
@@ -97,6 +102,6 @@ TEMPLATE_PRODUCT_TEST_CASE(
                 << std::endl;
             throw;
         }
-        
+
     }
 }

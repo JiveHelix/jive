@@ -1,8 +1,8 @@
 /**
   * @file format_paragraph.cpp
-  * 
+  *
   * @brief Converts a string into a vector of strings that fit within a line.
-  * 
+  *
   * @author Jive Helix (jivehelix@gmail.com)
   * @copyright 2011-2018 Jive Helix
   *
@@ -27,13 +27,13 @@ public:
     {
         return this->GetLineLength() + newWord.size() + 1;
     }
-    
+
     void AddWord(const std::string &newWord)
     {
         this->lineVector_.push_back(newWord);
         this->totalWordLength_ += newWord.size();
     }
-    
+
     size_t GetLineLength()
     {
         // Add width occupied by spaces
@@ -61,7 +61,7 @@ private:
 
 
 std::vector<std::string> FormatParagraph(
-    const std::string paragraph,
+    const std::string &paragraph,
     size_t indentSpacesCount,
     size_t maxLineSpacesCount)
 {
@@ -77,7 +77,7 @@ std::vector<std::string> FormatParagraph(
 
     size_t permittedLineLength = maxLineSpacesCount - indentSpacesCount;
 
-    while (wordDeque.size() != 0)
+    while (!wordDeque.empty())
     {
         bool nextWordHasNewline = ('\n' == wordDeque.front().back());
         if (currentLine.PredictLength(wordDeque.front()) > permittedLineLength)
@@ -85,14 +85,13 @@ std::vector<std::string> FormatParagraph(
             // The next word would exceed the allowable line length.
             lines.push_back(
                 std::string(indentSpacesCount, ' ') + currentLine.GetLine());
+
             currentLine.Reset();
             continue;
         }
-        else 
-        {
-            currentLine.AddWord(wordDeque.front());
-            wordDeque.pop_front();
-        }
+
+        currentLine.AddWord(wordDeque.front());
+        wordDeque.pop_front();
 
         if (nextWordHasNewline)
         {
@@ -103,7 +102,7 @@ std::vector<std::string> FormatParagraph(
             currentLine.Reset();
         }
     }
-    
+
     if (currentLine.GetLineLength() > 0)
     {
         lines.push_back(currentLine.GetLine());

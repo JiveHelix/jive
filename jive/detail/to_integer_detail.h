@@ -12,6 +12,11 @@
 namespace jive
 {
 
+inline constexpr int base2 = 2;
+inline constexpr int base8 = 8;
+inline constexpr int base10 = 10;
+inline constexpr int base16 = 16;
+
 namespace detail
 {
 
@@ -26,7 +31,7 @@ auto ToInteger(const String &asString)
         }
         else
         {
-            return wcstoull(asString.data(), nullptr, base);      
+            return wcstoull(asString.data(), nullptr, base);
         }
     }
     else
@@ -37,7 +42,7 @@ auto ToInteger(const String &asString)
         }
         else
         {
-            return strtoull(asString.data(), nullptr, base);      
+            return strtoull(asString.data(), nullptr, base);
         }
     }
 }
@@ -46,49 +51,49 @@ template<typename T, int base, typename Enable = void>
 struct AllowedDigits {};
 
 template<typename T>
-struct AllowedDigits<T, 2, std::enable_if_t<std::is_unsigned_v<T>>>
+struct AllowedDigits<T, base2, std::enable_if_t<std::is_unsigned_v<T>>>
 {
     static constexpr std::string_view value = "+01";
 };
 
 template<typename T>
-struct AllowedDigits<T, 2, std::enable_if_t<std::is_signed_v<T>>>
+struct AllowedDigits<T, base2, std::enable_if_t<std::is_signed_v<T>>>
 {
     static constexpr std::string_view value = "-+01";
 };
 
 template<typename T>
-struct AllowedDigits<T, 8, std::enable_if_t<std::is_unsigned_v<T>>>
+struct AllowedDigits<T, base8, std::enable_if_t<std::is_unsigned_v<T>>>
 {
     static constexpr std::string_view value = "+01234567";
 };
 
 template<typename T>
-struct AllowedDigits<T, 8, std::enable_if_t<std::is_signed_v<T>>>
+struct AllowedDigits<T, base8, std::enable_if_t<std::is_signed_v<T>>>
 {
     static constexpr std::string_view value = "-+01234567";
 };
 
 template<typename T>
-struct AllowedDigits<T, 10, std::enable_if_t<std::is_unsigned_v<T>>>
+struct AllowedDigits<T, base10, std::enable_if_t<std::is_unsigned_v<T>>>
 {
     static constexpr std::string_view value = "+0123456789";
 };
 
 template<typename T>
-struct AllowedDigits<T, 10, std::enable_if_t<std::is_signed_v<T>>>
+struct AllowedDigits<T, base10, std::enable_if_t<std::is_signed_v<T>>>
 {
     static constexpr std::string_view value = "-+0123456789";
 };
 
 template<typename T>
-struct AllowedDigits<T, 16, std::enable_if_t<std::is_unsigned_v<T>>>
+struct AllowedDigits<T, base16, std::enable_if_t<std::is_unsigned_v<T>>>
 {
     static constexpr std::string_view value = "+0123456789AaBbCcDdEeFfxX";
 };
 
 template<typename T>
-struct AllowedDigits<T, 16, std::enable_if_t<std::is_signed_v<T>>>
+struct AllowedDigits<T, base16, std::enable_if_t<std::is_signed_v<T>>>
 {
     static constexpr std::string_view value = "-+0123456789AaBbCcDdEeFfxX";
 };

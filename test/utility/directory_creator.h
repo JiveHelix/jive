@@ -15,8 +15,7 @@ class DirectoryCreator
 public:
     DirectoryCreator(const std::string &directoryName)
         :
-        directoryName_(directoryName),
-        files_{}
+        directoryName_(directoryName)
     {
         jive::path::MakeDirectory(directoryName);
     }
@@ -30,7 +29,7 @@ public:
 
         rmdir(this->directoryName_.data());
     }
-    
+
     template<typename InputIterator>
     void CreateFiles(InputIterator begin, InputIterator end)
     {
@@ -45,7 +44,7 @@ public:
             {
                 throw std::runtime_error("Failed to create the test file.");
             }
-            
+
             this->files_.push_back(fileName);
         }
     }

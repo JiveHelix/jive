@@ -1,9 +1,9 @@
 /**
   * @file describe_type_detail.h
-  * 
+  *
   * @brief Optionally wrap stream output in color codes if it is going to a
   * terminal.
-  * 
+  *
   * @author Jive Helix (jivehelix@gmail.com)
   * @date 12 May 2020
   * @copyright Jive Helix

@@ -1,8 +1,8 @@
 /**
   * @file to_integer.h
-  * 
+  *
   * @brief Converts string to integer of any integral type.
-  * 
+  *
   * @author Jive Helix (jivehelix@gmail.com)
   * @date 01 May 2020
   * @copyright Jive Helix
@@ -22,7 +22,7 @@
 namespace jive
 {
 
-template<typename T, int base = 10>
+template<typename T, int base = base10>
 std::enable_if_t<std::is_integral<T>::value, T>
 ToInteger(const std::string_view &asString)
 {
