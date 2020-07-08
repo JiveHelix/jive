@@ -22,7 +22,8 @@ add_executable(
     power_tests.cpp
     strings_tests.cpp
     time_value_tests.cpp
-    to_integer_tests.cpp)
+    to_integer_tests.cpp
+    to_float_tests.cpp)
 
 target_link_libraries(
     jive_tests
