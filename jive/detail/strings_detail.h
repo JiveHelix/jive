@@ -64,6 +64,17 @@ ContainerT SplitToContainer(
     return result;
 }
 
+
+/**
+ ** Modifiy the length of inString to the length returned by strlen.
+ **/
+inline
+void ResizeToStrlen(std::string &inString)
+{
+    size_t byteCount = std::min(inString.size(), strlen(inString.c_str()));
+    inString.resize(byteCount);
+}
+
 } // end namespace detail
 
 } // end namespace strings

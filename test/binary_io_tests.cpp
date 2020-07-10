@@ -9,7 +9,7 @@
 #include <algorithm>
 #include "jive/binary_io.h"
 #include "jive/power.h"
-#include "utility/gettys_words.h"
+#include "jive/testing/gettys_words.h"
 
 
 TEMPLATE_TEST_CASE(

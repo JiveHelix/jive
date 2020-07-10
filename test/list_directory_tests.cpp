@@ -8,8 +8,8 @@
 #include <algorithm>
 
 #include "jive/list_directory.h"
-#include "utility/directory_creator.h"
-#include "utility/gettys_words.h"
+#include "jive/testing/directory_creator.h"
+#include "jive/testing/gettys_words.h"
 
 
 TEST_CASE(

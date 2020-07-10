@@ -8,7 +8,7 @@
 #include "jive/strings.h"
 
 
-TEST_CASE("strings::Trim shortens string", "[strings]")
+TEST_CASE("strings::detail::ResizeToStrlen shortens string", "[strings]")
 {
     const char bytes[8] = {'f', 'o', 'o', 0, 0, 0, 0, 0};
 
@@ -17,7 +17,7 @@ TEST_CASE("strings::Trim shortens string", "[strings]")
 
     REQUIRE(value.size() == 8);
 
-    jive::strings::Trim(value);
+    jive::strings::detail::ResizeToStrlen(value);
 
     REQUIRE(value.size() == 3);
 }

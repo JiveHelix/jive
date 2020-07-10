@@ -32,16 +32,6 @@ namespace strings
 {
 
 /**
- ** Modifiy the length of inString to the length returned by strlen.
- **/
-inline
-void Trim(std::string &inString)
-{
-    size_t byteCount = std::min(inString.size(), strlen(inString.c_str()));
-    inString.resize(byteCount);
-}
-
-/**
  ** Return a string with length up to any optional null character, or the full
  ** length of the input array if there is no null character.
  **/
@@ -49,7 +39,7 @@ template<size_t N>
 std::string Make(const char (&bytes)[N])
 {
     std::string result(bytes, N);
-    Trim(result);
+    detail::ResizeToStrlen(result);
     return result;
 }
 
@@ -61,9 +51,32 @@ inline
 std::string Make(const char *inArray, size_t maxByteCount)
 {
     std::string result(inArray, maxByteCount);
-    Trim(result);
+    detail::ResizeToStrlen(result);
     return result;
 }
+
+/**
+ ** Remove all leading and trailing occurrences of specified
+ ** characters.
+ ** Defaults to whitespace characaters.
+ **/
+inline
+std::string Trim(
+    const std::string &inString,
+    const std::string &remove = " \t\r\n")
+{
+    const auto begin = inString.find_first_not_of(remove);
+    if (begin == std::string::npos)
+    {
+        // All unwanted
+        return "";
+    }
+
+    const auto end = inString.find_last_not_of(remove);
+    const auto count = end - begin + 1;
+    return inString.substr(begin, count);
+}
+
 
 template<size_t count>
 bool CharArrayEquals(

@@ -9,7 +9,7 @@
 
 #include "jive/time_value.h"
 #include "jive/power.h"
-#include "utility/duration_limits.h"
+#include "jive/testing/duration_limits.h"
 
 
 template<typename T, typename Enable = void>

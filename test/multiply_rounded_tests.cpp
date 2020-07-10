@@ -6,7 +6,7 @@
 #include <catch2/catch.hpp>
 
 #include "jive/multiply_rounded.h"
-#include "utility/cast_limits.h"
+#include "jive/testing/cast_limits.h"
 
 using namespace Catch::literals;
 
