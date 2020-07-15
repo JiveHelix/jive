@@ -35,6 +35,9 @@
 
 #pragma once
 
+#include <string>
+#include <cerrno>
+
 namespace jive
 {
 
