@@ -117,7 +117,7 @@ public:
         else
         {
             // The requested type is floating-point.
-            Microseconds<T>(this->nanoseconds_).count();
+            return Microseconds<T>(this->nanoseconds_).count();
         }
     }
 
