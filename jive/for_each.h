@@ -23,9 +23,11 @@ template<typename Tuple, typename Function>
 void ForEach(Tuple &&tuple, Function &&function)
 {
     std::apply(
-        [&](auto &...item)
+        [&](auto &&...item)
         {
-            (static_cast<void>(function(item)), ...);
+            (static_cast<void>(
+                function(std::forward<decltype(item)>(item))),
+             ...);
         },
         std::forward<Tuple>(tuple));
 }
