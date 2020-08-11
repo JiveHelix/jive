@@ -71,7 +71,7 @@ struct FormatSpecifier {};
 template<typename T>
 struct FormatSpecifier<T, 10, std::enable_if_t<std::is_floating_point_v<T>>>
 {
-    static constexpr std::string_view value = "f";
+    static constexpr std::string_view value = "g";
 };
 
 template<typename T>

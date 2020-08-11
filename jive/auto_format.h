@@ -17,20 +17,23 @@ template<typename T, int base>
 struct AutoFormat
 {
     static constexpr std::string_view percent = "%";
-
+    static constexpr std::string_view widthAndPrecision = "*.*";
     static constexpr std::string_view value =
         jive::StaticJoin<
             percent,
+            widthAndPrecision,
             detail::LengthModifier<T>::value,
             detail::FormatSpecifier<T, base>::value>::value;
 };
 
 
 template<int base, typename T>
-std::string AutoFormatter(T value)
+std::string AutoFormatter(T value, int width = -1 , int precision = -1)
 {
-    return FastFormatter<32>(
+    return Formatter<32>(
         AutoFormat<T, base>::value.data(),
+        width,
+        precision,
         value);
 }
 
