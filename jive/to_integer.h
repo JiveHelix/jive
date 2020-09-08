@@ -36,7 +36,7 @@ ToInteger(const std::string_view &asString)
     }
 #endif
 
-    // result will either by long long or unsigned long long depending on the
+    // result will either be long long or unsigned long long depending on the
     // sign of T.
     auto result = detail::ToInteger<T, base>(asString);
 
