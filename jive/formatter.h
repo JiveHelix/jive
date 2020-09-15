@@ -37,6 +37,7 @@
 
 #include <string>
 #include <cerrno>
+#include <cstdarg>
 
 namespace jive
 {

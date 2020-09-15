@@ -42,9 +42,9 @@ using _128 = Align<128>;
 
 } // end namespace test
 
-#define MAKE_TYPE(name, type)               \
-template<typename Align>                      \
-struct name: BufferTypes<type, Align> {};   \
+#define MAKE_TYPE(name, type)              \
+template<typename Align>                   \
+struct name: BufferTypes<type, Align> {}   \
 
 MAKE_TYPE(Int8, int8_t);
 MAKE_TYPE(UInt8, uint8_t);
@@ -59,6 +59,10 @@ MAKE_TYPE(Double, double);
 MAKE_TYPE(Trivial, TrivialStruct);
 
 
+
+// g++ warns about sign-conversion in this expanded macro
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wsign-conversion"
 TEMPLATE_PRODUCT_TEST_CASE(
     "Create aligned Buffer.",
     "[buffer]",
@@ -75,7 +79,9 @@ TEMPLATE_PRODUCT_TEST_CASE(
      Trivial),
     (test::_8, test::_16, test::_32, test::_64, test::_128))
 {
-    if constexpr(TestType::enable)
+#pragma GCC diagnostic pop
+
+    if constexpr (TestType::enable)
     {
         auto elementCount = GENERATE(
             take(

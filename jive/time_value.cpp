@@ -145,8 +145,7 @@ timeval TimeValue::GetAsTimeval() const
     timeval tv;
 
     // Allow tv_sec to truncate.
-    tv.tv_sec = static_cast<std::time_t>(
-        this->nanoseconds_.count() / BaseDuration::period::den);
+    tv.tv_sec = this->nanoseconds_.count() / BaseDuration::period::den;
 
     double remainderNanoseconds = static_cast<double>(
         this->nanoseconds_.count() % BaseDuration::period::den);
@@ -164,8 +163,7 @@ timespec TimeValue::GetAsTimespec() const
     timespec ts;
 
     // Allow tv_sec to truncate.
-    ts.tv_sec = static_cast<std::time_t>(
-        this->nanoseconds_.count() / BaseDuration::period::den);
+    ts.tv_sec = this->nanoseconds_.count() / BaseDuration::period::den;
 
     int64_t remainderNanoseconds =
         this->nanoseconds_.count() % BaseDuration::period::den;
@@ -187,10 +185,13 @@ std::ostream &operator<<(
     return outputStream;
 }
 
-std::string TimeValue::GetAsIso8601_(const char *timeFormat) const
-{
-    auto seconds = this->GetAsSeconds<time_t>();
 
+namespace detail
+{
+
+template<bool useHyphenatedFormat>
+std::string GetAsIso8601(time_t seconds)
+{
     struct tm utcTime;
     struct tm * result = gmtime_r(&seconds, &utcTime);
 
@@ -201,29 +202,46 @@ std::string TimeValue::GetAsIso8601_(const char *timeFormat) const
 
     std::string formattedTime;
     formattedTime.resize(maxFormattedLength);
-    size_t count = strftime(
-        &formattedTime[0],
-        maxFormattedLength - 1,
-        timeFormat,
-        &utcTime);
+
+    size_t count;
+
+    if constexpr (useHyphenatedFormat)
+    {
+        count = strftime(
+            &formattedTime[0],
+            maxFormattedLength - 1,
+            hyphenTimeFormat,
+            &utcTime);
+    }
+    else
+    {
+        count = strftime(
+            &formattedTime[0],
+            maxFormattedLength - 1,
+            colonTimeFormat,
+            &utcTime);
+    }
 
     if (count == 0)
     {
         throw TimeValueError("Time to string conversion failed.");
     }
+
     formattedTime[count] = 'Z';
     formattedTime.resize(count + 1);
     return formattedTime;
 }
 
+} // namespace detail
+
 std::string TimeValue::GetAsIso8601() const
 {
-    return this->GetAsIso8601_(hyphenTimeFormat);
+    return detail::GetAsIso8601<true>(this->GetAsSeconds<time_t>());
 }
 
 std::string TimeValue::GetAsIso8601WithColonTimeSeparator() const
 {
-    return this->GetAsIso8601_(colonTimeFormat);
+    return detail::GetAsIso8601<false>(this->GetAsSeconds<time_t>());
 }
 
 std::string TimeValue::GetAsIso8601Precise(size_t decimalCount) const

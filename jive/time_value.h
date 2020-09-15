@@ -178,8 +178,6 @@ public:
     }
 
 private:
-    std::string GetAsIso8601_(const char *timeFormat) const;
-
     BaseDuration nanoseconds_;
 };
 

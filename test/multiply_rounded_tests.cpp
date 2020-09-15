@@ -123,7 +123,9 @@ TEST_CASE(
     "Computes the rounded product of multiple signed arguments wihout overflow",
     "[multiply_rounded]")
 {
-    auto values = GENERATE(take(10, chunk(5, random(-5000, 5000))));
+    std::vector<int32_t> values =
+        GENERATE(take(10, chunk(5, random(-5000, 5000))));
+
     REQUIRE(values.size() == 5);
 
     constexpr auto rangeLow = -3.0;
@@ -131,7 +133,7 @@ TEST_CASE(
     auto scale = GENERATE(take( 10, random(rangeLow, rangeHigh)));
 
     auto aValue = static_cast<int16_t>(values[0]);
-    auto bValue = static_cast<int32_t>(values[1]);
+    auto bValue = values[1];
     auto cValue = static_cast<int64_t>(values[2]);
     auto dValue = static_cast<float>(values[3]);
     auto eValue = static_cast<double>(values[4]);
@@ -152,7 +154,7 @@ TEST_CASE(
     auto dExpected = static_cast<float>(
         scale * static_cast<double>(dValue));
 
-    auto eExpected = scale * static_cast<double>(eValue);
+    auto eExpected = scale * eValue;
 
     STATIC_REQUIRE(std::is_same_v<decltype(aValue), decltype(aExpected)>);
     STATIC_REQUIRE(std::is_same_v<decltype(bValue), decltype(bExpected)>);

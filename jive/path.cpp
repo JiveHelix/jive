@@ -37,10 +37,11 @@ template<typename InputIterator>
 static std::string Join(InputIterator first, InputIterator last)
 {
     std::string result = strings::Join(first, last, pathSeparator);
+
     auto getAdjacentPathSeparator =
-        [](const char &first, const char &second)->bool
+        [](const char &one, const char &another)->bool
         {
-            return first == second && first == pathSeparator;
+            return one == another && one == pathSeparator;
         };
 
     auto it = std::adjacent_find(

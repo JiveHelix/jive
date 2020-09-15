@@ -28,12 +28,16 @@ struct CheckType<T, std::enable_if_t<std::is_unsigned_v<T>>>
 };
 
 
+// g++ warns about sign-conversion in this expanded macro
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wsign-conversion"
 TEMPLATE_PRODUCT_TEST_CASE(
     "Create TimeValue from signed durations.",
     "[time_value]",
     (jive::Seconds, jive::Milliseconds, jive::Microseconds, jive::Nanoseconds),
     (int8_t, uint8_t, int16_t, uint16_t, int32_t, uint32_t, int64_t))
 {
+#pragma GCC diagnostic pop
     using rep = typename TestType::rep;
     using bounds = DurationLimits<TestType>;
 
@@ -53,12 +57,16 @@ TEMPLATE_PRODUCT_TEST_CASE(
 }
 
 
+// g++ warns about sign-conversion in this expanded macro
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wsign-conversion"
 TEMPLATE_PRODUCT_TEST_CASE(
     "Math with TimeValues",
     "[time_value]",
     (jive::Seconds, jive::Milliseconds, jive::Microseconds, jive::Nanoseconds),
     (int8_t, uint8_t, int16_t, uint16_t, int32_t, uint32_t, int64_t))
 {
+#pragma GCC diagnostic pop
     using rep = typename TestType::rep;
     using bounds = DurationLimits<TestType>;
 
