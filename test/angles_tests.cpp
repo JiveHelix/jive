@@ -11,6 +11,8 @@
 #include <tuple>
 #include <iostream>
 
+
+// NOLINTNEXTLINE(readability-function-cognitive-complexity)
 TEST_CASE("Convert between radians and degrees", "[angles]")
 {
     using Angles = jive::Angles<double>;

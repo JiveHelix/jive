@@ -11,7 +11,7 @@
 // Create types to use with the product test case.
 #define MAKE_TEST_VALUES(asDec_, asOct_, asHex_)                    \
     template<typename T>                                            \
-    struct _ ## asDec_                                              \
+    struct p ## asDec_                                              \
     {                                                               \
         using type = T;                                             \
         static constexpr std::string_view asDec = #asDec_;          \
@@ -20,7 +20,7 @@
         static constexpr auto value = (asDec_);                     \
     };                                                              \
     template<typename T>                                            \
-    struct _n ## asDec_                                             \
+    struct n ## asDec_                                              \
     {                                                               \
         using type = T;                                             \
         static constexpr std::string_view asDec = "-" #asDec_;      \
@@ -46,7 +46,7 @@ static constexpr int base16 = 16;
 TEMPLATE_PRODUCT_TEST_CASE(
     "Convert strings to signed integers",
     "[to_integer]",
-    ( _0, _42, _56, _105, _119, _n0, _n42, _n56, _n105, _n119),
+    ( p0, p42, p56, p105, p119, n0, n42, n56, n105, n119),
     (int8_t, int16_t, int32_t, int64_t))
 {
 #pragma GCC diagnostic pop
@@ -67,7 +67,7 @@ TEMPLATE_PRODUCT_TEST_CASE(
 TEMPLATE_PRODUCT_TEST_CASE(
     "Convert positive strings to unsigned integers",
     "[to_integer]",
-    ( _0, _42, _56, _105, _119),
+    ( p0, p42, p56, p105, p119),
     (uint8_t, uint16_t, uint32_t, uint64_t))
 {
 #pragma GCC diagnostic pop

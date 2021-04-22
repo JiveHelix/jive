@@ -119,6 +119,7 @@ TEMPLATE_TEST_CASE(
 }
 
 
+// NOLINTNEXTLINE(readability-function-cognitive-complexity)
 TEST_CASE(
     "Computes the rounded product of multiple signed arguments wihout overflow",
     "[multiply_rounded]")

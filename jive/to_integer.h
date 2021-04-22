@@ -18,6 +18,7 @@
 #include <typeinfo>
 
 #include "jive/detail/to_integer_detail.h"
+#include "jive/strings.h"
 
 namespace jive
 {
@@ -27,7 +28,9 @@ std::enable_if_t<std::is_integral<T>::value, T>
 ToInteger(const std::string_view &asString)
 {
 #ifndef NDEBUG
-    if (!detail::ValidateDigits<T, base>(asString))
+    std::string trimmedInput = jive::strings::Trim(std::string(asString), " ");
+
+    if (!detail::ValidateDigits<T, base>(trimmedInput))
     {
         throw std::invalid_argument(
             std::string("Expected only digits: ")

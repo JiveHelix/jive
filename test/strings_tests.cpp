@@ -32,6 +32,7 @@ TEST_CASE("strings::Make creates a string without nullbytes", "[strings]")
 }
 
 
+// NOLINTNEXTLINE(readability-function-cognitive-complexity)
 TEST_CASE("strings::Split separates string on token", "[strings]")
 {
     std::string value{"foo.bar,car.wibble,wobble.frob"};

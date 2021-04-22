@@ -23,6 +23,7 @@ TEST_CASE("Created exception throws with message", "[exceptions]")
         "Something went wrong");
 }
 
+// NOLINTNEXTLINE(readability-function-cognitive-complexity)
 TEST_CASE("Subclassed exception throws", "[exceptions]")
 {
     REQUIRE_THROWS_AS(throw ChildException(""), ChildException);

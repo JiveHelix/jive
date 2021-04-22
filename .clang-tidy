@@ -4,12 +4,11 @@ Checks: -*,
         -readability-named-parameter,
         -readability-redundant-member-init,
         -readability-misleading-indentation,
-        -readability-identifier-naming,
         -readability-redundant-access-specifiers,
         bugprone-*,
         -bugprone-macro-parentheses,
         performance-*
-        
+
 HeaderFilterRegex: '.*'
 WarningsAsErrors: '*'
 FormatStyle: file
