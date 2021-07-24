@@ -37,15 +37,22 @@
 
 #include <string>
 #include <cerrno>
-#include <cstdarg>
+#include <stdexcept>
+
+#undef FORMATTER_ATTRIBUTE
+#ifndef _WIN32
+#define FORMATTER_ATTRIBUTE __attribute__((format(printf, 1, 2)))
+#else
+#include "STDARG.H"
+#define FORMATTER_ATTRIBUTE
+#endif
 
 namespace jive
 {
 
 
 template<size_t charCount>
-std::string Formatter(const char *format, ...)
-    __attribute__((format(printf, 1, 2)));
+std::string Formatter(const char *format, ...) FORMATTER_ATTRIBUTE;
 
 template<size_t charCount>
 std::string Formatter(const char *format, ...)
@@ -108,8 +115,7 @@ std::string Formatter(const char *format, ...)
  **
  **/
 template<size_t charCount>
-std::string FastFormatter(const char *format, ...)
-    __attribute__((format(printf, 1, 2)));
+std::string FastFormatter(const char *format, ...) FORMATTER_ATTRIBUTE;
 
 template<size_t charCount>
 std::string FastFormatter(const char *format, ...)

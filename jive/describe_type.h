@@ -43,6 +43,10 @@ struct DescribeContainer<
     T,
     std::void_t<std::enable_if_t<detail::IsMapLike<T>::value>>>
 {
+    static_assert(
+        !detail::IsMapLike<typename T::mapped_type>::value,
+        "Nested map-like types are not supported.");
+
     static constexpr auto value =
         jive::StaticJoin<
             detail::ContainerName<T>::value,

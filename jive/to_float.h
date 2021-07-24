@@ -1,13 +1,13 @@
 /**
- * @file to_float.h
- *
- * @brief Convert strings to float, double, or long double.
- *
- * @author Jive Helix (jivehelix@gmail.com)
- * @date 08 Jul 2020
- * @copyright Jive Helix
- * Licensed under the MIT license. See LICENSE file.
- **/
+  * @file to_float.h
+  *
+  * @brief Convert strings to float, double, or long double.
+  *
+  * @author Jive Helix (jivehelix@gmail.com)
+  * @date 08 Jul 2020
+  * @copyright Jive Helix
+  * Licensed under the MIT license. See LICENSE file.
+**/
 
 #pragma once
 
@@ -21,7 +21,7 @@
 namespace jive
 {
 
-template <typename T>
+template<typename T>
 std::enable_if_t<std::is_floating_point_v<T>, T>
 ToFloat(const std::string_view &asString)
 {

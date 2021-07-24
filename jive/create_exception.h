@@ -7,11 +7,11 @@
   * Licensed under the MIT license. See LICENSE file.
   */
 
-
 #pragma once
 
 #include <stdexcept>
 #include <type_traits>
+#include <string>
 
 
 /*

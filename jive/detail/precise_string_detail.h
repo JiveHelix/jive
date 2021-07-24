@@ -12,13 +12,14 @@
 
 #pragma once
 
+#include "jive/formatter.h"
+
+
 namespace jive
 {
 
 namespace detail
 {
-
-#include "jive/formatter.h"
 
 #define STRING_EXPAND(token) #token
 #define STRING(token) STRING_EXPAND(token)

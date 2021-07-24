@@ -16,8 +16,10 @@ namespace jive
 {
 
 Chunk::Chunk(const std::string &valueAsString, bool isNumeric)
-    : isNumeric_(isNumeric),
-      valueAsString_(valueAsString)
+    :
+    isNumeric_(isNumeric),
+    valueAsString_(valueAsString),
+    valueAsInt_()
 {
     if (isNumeric)
     {
@@ -47,7 +49,9 @@ bool Chunk::operator>(const Chunk &other) const
     return this->valueAsString_ > other.valueAsString_;
 }
 
-NumericString::NumericString(const std::string &value): value_(value)
+NumericString::NumericString(const std::string &value)
+    :
+    value_(value)
 {
     if (!value.empty())
     {
@@ -118,7 +122,7 @@ bool NumericStringCompare::operator()(
     return (NumericString(first) < NumericString(second));
 }
 
-std::ostream &operator<<(
+std::ostream & operator<<(
     std::ostream &outputStream,
     const NumericString &numericString)
 {

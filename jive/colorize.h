@@ -10,11 +10,33 @@
   * Licensed under the MIT license. See LICENSE file.
   *
   */
+
 #pragma once
 
-#include <unistd.h>
 #include <iostream>
 #include <cstdio>
+
+
+#ifdef _WIN32
+
+    #include <io.h>
+
+    inline bool IsTerminal()
+    {
+        return (1 == _isatty(_fileno(stdout)));
+    }
+
+#else // *NIX
+
+    #include <unistd.h>
+
+    inline bool IsTerminal()
+    {
+        return (1 == isatty(STDOUT_FILENO));
+    }
+
+#endif
+
 
 namespace jive
 {
@@ -60,7 +82,7 @@ public:
         if (outputStream.rdbuf() == std::cout.rdbuf())
         {
             // The output stream is writing to stdout
-            this->isTerminal_ = (1 == isatty(STDOUT_FILENO));
+            this->isTerminal_ = IsTerminal();
         }
     }
 

@@ -1,7 +1,7 @@
 /**
   * @file math_templates.h
   *
-  * @brief Compile-time math functions.
+  * @brief Compile-time integral exponentiation.
   *
   * @author Jive Helix (jivehelix@gmail.com)
   * @date 29 Apr 2018
@@ -12,6 +12,11 @@
 #pragma once
 
 #include <utility>
+
+#ifdef _WIN32
+#include <BaseTsd.h>
+typedef SSIZE_T ssize_t;
+#endif
 
 namespace jive
 {

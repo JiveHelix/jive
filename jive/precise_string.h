@@ -15,6 +15,7 @@
 #include "jive/formatter.h"
 #include "jive/detail/precise_string_detail.h"
 
+
 namespace jive
 {
 
@@ -32,14 +33,18 @@ PreciseString(T value)
     static constexpr auto size = detail::FloatFormat<T>::size;
     static constexpr auto format = detail::FloatFormat<T>::format;
 
+#ifdef __GNUG__
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdouble-promotion"
     // floats are always promoted to double in calls to variadic functions.
     // This warning generates too much noise in this case.
+#endif
 
     return jive::FastFormatter<size>(format, value);
 
+#ifdef __GNUG__
 #pragma GCC diagnostic pop
+#endif
 }
 
 } // end namespace jive

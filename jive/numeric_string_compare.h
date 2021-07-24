@@ -1,6 +1,6 @@
 /**
   * @author Jive Helix (jivehelix@gmail.com)
-  * @copyright 2011-2018 Jive Helix
+  * @copyright 2018 Jive Helix
   * Licensed under the MIT license. See LICENSE file.
   */
 

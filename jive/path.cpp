@@ -16,12 +16,29 @@
 #include <deque>
 #include <utility>
 
-// For GetLastCreationTime
+#ifdef _WIN32
+// Request definition of S_IFMT, S_IFREG, and S_IFDIR
+#define _CRT_INTERNAL_NONSTDC_NAMES 1
+
+#include <algorithm>
+
+#endif
+
 #include <sys/types.h>
 #include <sys/stat.h>
+
 #ifdef _WIN32
 #include <direct.h>
 #define stat _stat
+
+#if !defined(S_ISREG) && defined(S_IFMT) && defined(S_IFREG)
+#define S_ISREG(m) (((m) & S_IFMT) == S_IFREG)
+#endif
+
+#if !defined(S_ISDIR) && defined(S_IFMT) && defined(S_IFDIR)
+#define S_ISDIR(m) (((m) & S_IFMT) == S_IFDIR)
+#endif
+
 #else
 #include <unistd.h>
 #endif
@@ -108,16 +125,25 @@ std::string Directory(const std::string& filename)
 
 std::pair<std::string, std::string> Split(const std::string& filename)
 {
-    std::string::size_type pos = filename.find_last_of(pathSeparator);
+
+#ifdef _WIN32
+    std::string fixed(filename);
+    std::replace(fixed.begin(), fixed.end(), '\\', '/');
+    const std::string &input = fixed;
+#else
+    const std::string &input = filename;
+#endif
+    
+    std::string::size_type pos = input.find_last_of(pathSeparator);
 
     if (pos == std::string::npos)
     {
-        return std::make_pair("", filename);
+        return std::make_pair("", input);
     }
 
     return std::make_pair(
-        filename.substr(0, pos),
-        filename.substr(pos + 1));
+        input.substr(0, pos),
+        input.substr(pos + 1));
 }
 
 std::pair<std::string, std::string> SplitExtension(const std::string& filename)
@@ -155,13 +181,13 @@ std::string MakeUniqueSystemName(const std::string &systemName)
     return uniqueName;
 }
 
-
 bool Exists(const std::string &name)
 {
     static struct stat st;
     return (stat(name.c_str(), &st) == 0);
 }
 
+#ifndef _WIN32
 bool IsFifo(const std::string &name)
 {
     struct stat st;
@@ -177,6 +203,7 @@ bool IsFifo(const std::string &name)
 
     return false;
 }
+#endif
 
 bool IsFile(const std::string &name)
 {
@@ -210,6 +237,7 @@ bool IsDirectory(const std::string &name)
     return false;
 }
 
+#ifndef _WIN32
 void MakeFifo(const std::string &fifoName)
 {
     static constexpr mode_t mode{0644};
@@ -220,6 +248,7 @@ void MakeFifo(const std::string &fifoName)
             "MakeFifo(" + fifoName + ") failed: " + std::strerror(errno));
     }
 }
+#endif
 
 std::map<int, std::string> mkdirErrorsByErrno({
     { EACCES, "Search permission is denied on a component of the path "
