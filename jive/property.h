@@ -48,6 +48,8 @@ public:
 
     explicit Property(Owner &owner): owner_{owner} {}
 
+    Property(const Property &) = delete;
+
     // Implicit conversion to const reference of wrapped value.
     operator const T & () const { return this->owner_.*member; }
 
@@ -96,6 +98,8 @@ public:
 
     }
 
+    AssignableProperty(const AssignableProperty &) = delete;
+
     AssignableProperty & operator=(T other)
     {
         this->owner_.*member = other;
@@ -120,17 +124,17 @@ public:
 
     }
 
-    operator const T & () const
+    PropertyFunctor(const PropertyFunctor &) = delete;
+
+    operator T () const
     {
-        this->value_ = this->getter_();
-        return this->value_;
+        return this->getter_();
     }
 
-    const T & operator()() const { return static_cast<const T &>(*this); }
+    T operator()() const { return static_cast<T>(*this); }
 
 protected:
     Getter getter_;
-    T value_;
 };
 
 
