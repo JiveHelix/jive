@@ -17,6 +17,7 @@
 #include <string>
 
 #include "jive/detail/describe_type_detail.h"
+#include "jive/type_traits.h"
 
 namespace jive
 {
@@ -24,12 +25,24 @@ namespace jive
 template<typename T, typename Enable = void>
 struct DescribeType {};
 
+template<typename, typename = std::void_t<>>
+struct HasStaticDescribeType: std::false_type {};
+
+template<typename T>
+struct HasStaticDescribeType<
+    T,
+    std::void_t<decltype(DescribeType<T>::value)>> : std::true_type {};
+
 
 /** Describe all containers except the map-like ones. **/
 template<typename T, typename = std::void_t<>>
 struct DescribeContainer
 {
-    static constexpr auto value =
+    static_assert(
+        HasStaticDescribeType<typename T::value_type>::value,
+        "Static DescribeType not found.");
+
+    static constexpr std::string_view value =
         jive::StaticJoin<
             detail::ContainerName<T>::value,
             detail::tOpen,
@@ -41,13 +54,13 @@ struct DescribeContainer
 template<typename T>
 struct DescribeContainer<
     T,
-    std::void_t<std::enable_if_t<detail::IsMapLike<T>::value>>>
+    std::void_t<std::enable_if_t<jive::IsMapLike<T>::value>>>
 {
     static_assert(
-        !detail::IsMapLike<typename T::mapped_type>::value,
-        "Nested map-like types are not supported.");
+        HasStaticDescribeType<typename T::mapped_type>::value,
+        "Static DescribeType not found.");
 
-    static constexpr auto value =
+    static constexpr std::string_view value =
         jive::StaticJoin<
             detail::ContainerName<T>::value,
             detail::tOpen,
@@ -61,14 +74,15 @@ struct DescribeContainer<
 template<typename T>
 struct DescribeType<T, std::enable_if_t<detail::IsSupportedContainer<T>::value>>
 {
-    static constexpr auto value = DescribeContainer<T>::value;
+    static constexpr std::string_view value = DescribeContainer<T>::value;
 };
 
 template<typename T>
 struct DescribeType<T, std::enable_if_t<std::is_fundamental_v<T>>>
 {
-    static constexpr auto value = detail::DescribeNumeric<T>::value;
+    static constexpr std::string_view value = detail::DescribeNumeric<T>::value;
 };
+
 
 template<>
 struct DescribeType<std::string>
@@ -81,15 +95,6 @@ struct DescribeType<std::wstring>
 {
     static constexpr std::string_view value = "wstring";
 };
-
-
-template<typename, typename = std::void_t<>>
-struct HasStaticDescribeType: std::false_type {};
-
-template<typename T>
-struct HasStaticDescribeType<
-    T,
-    std::void_t<decltype(DescribeType<T>::value)>> : std::true_type {};
 
 
 template<typename T>

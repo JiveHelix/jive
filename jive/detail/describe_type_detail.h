@@ -132,14 +132,14 @@ struct DescribeNumeric {};
 template<typename T>
 struct DescribeNumeric<T, std::enable_if_t<std::is_floating_point_v<T>>>
 {
-    static constexpr auto value = FloatName<T>::value;
+    static constexpr std::string_view value = FloatName<T>::value;
 };
 
 /** Specialize for integers **/
 template<typename T>
 struct DescribeNumeric<T, std::enable_if_t<std::is_integral_v<T>>>
 {
-    static constexpr auto value =
+    static constexpr std::string_view value =
         jive::StaticJoin<IntegralStem<T>::value, Bits<T>::value, _t>::value;
 };
 
@@ -195,20 +195,6 @@ template<typename T>
 struct IsSupportedContainer<
     T,
     std::void_t<decltype(ContainerName<T>::value)>>: public std::true_type {};
-
-
-/** If the container defines key_type and mapped_type, it is close enough to be
- ** considered map-like for our purposes.**/
-template<typename T, typename = std::void_t<>>
-struct IsMapLike: public std::false_type {};
-
-template<typename T>
-struct IsMapLike<
-    T,
-    std::void_t<
-        typename T::key_type,
-        typename T::mapped_type>>: public std::true_type {};
-
 
 
 /** Fallback for types that do not have static descriptions **/
