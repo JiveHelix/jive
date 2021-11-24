@@ -35,6 +35,11 @@
 
 #pragma once
 
+#define __STD_WANT_LIB_EXT1__ 1
+
+#include "jive/error.h"
+
+#include <cstring>
 #include <string>
 #include <cerrno>
 #include <stdexcept>
@@ -75,7 +80,7 @@ std::string Formatter(const char *format, ...)
     if (formatResult < 0)
     {
         throw std::runtime_error(
-            std::string("Formatting error: ") + std::strerror(errno));
+            std::string("Formatting error: ") + StringError(errno));
     }
 
     size_t formattedCharCount = static_cast<size_t>(formatResult);
@@ -127,14 +132,19 @@ std::string FastFormatter(const char *format, ...)
     va_start(args, format);
 
     // Use vsprintf instead of vsnprintf because it is faster.
+#if __STDC_LIB_EXT1__ || defined _WIN32
+    int formatResult =
+        vsprintf_s(&result[0], charCount, format, args);
+#else
     int formatResult =
         vsprintf(&result[0], format, args);
+#endif
 
     va_end(args);
 
     if (formatResult < 0)
     {
-        return std::string("Formatting error: ") + std::strerror(errno);
+        return std::string("Formatting error: ") + StringError(errno);
     }
 
     size_t formattedCharCount = static_cast<size_t>(formatResult);

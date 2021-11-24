@@ -6,6 +6,11 @@
 
 #pragma once
 
+
+#undef min
+#undef max
+#include <algorithm>
+
 namespace jive
 {
 

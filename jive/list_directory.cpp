@@ -9,9 +9,12 @@
   * Licensed under the MIT license. See LICENSE file.
   */
 
+#ifndef _WIN32
+
 #include "jive/list_directory.h"
-#include "jive/errno_exception.h"
+#include "jive/error.h"
 #include <memory>
+
 
 namespace jive
 {
@@ -88,3 +91,6 @@ std::vector<std::string> ListDirectory(const std::string &path)
 
 
 } // end namespace jive
+
+
+#endif // _WIN32

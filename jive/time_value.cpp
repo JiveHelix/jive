@@ -15,6 +15,10 @@
 #include <iomanip>
 #include <cstring>
 
+#ifdef _WIN32
+#include <ctime>
+#endif
+
 #include "jive/formatter.h"
 #include "jive/strings.h"
 
@@ -145,12 +149,17 @@ timeval TimeValue::GetAsTimeval() const
     timeval tv;
 
     // Allow tv_sec to truncate.
-    tv.tv_sec = this->nanoseconds_.count() / BaseDuration::period::den;
+    tv.tv_sec = static_cast<long>(
+        this->nanoseconds_.count() / BaseDuration::period::den);
 
     double remainderNanoseconds = static_cast<double>(
         this->nanoseconds_.count() % BaseDuration::period::den);
 
     static constexpr double nanosecondsPerMicrosecond = 1000.0;
+
+#ifdef _WIN32
+    using suseconds_t = long;
+#endif
 
     tv.tv_usec = static_cast<suseconds_t>(std::round(
         remainderNanoseconds / nanosecondsPerMicrosecond));
@@ -168,7 +177,11 @@ timespec TimeValue::GetAsTimespec() const
     int64_t remainderNanoseconds =
         this->nanoseconds_.count() % BaseDuration::period::den;
 
+#ifdef _WIN32
+    ts.tv_nsec = static_cast<long>(remainderNanoseconds);
+#else
     ts.tv_nsec = remainderNanoseconds;
+#endif
 
     return ts;
 }
@@ -189,17 +202,28 @@ std::ostream &operator<<(
 namespace detail
 {
 
+void GetUtcTime(struct tm *result, time_t seconds)
+{
+#ifdef _WIN32
+    errno_t valid = gmtime_s(result, &seconds);
+    bool success = (valid != 0);
+#else
+    struct tm * valid = gmtime_r(&seconds, result);
+    bool success = (valid != NULL);
+#endif
+
+    if (!success)
+    {
+        throw TimeValueError("Error converting time to UTC time.");
+    }
+}
+
+
 template<bool useHyphenatedFormat>
 std::string GetAsIso8601(time_t seconds)
 {
     struct tm utcTime;
-    struct tm * result = gmtime_r(&seconds, &utcTime);
-
-    if (!result)
-    {
-        throw TimeValueError("Error converting time to UTC time.");
-    }
-
+    GetUtcTime(&utcTime, seconds);
     std::string formattedTime;
     formattedTime.resize(maxFormattedLength);
 
@@ -249,12 +273,8 @@ std::string TimeValue::GetAsIso8601Precise(size_t decimalCount) const
     timespec ts = this->GetAsTimespec();
     struct tm utcTime;
     time_t seconds = ts.tv_sec;
-    struct tm * result = gmtime_r(&seconds, &utcTime);
 
-    if (!result)
-    {
-        throw TimeValueError("Error converting time to UTC time.");
-    }
+    detail::GetUtcTime(&utcTime, seconds);
 
     std::string formattedTime;
     formattedTime.resize(maxFormattedLength);

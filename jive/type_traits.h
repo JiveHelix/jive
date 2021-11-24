@@ -64,6 +64,7 @@ struct IsValueContainer<
     std::void_t<
         std::enable_if_t<
             jive::IsIterable<T>::value
+            && std::is_integral_v<decltype(std::declval<T>().size())>
             && !jive::IsMapLike<T>::value
             && !IsString<T>::value
         >,

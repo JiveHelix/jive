@@ -12,9 +12,7 @@
 #pragma once
 
 /// TODO: Create a windows compatible implementation.
-#ifdef _WIN32
-#error Needs windows implementation.
-#endif
+#ifndef _WIN32
 
 #include <sys/types.h>
 #include <dirent.h>
@@ -36,3 +34,5 @@ namespace jive
 std::vector<std::string> ListDirectory(const std::string& path);
 
 } // end namespace jive
+
+#endif // _WIN32

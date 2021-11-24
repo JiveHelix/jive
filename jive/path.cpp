@@ -10,6 +10,7 @@
   */
 
 #include "jive/path.h"
+#include "jive/error.h"
 
 #include <errno.h>
 #include <cstring>
@@ -245,7 +246,7 @@ void MakeFifo(const std::string &fifoName)
     if (mkfifo(fifoName.c_str(), mode) != 0)
     {
         throw PathError(
-            "MakeFifo(" + fifoName + ") failed: " + std::strerror(errno));
+            "MakeFifo(" + fifoName + ") failed: " + StringError(errno));
     }
 }
 #endif

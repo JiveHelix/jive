@@ -16,7 +16,13 @@
 #include <ostream>
 #include <ctime>
 #include <cmath>
+
+#ifdef _WIN32
+#include <winsock.h> // timeval
+#endif
+
 #include "jive/create_exception.h"
+
 
 namespace jive
 {
@@ -192,6 +198,8 @@ std::string GetNowIso8601();
 
 } // end namespace jive
 
+
+#undef max
 
 namespace std
 {
