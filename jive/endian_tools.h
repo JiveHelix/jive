@@ -153,6 +153,15 @@ T LittleEndianToHost(const T &value)
 template<
     typename T,
     typename std::enable_if<
+        EnableIntegralNotPointer<T, 1>::value, int>::type = 0>
+T LittleEndianToHost(const T &value)
+{
+    return value;
+}
+
+template<
+    typename T,
+    typename std::enable_if<
         EnableIntegralNotPointer<T, 2>::value, int>::type = 0>
 T BigEndianToHost(const T &value)
 {
@@ -176,6 +185,16 @@ T BigEndianToHost(const T &value)
 {
     return static_cast<T>(be64toh(value));
 }
+
+template<
+    typename T,
+    typename std::enable_if<
+        EnableIntegralNotPointer<T, 1>::value, int>::type = 0>
+T BigEndianToHost(const T &value)
+{
+    return value;
+}
+
 
 template<
     typename T,
@@ -207,6 +226,15 @@ T HostToLittleEndian(const T &value)
 template<
     typename T,
     typename std::enable_if<
+        EnableIntegralNotPointer<T, 1>::value, int>::type = 0>
+T HostToLittleEndian(const T &value)
+{
+    return value;
+}
+
+template<
+    typename T,
+    typename std::enable_if<
         EnableIntegralNotPointer<T, 2>::value, int>::type = 0>
 T HostToBigEndian(const T &value)
 {
@@ -229,6 +257,15 @@ template<
 T HostToBigEndian(const T &value)
 {
     return static_cast<T>(htobe64(value));
+}
+
+template<
+    typename T,
+    typename std::enable_if<
+        EnableIntegralNotPointer<T, 1>::value, int>::type = 0>
+T HostToBigEndian(const T &value)
+{
+    return value;
 }
 
 template<typename T>
@@ -323,49 +360,226 @@ T HostToBigEndian(void *data)
     return HostToBigEndian(*static_cast<T *>(data));
 }
 
-/* These are defined as pass-through methods for single byte values.
- * These shouldn't be used if you know that the value is a single byte, but
- * they are here to allow flexibility in templated functions that accept both
- * single- and multi-byte values.
- */
-inline uint8_t HostToBigEndian(const uint8_t &value)
+
+namespace detail
 {
-    return value;
+
+    struct ToBigEndian
+    {
+        template<typename T>
+        T operator()(T value)
+        {
+            return HostToBigEndian(value);
+        }
+    };
+
+    struct FromBigEndian
+    {
+        template<typename T>
+        T operator()(T value)
+        {
+            return BigEndianToHost(value);
+        }
+    };
+
+    struct ToLittleEndian
+    {
+        template<typename T>
+        T operator()(T value)
+        {
+            return HostToLittleEndian(value);
+        }
+    };
+
+    struct FromLittleEndian
+    {
+        template<typename T>
+        T operator()(T value)
+        {
+            return LittleEndianToHost(value);
+        }
+    };
+
+} // end namespace detail
+
+
+template<
+    typename Operation,
+    typename InputIterator,
+    typename OutputIterator>
+void RangeSwap(
+    InputIterator inputBegin,
+    InputIterator inputEnd,
+    OutputIterator outputBegin)
+{
+    if constexpr (1 == sizeof(std::remove_pointer_t<InputIterator>))
+    {
+        // Can't swap single byte values.
+        if (outputBegin != inputBegin)
+        {
+            // only copy is necessary.
+            std::copy(inputBegin, inputEnd, outputBegin);
+        }
+
+        return;
+    }
+
+    while (inputBegin != inputEnd)
+    {
+        *outputBegin = Operation{}(*inputBegin);
+        ++outputBegin;
+        ++inputBegin;
+    }
 }
 
-inline uint8_t BigEndianToHost(const uint8_t &value)
+
+template<typename InputIterator, typename OutputIterator>
+void HostToBigEndian(
+    InputIterator inputBegin,
+    InputIterator inputEnd,
+    OutputIterator outputBegin)
 {
-    return value;
+
+#if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+
+    // Host is already big-endian.
+
+    if (outputBegin != inputBegin)
+    {
+        // only copy is necessary
+        std::copy(inputBegin, inputEnd, outputBegin);
+    }
+
+#else
+
+    RangeSwap<detail::ToBigEndian>(inputBegin, inputEnd, outputBegin);
+
+#endif
+
 }
 
-inline uint8_t HostToLittleEndian(const uint8_t &value)
+template<typename InputIterator, typename OutputIterator>
+void BigEndianToHost(
+    InputIterator inputBegin,
+    InputIterator inputEnd,
+    OutputIterator outputBegin)
 {
-    return value;
+
+#if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+
+    // Host is already big-endian.
+
+    if (outputBegin != inputBegin)
+    {
+        // only copy is necessary
+        std::copy(inputBegin, inputEnd, outputBegin);
+    }
+
+#else
+
+    RangeSwap<detail::FromBigEndian>(inputBegin, inputEnd, outputBegin);
+
+#endif
+
 }
 
-inline uint8_t LittleEndianToHost(const uint8_t &value)
+template<typename InputIterator, typename OutputIterator>
+void HostToLittleEndian(
+    InputIterator inputBegin,
+    InputIterator inputEnd,
+    OutputIterator outputBegin)
 {
-    return value;
+
+#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+
+    // Host is already little-endian.
+
+    if (outputBegin != inputBegin)
+    {
+        // only copy is necessary
+        std::copy(inputBegin, inputEnd, outputBegin);
+    }
+
+#else
+
+    RangeSwap<detail::ToLittleEndian>(inputBegin, inputEnd, outputBegin);
+
+#endif
+
 }
 
-inline int8_t HostToBigEndian(const int8_t &value)
+template<typename InputIterator, typename OutputIterator>
+void LittleEndianToHost(
+    InputIterator inputBegin,
+    InputIterator inputEnd,
+    OutputIterator outputBegin)
 {
-    return value;
+
+#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+
+    // Host is already little-endian.
+
+    if (outputBegin != inputBegin)
+    {
+        // only copy is necessary
+        std::copy(inputBegin, inputEnd, outputBegin);
+    }
+
+#else
+
+    RangeSwap<detail::FromLittleEndian>(inputBegin, inputEnd, outputBegin);
+
+#endif
 }
 
-inline int8_t BigEndianToHost(const int8_t &value)
+
+template<
+    typename T,
+    typename std::enable_if_t<std::is_array_v<T>, int> = 0
+>
+void HostToBigEndian(const T &input, T &output)
 {
-    return value;
+    HostToBigEndian(
+        Begin(input),
+        End(input),
+        Begin(output));
 }
 
-inline int8_t HostToLittleEndian(const int8_t &value)
+template<
+    typename T,
+    typename std::enable_if_t<std::is_array_v<T>, int> = 0
+>
+void BigEndianToHost(const T &input, T &output)
 {
-    return value;
+    BigEndianToHost(
+        Begin(input),
+        End(input),
+        Begin(output));
 }
 
-inline int8_t LittleEndianToHost(const int8_t &value)
+template<
+    typename T,
+    typename std::enable_if_t<std::is_array_v<T>, int> = 0
+>
+void HostToLittleEndian(const T &input, T &output)
 {
-    return value;
+    HostToLittleEndian(
+        Begin(input),
+        End(input),
+        Begin(output));
 }
+
+template<
+    typename T,
+    typename std::enable_if_t<std::is_array_v<T>, int> = 0
+>
+void LittleEndianToHost(const T &input, T &output)
+{
+    LittleEndianToHost(
+        Begin(input),
+        End(input),
+        Begin(output));
+}
+
 
 } // end namespace jive

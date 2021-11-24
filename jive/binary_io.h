@@ -90,6 +90,13 @@ void Write(const WriteFunction &writeFunction, const T &value);
 void Skip(const ReadFunction &readFunction, size_t byteCount);
 
 
+template<typename T>
+void Skip(std::istream &inputStream)
+{
+    inputStream.seekg(sizeof(T), std::istream::cur);
+}
+
+
 template<typename CountType = uint32_t>
 void WriteString(
     std::ostream &outputStream,

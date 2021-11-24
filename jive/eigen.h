@@ -10,28 +10,232 @@
 #pragma once
 
 #include <type_traits>
+#include <numeric>
 #include "Eigen/Dense"
+#include "jive/type_traits.h"
 #include "jive/future.h"
 
-namespace jive
+namespace numerical
 {
 
-/** Eigen 3.3.7 does not support brace initialization, and comma initialization
- ** is unsafe because it does not fail until runtime when Eigen discovers an
+
+template<typename>
+struct IsMatrix: std::false_type {};
+
+template<typename T, int rows, int columns>
+struct IsMatrix<Eigen::Matrix<T, rows, columns>>: std::true_type {};
+
+// An Eigen::Map behaves like a Matrix.
+// Use MatrixTraits to test whether it is an Eigen::Matrix or Eigen::Map.
+template<typename PlainMatrix, int mapOptions, typename Stride>
+struct IsMatrix<Eigen::Map<PlainMatrix, mapOptions, Stride>>: std::true_type {};
+
+
+template<typename T, typename Enable = void>
+struct ValueType
+{
+    using type = T;
+};
+
+
+template<typename T>
+struct ValueType<T, std::enable_if_t<jive::IsValueContainer<T>::value>>
+{
+    using type = typename T::value_type;
+};
+
+
+template<typename T_>
+struct MatrixTraits
+{
+    using T = std::remove_cvref_t<T_>;
+
+    static_assert(
+        std::is_arithmetic_v<T> || jive::IsValueContainer<T>::value,
+        "Expected an arithmetic type or a value container.");
+
+    static constexpr bool isMatrix = false;
+    static constexpr bool isMap = false;
+    static constexpr bool isDynamic = jive::IsValueContainer<T>::value;
+    static constexpr bool isFullDynamic = isDynamic;
+    using type = typename ValueType<T>::type;
+};
+
+
+template<
+    typename T_,
+    int rows_,
+    int columns_,
+    int options_,
+    int maxRows_,
+    int maxColumns_>
+struct MatrixTraits<
+    Eigen::Matrix<T_, rows_, columns_, options_, maxRows_, maxColumns_>>
+{
+    using type = T_;
+    static constexpr int rows = rows_;
+    static constexpr int columns = columns_;
+    static constexpr int options = options_;
+    static constexpr int maxRows = maxRows_;
+    static constexpr int maxColumns = maxColumns_;
+    static constexpr bool isDynamic = (
+        columns == Eigen::Dynamic
+        || rows == Eigen::Dynamic);
+
+    static constexpr bool isFullDynamic = (
+        columns == Eigen::Dynamic
+        && rows == Eigen::Dynamic);
+
+    static constexpr bool isVector = (rows == 1) || (columns == 1);
+    static constexpr bool isRowVector = (rows == 1);
+    static constexpr bool isColumnVector = (columns == 1);
+    static constexpr bool isRowMajor = (options & Eigen::RowMajor); 
+    static constexpr bool isColumnMajor = !(options & Eigen::RowMajor); 
+    static constexpr int size = isDynamic ? -1 : rows * columns;
+
+    static constexpr bool isMatrix = true;
+    static constexpr bool isMap = false;
+};
+
+
+template<typename PlainMatrix, int mapOptions, typename Stride>
+struct MatrixTraits<Eigen::Map<PlainMatrix, mapOptions, Stride>>
+    : MatrixTraits<PlainMatrix>
+{
+    static constexpr bool isMap = true;
+};
+
+
+template<typename T, typename MatrixType>
+using MatrixLike = Eigen::Matrix<
+    T,
+    MatrixTraits<MatrixType>::rows,
+    MatrixTraits<MatrixType>::columns,
+    MatrixTraits<MatrixType>::options,
+    MatrixTraits<MatrixType>::maxRows,
+    MatrixTraits<MatrixType>::maxColumns>;
+
+/** Eigen 3.4.0 does not support compile time checking of fixed-size array
+ ** initialization. Brace and comma initialization
+ ** are unsafe because they do not fail until runtime when Eigen discovers an
  ** incorrect number of arguments.
  **
  ** This helper allows comma initialization to be used as a one-liner, and
  ** provides a compile time check on the argument count.
  **/
-template<int columns, int rows, typename T, typename ...Values>
-Eigen::Matrix<std::remove_cvref_t<T>, columns, rows>
-EigenMatrix(T &&first, Values &&...values)
+template<int rows, int columns, typename T, typename ...Values>
+Eigen::Matrix<std::remove_cvref_t<T>, rows, columns>
+Matrix(T &&first, Values &&...values)
 {
-    static_assert(sizeof...(Values) + 1 == columns * rows);
-    Eigen::Matrix<std::remove_cvref_t<T>, columns, rows> result;
+    static_assert(sizeof...(Values) + 1 == rows * columns);
+
+    using type = std::remove_cvref_t<T>;
+
+    using Common =
+        std::common_type_t<
+            type,
+            std::remove_cvref_t<Values>...>;
+
+    Eigen::Matrix<Common, rows, columns> result;
     ((result << std::forward<T>(first)), ..., std::forward<Values>(values));
+    return result.template cast<type>();
+}
+
+
+template<int items, typename T, typename ...Values>
+Eigen::Matrix<std::remove_cvref_t<T>, items, 1>
+Vector(T &&first, Values &&...values)
+{
+    return Matrix<items, 1, T>(
+        std::forward<T>(first),
+        std::forward<Values>(values)...);
+}
+
+
+template<typename... Values>
+auto Vector(Values &&...values)
+{
+    using T = std::common_type_t<Values...>;
+    return Matrix<sizeof...(Values), 1, T>(std::forward<Values>(values)...);
+}
+
+
+template<int items, typename T, typename ...Values>
+Eigen::Matrix<std::remove_cvref_t<T>, 1, items>
+RowVector(T &&first, Values &&...values)
+{
+    return Matrix<1, items, T>(
+        std::forward<T>(first),
+        std::forward<Values>(values)...);
+}
+
+
+template<typename... Values>
+auto RowVector(Values &&...values)
+{
+    using T = std::common_type_t<Values...>;
+    return Matrix<1, sizeof...(Values), T>(std::forward<Values>(values)...);
+}
+
+
+template<typename T>
+Eigen::VectorX<std::remove_cvref_t<T>> VectorRange(T start, size_t count)
+{
+    using ValueType = std::remove_cvref_t<T>;
+    Eigen::VectorX<ValueType> result(count);
+    std::iota(result.begin(), result.end(), start);
     return result;
 }
+
+
+template<typename T>
+bool IsRowVector(const T &matrix)
+{
+    using traits = MatrixTraits<T>;
+    
+    if constexpr (traits::isDynamic)
+    {
+        return matrix.rows() == 1;
+    }
+    else
+    {
+        return traits::isRowVector;
+    }
+}
+
+
+template<typename T>
+bool IsColumnVector(const T &matrix)
+{
+    using traits = MatrixTraits<T>;
+    
+    if constexpr (traits::isDynamic)
+    {
+        return matrix.cols() == 1;
+    }
+    else
+    {
+        return traits::isColumnVector;
+    }
+}
+
+
+template<typename T>
+bool IsVector(const T &matrix)
+{
+    using traits = MatrixTraits<T>;
+    
+    if constexpr (traits::isDynamic)
+    {
+        return matrix.cols() == 1 || matrix.rows() == 1;
+    }
+    else
+    {
+        return traits::isVector;
+    }
+}
+
+
 
 
 /**
@@ -135,4 +339,4 @@ private:
 };
 
 
-} // end namespace jive
+} // end namespace numerical

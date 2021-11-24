@@ -131,7 +131,7 @@ TEST_CASE(
 
     constexpr auto rangeLow = -3.0;
     constexpr auto rangeHigh = 3.0;
-    auto scale = GENERATE(take( 10, random(rangeLow, rangeHigh)));
+    auto scale = GENERATE(take(10, random(rangeLow, rangeHigh)));
 
     auto aValue = static_cast<int16_t>(values[0]);
     auto bValue = values[1];

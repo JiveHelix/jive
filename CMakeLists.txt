@@ -23,8 +23,6 @@ add_subdirectory(jive)
 
 if (JIVE_NOT_SUBPROJECT)
 
-
-
     if(ENABLE_TESTING)
         enable_testing()
         add_subdirectory(test)
