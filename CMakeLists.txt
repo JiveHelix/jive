@@ -5,7 +5,8 @@ if(NOT DEFINED PROJECT_NAME)
     set(JIVE_NOT_SUBPROJECT ON)
 endif()
 
-include(cmake/DefineProjectOnce.cmake)
+include(cmake_includes/DefineProjectOnce.cmake)
+
 
 define_project_once(jive)
 
