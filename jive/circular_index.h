@@ -99,7 +99,7 @@ public:
 
         // modulusAddend is guaranteed to be less than wrapCount
         // Add wrapCount before subtracting to ensure that we never go less
-        // than zero. (Similar to operator--.
+        // than zero. (Similar to operator--).
         this->index_ = (this->index_ + wrapCount - modulusAddend) % wrapCount;
         return *this;
     }
@@ -110,12 +110,12 @@ public:
         return this->index_;
     }
 
-    bool operator == (const CircularIndex &other)
+    bool operator == (const CircularIndex &other) const
     {
         return this->index_ == other.index_;
     }
 
-    bool operator != (const CircularIndex &other)
+    bool operator != (const CircularIndex &other) const
     {
         return this->index_ != other.index_;
     }

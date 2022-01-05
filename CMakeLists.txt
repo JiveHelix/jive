@@ -13,8 +13,7 @@ project(jive CXX)
 
 if(JIVE_NOT_SUBPROJECT)
     # This is the top-level project
-    set(CONAN_EXTRA_REQUIRES "eigen/3.3.7")
-    include(cmake/Standalone.cmake)
+    include(cmake_includes/Standalone.cmake)
     option(ENABLE_UNITY "Enable Unity builds of projects" OFF)
 endif()
 

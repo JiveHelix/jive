@@ -5,10 +5,63 @@
   */
 #pragma once
 
+#include <cstdint>
+#include <type_traits>
+#include <ostream>
+#include <iomanip>
 #include "jive/circular_index.h"
 
 namespace jive
 {
+
+namespace detail
+{
+    template<typename T>
+    auto AsNumber(T value)
+    {
+        using type = std::remove_cv_t<std::remove_reference_t<T>>;
+
+        if constexpr (sizeof(type) > 1)
+        {
+            return value;
+        }
+        else if constexpr (std::is_signed_v<type>)
+        {
+            return static_cast<int16_t>(value);
+        }
+        else
+        {
+            return static_cast<uint16_t>(value);
+        }
+    }
+} // end namespace detail
+
+
+template<typename T>
+struct PromoteByte
+{
+    static_assert(sizeof(T) == 1);
+
+    PromoteByte(T value_): value(value_) {}
+    T value; 
+};
+
+
+template<typename T>
+std::ostream & operator<<(
+        std::ostream &outputStream,
+        const PromoteByte<T> &asByte)
+{
+    if constexpr (sizeof(T) == 1)
+    {
+        return outputStream << std::setw(2) << detail::AsNumber(asByte.value);
+    }
+    else
+    {
+        return outputStream << asByte.value;
+    }
+}
+
 
 template<typename T, size_t N>
 class CircularBuffer
@@ -16,116 +69,236 @@ class CircularBuffer
 public:
     CircularBuffer()
         :
-        isFull_(false),
-        index_()
+        writeIndex_(),
+        readIndex_()
     {
 
     }
 
     void Reset()
     {
-        this->isFull_ = false;
-        this->index_.Reset();
+        this->writeIndex_.Reset();
+        this->readIndex_.Reset();
     }
 
     bool IsEmpty()
     {
-        return (!this->isFull_ && this->index_ == 0);
+        return (this->readIndex_ == this->writeIndex_);
     }
 
-    void AddValue(T value)
+    size_t GetSize() const
     {
-        this->elements_[this->index_++] = value;
+        return this->writeIndex_ - this->readIndex_;
+    }
 
-        if (!this->isFull_)
-        {
-            if (this->index_ == 0)
-            {
-                this->isFull_ = true;
-            }
-        }
+    size_t GetAvailable() const
+    {
+        return N - this->GetSize();
     }
 
     T FrontElement()
     {
-        return this->elements_[this->BeginIndex()];
-    }
-
-    CircularIndex<N> BeginIndex()
-    {
-        if (this->isFull_)
+        if (this->IsEmpty())
         {
-            return this->index_;
+            throw std::out_of_range("Buffer is empty");
         }
-        else
-        {
-            // Partial array. The zeroth element is the first
-            return CircularIndex<N>();
-        }
-    }
 
-    CircularIndex<N> EndIndex()
-    {
-        return this->index_;
+        return this->elements_[this->readIndex_];
     }
 
     T BackElement()
     {
-        return this->elements_[--this->EndIndex()];
+        if (this->IsEmpty())
+        {
+            throw std::out_of_range("Buffer is empty");
+        }
+
+        return this->elements_[this->writeIndex_ - 1];
     }
 
-    T Sum()
+    std::ostream & PrintElements(std::ostream &outputStream)
     {
-        auto index = this->BeginIndex();
-        auto stop = this->EndIndex();
-
-        T sum{};
-
-        if (!this->isFull_)
+        auto index = this->readIndex_;
+        auto endIndex = this->writeIndex_;
+        
+        while (index != endIndex)
         {
-            if (0 == this->index_)
+            if constexpr (std::is_integral_v<T> && sizeof(T) == 1)
             {
-                // there is no data yet.
-                return sum;
+                outputStream << PromoteByte(this->elements_[index]) << " ";
             }
+            else
+            {
+                outputStream << this->elements_[index] << " ";
+            }
+
+            ++index;
         }
 
-        do
-        {
-            sum += this->elements_[index++];
-        }
-        while (index != stop);
-
-        return sum;
+        return outputStream;
     }
 
-    T Average()
+    std::ostream & PrintContents(std::ostream &outputStream)
     {
-        if (this->isFull_)
+        auto index = 0;
+        auto endIndex = N;
+        
+        while (index != endIndex)
         {
-            return this->Sum() / static_cast<T>(N);
+            if constexpr (std::is_integral_v<T> && sizeof(T) == 1)
+            {
+                outputStream << PromoteByte(this->elements_[index]) << " ";
+            }
+            else
+            {
+                outputStream << this->elements_[index] << " ";
+            }
+
+            ++index;
         }
-        else
-        {
-            return this->Sum()
-                / static_cast<T>(static_cast<size_t>(this->index_));
-        }
+
+        return outputStream;
     }
 
-    void PrintElements()
+    bool Write(const T *source, size_t count)
     {
-        for (size_t i = 0; i < N; i++)
+        if (count > this->GetAvailable())
         {
-            std::cout << this->elements_[i] << " ";
+            return false;
         }
 
-        std::cout << std::endl;
+        // Because we have already checked that count is less than the free
+        // space, we do not need to consider the position of the readIndex_ in
+        // this check. If the readIndex_ is after the write index, then count
+        // places us before the readIndex_.
+        auto countToEnd = N - this->writeIndex_;
+        auto tailCount = std::min(count, countToEnd);
+
+        std::memcpy(
+            &this->elements_[this->writeIndex_],
+            source,
+            sizeof(T) * tailCount);
+
+        if (count > tailCount)
+        {
+            // Write the remaining data at the start of the buffer
+            auto remainder = count - tailCount;
+
+            std::memcpy(
+                &this->elements_[0],
+                source + tailCount,
+                sizeof(T) * remainder);
+        }
+        
+        this->writeIndex_ += count;
+
+        return true;
+    }
+
+    bool Peek(T * target, size_t count)
+    {
+        if (count > this->GetSize())
+        {
+            return false;
+        }
+
+        auto countToEnd = N - this->readIndex_;
+        auto tailCount = std::min(count, countToEnd);
+
+        std::memcpy(
+            target,
+            &this->elements_[this->readIndex_],
+            sizeof(T) * tailCount);
+
+        if (count > tailCount)
+        {
+            // Read from the start of the buffer
+            auto remainder = count - tailCount;
+
+            std::memcpy(
+                target + tailCount,
+                &this->elements_[0],
+                sizeof(T) * remainder);
+        }
+
+        return true;
+    }
+
+    bool Read(T * target, size_t count)
+    {
+        if (this->Peek(target, count))
+        {
+            // The Peek copied to target.
+            // Increment the readIndex_ to consume the data.
+            this->readIndex_ += count;
+            return true;
+        }
+
+        return false;
+    }
+
+    template<typename, size_t>
+    friend class AsPointer;
+
+private:
+    /**
+     ** @return The count of bytes that can be written without overwriting
+     ** either the end of the buffer or the read index.
+     **/
+    size_t GetWritableSize() const
+    {
+        auto countToEnd = N - this->writeIndex_;
+
+        return std::min(this->GetAvailable(), countToEnd);
     }
 
 private:
-    bool isFull_;
-    CircularIndex<N> index_;
+    CircularIndex<N> writeIndex_;
+    CircularIndex<N> readIndex_;
     T elements_[N];
 };
+
+
+template<typename T, size_t N>
+class AsPointer
+{
+public:
+    AsPointer(CircularBuffer<T, N> &targetBuffer)
+        :
+        targetBuffer_(targetBuffer),
+        writeCount_(0)
+    {
+
+    }
+
+    size_t GetWritableSize() const
+    {
+        return this->targetBuffer_.GetWritableSize();
+    }
+
+    T * Get()
+    {
+        return &this->targetBuffer_.elements_[this->targetBuffer_.writeIndex_];
+    }
+
+    void SetWriteCount(size_t count)
+    {
+        assert(count <= this->GetWritableSize());
+        this->writeCount_ = count;
+    }
+
+    ~AsPointer()
+    {
+        if (this->writeCount_ > 0)
+        {
+            this->targetBuffer_.writeIndex_ += this->writeCount_;
+        }
+    }
+
+private:
+    CircularBuffer<T, N> &targetBuffer_;
+    size_t writeCount_;
+};
+
 
 } // end namespace jive

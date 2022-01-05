@@ -37,5 +37,5 @@
     {                                                                   \
     public:                                                             \
         /* NOLINTNEXTLINE(bugprone-macro-parentheses) */                \
-        exceptionName(const std::string &what) : parentClass(what) {}   \
+        exceptionName(const std::string &what = "") : parentClass(what) {}   \
     }
