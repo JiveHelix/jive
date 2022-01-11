@@ -18,7 +18,7 @@ namespace jive
 {
 
 
-CREATE_EXCEPTION(SocketError, std::runtime_error);
+CREATE_SYSTEM_ERROR(SocketError, std::system_error);
 
 
 } // end namespace jive

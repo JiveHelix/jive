@@ -40,9 +40,7 @@ public:
 
         if (this->handle_ == -1)
         {
-            throw ErrnoException<SocketError>(
-                "Failed to create socket",
-                errno);
+            throw SocketError(SystemError(errno), "Failed to create socket");
         }
     }
 
@@ -82,9 +80,9 @@ public:
 
         if (result == -1)
         {
-            throw ErrnoException<SocketError>(
-                "Failed to mark socket as listening",
-                errno);
+            throw SocketError(
+                SystemError(errno),
+                "Failed to mark socket as listening");
         }
     }
 
@@ -99,9 +97,9 @@ public:
 
         if (result == -1)
         {
-            throw ErrnoException<SocketError>(
-                "Failed to bind to " + serviceAddress.ToString(),
-                errno);
+            throw SocketError(
+                SystemError(errno),
+                "Failed to bind to " + serviceAddress.ToString());
         }
 
         this->connectedAddress_ = serviceAddress;
@@ -124,9 +122,9 @@ public:
 
         if (connectedHandle == -1)
         {
-            throw ErrnoException<SocketError>(
-                "Failed to accept connection",
-                errno);
+            throw SocketError(
+                SystemError(errno),
+                "Failed to accept connection");
         }
 
         Socket result{};
@@ -147,9 +145,9 @@ public:
 
         if (result == -1)
         {
-            throw ErrnoException<SocketError>(
-                "Failed to connect to " + serviceAddress.ToString(),
-                errno);
+            throw SocketError(
+                SystemError(errno),
+                "Failed to connect to " + serviceAddress.ToString());
         }
 
         this->connectedAddress_ = serviceAddress;
@@ -178,9 +176,9 @@ public:
             }
             else
             {
-                throw ErrnoException<SocketError>(
-                    "Failed to receieve data from socket",
-                    errno);
+                throw SocketError(
+                    SystemError(errno),
+                    "Failed to receieve data from socket");
             }
         }
 
@@ -199,9 +197,9 @@ public:
             }
             else
             {
-                throw ErrnoException<SocketError>(
-                    "Failed to receieve data from socket",
-                    errno);
+                throw SocketError(
+                    SystemError(errno),
+                    "Failed to receieve data from socket");
             }
         }
         
@@ -225,9 +223,9 @@ public:
             }
             else
             {
-                throw ErrnoException<SocketError>(
-                    "Failed to receieve data from socket",
-                    errno);
+                throw SocketError(
+                    SystemError(errno),
+                    "Failed to receieve data from socket");
             }
         }
         
@@ -246,9 +244,9 @@ public:
 
         if (result == -1)
         {
-            throw ErrnoException<SocketError>(
-                "Failed to set socket option",
-                errno);
+            throw SocketError(
+                SystemError(errno),
+                "Failed to set socket option");
         }
     }
 
@@ -290,14 +288,13 @@ public:
                 return false;
             }
 
-            throw ErrnoException<SocketError>(
-                "Failed to wait for new connection",
-                errno);
+            throw SocketError(
+                SystemError(errno),
+                "Failed to wait for new connection");
         }
 
         // A value greater than zero indicates that accept will not block.
         return (result != 0);
-
     }
 
 

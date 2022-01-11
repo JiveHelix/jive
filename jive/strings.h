@@ -18,7 +18,10 @@
 #include <initializer_list>
 #include <numeric>
 #include <cassert>
+
+#undef str
 #include <sstream>
+
 #include <cstring>
 #include <cstdarg>
 

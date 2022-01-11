@@ -21,8 +21,10 @@
 #include <sys/stat.h>
 #include <errno.h>
 #include <map>
-#include "jive/create_exception.h"
 #include <list>
+#include <system_error>
+#include "jive/create_exception.h"
+
 
 namespace jive
 {
@@ -34,7 +36,7 @@ namespace path
 // Windows NT.
 inline constexpr char pathSeparator = '/';
 
-CREATE_EXCEPTION(PathError, std::runtime_error);
+CREATE_SYSTEM_ERROR(PathError, std::system_error);
 
 std::string Join(std::initializer_list<std::string> il);
 

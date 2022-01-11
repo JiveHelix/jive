@@ -23,10 +23,11 @@
 
 #include <string>
 #include <vector>
+#include <system_error>
 #include "jive/create_exception.h"
 
-CREATE_EXCEPTION(ListDirectoryError, std::runtime_error);
-CREATE_EXCEPTION(BadDirectory, ListDirectoryError);
+CREATE_SYSTEM_ERROR(ListDirectoryError, std::system_error);
+CREATE_SYSTEM_ERROR(BadDirectory, ListDirectoryError);
 
 namespace jive
 {

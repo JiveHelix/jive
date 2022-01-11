@@ -246,7 +246,8 @@ void MakeFifo(const std::string &fifoName)
     if (mkfifo(fifoName.c_str(), mode) != 0)
     {
         throw PathError(
-            "MakeFifo(" + fifoName + ") failed: " + StringError(errno));
+            SystemError(errno),
+            "MakeFifo(" + fifoName + ") failed");
     }
 }
 #endif
@@ -288,8 +289,10 @@ void MakeDirectory(const std::string &pathName)
             if (!IsDirectory(pathName))
             {
                 throw PathError(
-                    "Failed to create directory " + pathName
-                    + ". File already exists.");
+                    SystemError(errno),
+                    "Failed to create directory "
+                        + pathName
+                        + ". File already exists.");
             }
         }
         else
@@ -304,7 +307,7 @@ void MakeDirectory(const std::string &pathName)
                 errorMessage += "Unknown errno " + std::to_string(errno);
             }
 
-            throw PathError(errorMessage);
+            throw PathError(SystemError(errno), errorMessage);
         }
     }
 }
@@ -368,7 +371,9 @@ time_t GetCreationTime(const std::string &fileName)
     struct stat result;
     if (stat(fileName.c_str(), &result) != 0)
     {
-        throw PathError("Unable to access " + fileName);
+        throw PathError(
+            std::make_error_code(std::errc::no_such_file_or_directory),
+            "Unable to access " + fileName);
     }
 
     return result.st_ctime;

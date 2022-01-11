@@ -6,36 +6,34 @@
 
 #pragma once
 
-#define __STD_WANT_LIB_EXT1__ 1
 #include <cerrno>
+
+#undef str
 #include <sstream>
+
 #include <string>
 #include <cstring>
+#include <system_error>
 
 namespace jive
 {
 
 
+inline std::error_code SystemError(int errorNumber)
+{
+    return std::error_code(errorNumber, std::system_category());
+}
+
+
+[[deprecated("Use std::error_code directly")]]
 inline std::string StringError(int errorNumber)
 {
-    char buffer[64];
-
-#ifdef _WIN32
-    errno_t success = strerror_s(buffer, sizeof(buffer), errorNumber);
-#else
-    int success = strerror_r(errorNumber, buffer, sizeof(buffer));
-#endif
-
-    if (success != 0)
-    {
-        return std::string("Unknown error: ") + std::to_string(errorNumber);
-    }
-
-    return std::string{&buffer[0]};
+    return SystemError(errorNumber).message();
 }
 
 
 template<typename Exception>
+[[deprecated("Subclass std::system_error instead.")]]
 Exception ErrnoException(const std::string &message, int errorNumber = 0)
 {
     std::ostringstream outputStream(

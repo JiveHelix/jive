@@ -29,9 +29,9 @@ public:
     {
         if (!this->dir_)
         {
-            throw jive::ErrnoException<BadDirectory>(
-                "ListDirectory failed: " + path,
-                errno);
+            throw BadDirectory(
+                SystemError(errno),
+                "ListDirectory failed: " + path);
         }
     }
 

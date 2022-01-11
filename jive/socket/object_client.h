@@ -102,7 +102,9 @@ private:
         if (count == 0)
         {
             // There is no more room in the read buffer.
-            throw SocketError("Cannot drain socket when read buffer is full.");
+            throw SocketError(
+                std::make_error_code(std::errc::no_buffer_space),
+                "Cannot drain socket when read buffer is full.");
         }
 
         std::optional<size_t> receivedCount =
@@ -110,7 +112,9 @@ private:
 
         if (!receivedCount)
         {
-            throw SocketError("Socket timed out");
+            throw SocketError(
+                std::make_error_code(std::errc::timed_out),
+                "Socket timed out");
         }
 
         buffer.SetWriteCount(receivedCount.value());

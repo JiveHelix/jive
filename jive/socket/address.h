@@ -51,7 +51,9 @@ struct Address
 
         if (parts.size() != 4)
         {
-            throw SocketError("Bad address");
+            throw SocketError(
+                std::make_error_code(std::errc::bad_address),
+                "Expected 4 octets");
         }
 
         for (auto index: Range(0u, 4u))

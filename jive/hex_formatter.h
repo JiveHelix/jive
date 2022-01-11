@@ -16,7 +16,10 @@
 #include <ostream>
 #include <type_traits>
 #include <cstdint>
+
+#undef str
 #include <sstream>
+
 #include <cctype>
 #include "jive/strings.h"
 #include "jive/formatter.h"

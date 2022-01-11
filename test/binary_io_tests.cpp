@@ -5,7 +5,10 @@
   */
 #include <catch2/catch.hpp>
 #include <limits>
+
+#undef str
 #include <sstream>
+
 #include <algorithm>
 #include "jive/binary_io.h"
 #include "jive/power.h"

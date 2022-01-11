@@ -79,8 +79,7 @@ std::string Formatter(const char *format, ...)
 
     if (formatResult < 0)
     {
-        throw std::runtime_error(
-            std::string("Formatting error: ") + StringError(errno));
+        throw std::system_error(SystemError(errno), "Formatting error");
     }
 
     size_t formattedCharCount = static_cast<size_t>(formatResult);
@@ -144,7 +143,7 @@ std::string FastFormatter(const char *format, ...)
 
     if (formatResult < 0)
     {
-        return std::string("Formatting error: ") + StringError(errno);
+        return std::string("Formatting error: ") + SystemError(errno).message();
     }
 
     size_t formattedCharCount = static_cast<size_t>(formatResult);
