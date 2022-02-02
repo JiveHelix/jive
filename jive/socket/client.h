@@ -1,5 +1,5 @@
 /**
-  * @file object_client.h
+  * @file client.h
   * 
   * @brief A socket that reads and writes data structured as binary objects.
   * 
@@ -21,20 +21,18 @@ namespace jive
 
 
 template<size_t BufferSize>
-class ObjectClient
+class Client: public Socket
 {
 public:
-    ObjectClient(const ServiceAddress &serviceAddress)
-        :
-        socket_()
+    Client(const ServiceAddress &serviceAddress)
     {
-        this->socket_.Connect(serviceAddress);
+        this->Connect(serviceAddress);
     }
 
     template<typename T>
     void Write(const T &data)
     {
-        this->socket_.Send(&data, sizeof(T), 0);
+        this->Send(&data, sizeof(T), 0);
     }
 
     template<typename T>
@@ -57,6 +55,48 @@ public:
         assert(success);
 
         return result;
+    }
+
+    void Read(void *target, size_t byteCount)
+    {
+        size_t receivedCount = 0;
+
+        while (receivedCount < byteCount)
+        {
+            auto increment = this->ReceiveWait(
+                static_cast<uint8_t *>(target) + receivedCount,
+                byteCount - receivedCount);
+
+            if (!increment)
+            {
+                throw SocketError(
+                    std::make_error_code(std::errc::timed_out),
+                    "Socket timed out");
+            }
+
+            receivedCount += increment.value();
+        }
+    }
+
+    void Write(const void *source, size_t byteCount)
+    {
+        size_t sentCount = 0;
+
+        while (sentCount < byteCount)
+        {
+            auto increment = this->SendWait(
+                static_cast<const uint8_t *>(source) + sentCount,
+                byteCount - sentCount);
+
+            if (!increment)
+            {
+                throw SocketError(
+                    std::make_error_code(std::errc::timed_out),
+                    "Socket timed out");
+            }
+
+            sentCount += increment.value();
+        }
     }
 
     template<typename T>
@@ -89,17 +129,17 @@ private:
         
         while (this->readBuffer_.GetSize() < fillCount)
         {
-            this->DrainSocket_();
+            this->DrainSocket_(fillCount - this->readBuffer_.GetSize());
         }
     }
 
-    void DrainSocket_()
+    void DrainSocket_(size_t byteCount)
     {
         AsPointer buffer(this->readBuffer_);
         
-        auto count = buffer.GetWritableSize();
+        auto bufferSize = buffer.GetWritableSize();
 
-        if (count == 0)
+        if (bufferSize == 0)
         {
             // There is no more room in the read buffer.
             throw SocketError(
@@ -107,8 +147,10 @@ private:
                 "Cannot drain socket when read buffer is full.");
         }
 
+        size_t count = std::min(bufferSize, byteCount);
+
         std::optional<size_t> receivedCount =
-            this->socket_.ReceiveWait(buffer.Get(), count);
+            this->ReceiveWait(buffer.Get(), count);
 
         if (!receivedCount)
         {
@@ -121,7 +163,6 @@ private:
     }
 
 private:
-    Socket socket_;
     CircularBuffer<uint8_t, BufferSize> readBuffer_;
 };
 
