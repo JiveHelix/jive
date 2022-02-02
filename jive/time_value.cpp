@@ -144,12 +144,18 @@ bool TimeValue::operator>=(const TimeValue &other) const
     return !(*this < other);
 }
 
+#ifdef _WIN32
+#define LONG_CAST(arg) static_cast<long>(arg)
+#else
+#define LONG_CAST(arg) (arg)
+#endif
+
 timeval TimeValue::GetAsTimeval() const
 {
     timeval tv;
 
     // Allow tv_sec to truncate.
-    tv.tv_sec = static_cast<long>(
+    tv.tv_sec = LONG_CAST(
         this->nanoseconds_.count() / BaseDuration::period::den);
 
     double remainderNanoseconds = static_cast<double>(

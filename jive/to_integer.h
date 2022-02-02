@@ -16,6 +16,7 @@
 #include <type_traits>
 #include <string_view>
 #include <typeinfo>
+#include <limits>
 
 #include "jive/detail/to_integer_detail.h"
 #include "jive/strings.h"

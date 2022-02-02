@@ -103,7 +103,7 @@ public:
             throw std::out_of_range("Buffer is empty");
         }
 
-        return this->elements_[this->readIndex_];
+        return this->elements_[static_cast<size_t>(this->readIndex_)];
     }
 
     T BackElement()
@@ -125,11 +125,12 @@ public:
         {
             if constexpr (std::is_integral_v<T> && sizeof(T) == 1)
             {
-                outputStream << PromoteByte(this->elements_[index]) << " ";
+                outputStream << PromoteByte(
+                    this->elements_[static_cast<size_t>(index)]) << " ";
             }
             else
             {
-                outputStream << this->elements_[index] << " ";
+                outputStream << this->elements_[static_cast<size_t>(index)] << " ";
             }
 
             ++index;
@@ -175,7 +176,7 @@ public:
         auto tailCount = std::min(count, countToEnd);
 
         std::memcpy(
-            &this->elements_[this->writeIndex_],
+            &this->elements_[static_cast<size_t>(this->writeIndex_)],
             source,
             sizeof(T) * tailCount);
 
@@ -207,7 +208,7 @@ public:
 
         std::memcpy(
             target,
-            &this->elements_[this->readIndex_],
+            &this->elements_[static_cast<size_t>(this->readIndex_)],
             sizeof(T) * tailCount);
 
         if (count > tailCount)
@@ -278,7 +279,8 @@ public:
 
     T * Get()
     {
-        return &this->targetBuffer_.elements_[this->targetBuffer_.writeIndex_];
+        return &this->targetBuffer_.elements_[
+            static_cast<size_t>(this->targetBuffer_.writeIndex_)];
     }
 
     void SetWriteCount(size_t count)

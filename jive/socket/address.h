@@ -109,10 +109,10 @@ struct ServiceAddress
 
     }
 
-    ServiceAddress(const char *socketAddress, uint16_t port)
+    ServiceAddress(const char *socketAddress, uint16_t port_)
         :
         address{socketAddress},
-        port{port}
+        port{port_}
     {
 
     }
@@ -141,7 +141,7 @@ std::ostream & operator<<(
     const ServiceAddress &serviceAddress)
 {
     return outputStream << serviceAddress.ToString();
-};
+}
 
 
 } // end namespace jive

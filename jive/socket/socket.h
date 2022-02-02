@@ -28,6 +28,17 @@ namespace jive
 {
 
 
+inline
+bool WouldBlock(int errorCode)
+{
+#if EAGAIN == EWOULDBLOCK
+    return errorCode == EAGAIN;
+#else
+    return errorCode == EAGAIN || errorCode == EWOULDBLOCK;
+#endif
+}
+
+
 class Socket
 {
 public:
@@ -170,7 +181,7 @@ public:
 
         if (receivedCount < 0)
         {
-            if (errno == EAGAIN || errno == EWOULDBLOCK)
+	    if (WouldBlock(errno))
             {
                 receivedCount = 0;
             }
@@ -191,7 +202,7 @@ public:
 
         if (receivedCount < 0)
         {
-            if (errno == EAGAIN || errno == EWOULDBLOCK)
+	    if (WouldBlock(errno))
             {
                 return {};
             }
@@ -217,7 +228,7 @@ public:
 
         if (sentCount < 0)
         {
-            if (errno == EAGAIN || errno == EWOULDBLOCK)
+	    if (WouldBlock(errno))
             {
                 return {};
             }
@@ -271,7 +282,7 @@ public:
     /* @return true when Accept will not block */
     bool WaitForConnection(long seconds, suseconds_t microseconds)
     {
-        timeval timeOut = {.tv_sec = seconds, .tv_usec = microseconds};
+        timeval timeOut = {seconds, microseconds};
         fd_set fileSet;
 
         FD_ZERO(&fileSet);

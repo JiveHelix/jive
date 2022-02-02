@@ -11,6 +11,8 @@
 #include "jive/formatter.h"
 #include "jive/to_integer.h"
 
+#undef major
+#undef minor
 
 namespace jive
 {
@@ -25,11 +27,11 @@ class Version
 public:
     constexpr Version(): major(0), minor(0), revision(0) {}
 
-    constexpr Version(T major, T minor, T revision)
+    constexpr Version(T major_, T minor_, T revision_)
         :
-        major(major),
-        minor(minor),
-        revision(revision)
+        major(major_),
+        minor(minor_),
+        revision(revision_)
     {
 
     }

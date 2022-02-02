@@ -43,7 +43,7 @@ Exception ErrnoException(const std::string &message, int errorNumber = 0)
     if (errorNumber > 0)
     {
         outputStream << ", errno=" << errorNumber << ": "
-            << StringError(errorNumber);
+            << SystemError(errorNumber).message();
     }
 
     return Exception(outputStream.str());
