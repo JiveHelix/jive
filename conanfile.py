@@ -1,6 +1,4 @@
 from conans import ConanFile, CMake
-# from conan.tools.cmake import CMakeToolchain
-# from conan.tools.layout import cmake_layout
 
 
 class JiveConan(ConanFile):
