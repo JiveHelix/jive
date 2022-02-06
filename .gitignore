@@ -6,10 +6,3 @@ build
 CMakeFiles/
 bin/
 lib/
-Makefile
-conan*
-graph_info.json
-CMakeLists.txt
-CMakeCache.txt
-*.cmake
-compile_commands.json

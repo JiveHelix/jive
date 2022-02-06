@@ -61,8 +61,10 @@ MAKE_TYPE(Trivial, TrivialStruct);
 
 
 // g++ warns about sign-conversion in this expanded macro
+#ifndef _WIN32
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wsign-conversion"
+#endif
 TEMPLATE_PRODUCT_TEST_CASE(
     "Create aligned Buffer.",
     "[buffer]",
@@ -79,7 +81,9 @@ TEMPLATE_PRODUCT_TEST_CASE(
      Trivial),
     (test::_8, test::_16, test::_32, test::_64, test::_128))
 {
+#ifndef _WIN32
 #pragma GCC diagnostic pop
+#endif
 
     if constexpr (TestType::enable)
     {

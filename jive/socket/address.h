@@ -56,7 +56,7 @@ struct Address
                 "Expected 4 octets");
         }
 
-        for (auto index: Range(0u, 4u))
+        for (auto index: Range(0U, 4U))
         {
             this->values[index] = ToInteger<uint8_t>(parts[index]);
         }
@@ -93,10 +93,10 @@ struct ServiceAddress
 
     }
 
-    ServiceAddress(Address address_, uint16_t port_)
+    ServiceAddress(Address inAddress, uint16_t inPort)
         :
-        address(address_),
-        port(port_)
+        address(inAddress),
+        port(inPort)
     { 
 
     }
@@ -109,10 +109,10 @@ struct ServiceAddress
 
     }
 
-    ServiceAddress(const char *socketAddress, uint16_t port_)
+    ServiceAddress(const char *socketAddress, uint16_t inPort)
         :
         address{socketAddress},
-        port{port_}
+        port{inPort}
     {
 
     }

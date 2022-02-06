@@ -5,6 +5,8 @@
   */
 #pragma once
 
+#undef min
+
 #include <limits>
 #include <chrono>
 #include "jive/power.h"
@@ -38,18 +40,18 @@ struct Limits<T, std::enable_if_t<std::is_unsigned_v<T>>>
     static constexpr std::chrono::duration<uint64_t> lower{0};
 };
 
-template<typename Duration>
+template<typename Duration, typename Target = typename Duration::rep>
 struct DurationLimits
 {
     using T = typename Duration::rep;
 
-    static constexpr T upper =
+    static constexpr auto upper = static_cast<Target>(
         (Duration(TypeLimit<T>::max()) > Limits<T>::upper)
         ? Duration(Limits<T>::upper).count()
-        : TypeLimit<T>::max();
+        : TypeLimit<T>::max());
 
-    static constexpr T lower =
+    static constexpr auto lower = static_cast<Target>(
         (Duration(TypeLimit<T>::min()) < Limits<T>::lower)
         ? Duration(Limits<T>::lower).count()
-        : TypeLimit<T>::min();
+        : TypeLimit<T>::min());
 };

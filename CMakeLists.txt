@@ -1,41 +1,16 @@
 cmake_minimum_required(VERSION 3.15)
 
-# detect whether jive has been added as a subproject
-if(NOT DEFINED PROJECT_NAME)
-    set(JIVE_NOT_SUBPROJECT ON)
-endif()
-
-include(cmake_includes/DefineProjectOnce.cmake)
-
-
-define_project_once(jive)
-
 project(jive CXX)
 
-if(JIVE_NOT_SUBPROJECT)
-    # This is the top-level project
-    include(cmake_includes/Standalone.cmake)
-    option(ENABLE_UNITY "Enable Unity builds of projects" OFF)
-endif()
+include(${CMAKE_CURRENT_LIST_DIR}/cmake_includes/setup_project.cmake)
+setup_project()
 
 add_subdirectory(jive)
 
-
-if (JIVE_NOT_SUBPROJECT)
-
-    if(ENABLE_TESTING)
-        enable_testing()
+if (${PROJECT_IS_TOP_LEVEL})
+    if (ENABLE_TESTING)
         add_subdirectory(test)
     endif()
-
-elseif(RECURSIVE_BUILD_TESTS AND ENABLE_TESTING)
-
-    # A parent project has requested tests.
+elseif(${RECURSIVE_BUILD_TESTS} AND ${ENABLE_TESTING})
     add_subdirectory(test)
-
-endif()
-
-if(ENABLE_UNITY)
-  # Add for any project you want to apply unity builds for
-  set_target_properties(jive PROPERTIES UNITY_BUILD ON)
-endif()
+endif ()

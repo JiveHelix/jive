@@ -40,16 +40,20 @@ static constexpr int base8 = 8;
 static constexpr int base10 = 10;
 static constexpr int base16 = 16;
 
+#ifndef _WIN32
 // g++ warns about sign-conversion in this expanded macro
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wsign-conversion"
+#endif
 TEMPLATE_PRODUCT_TEST_CASE(
     "Convert strings to signed integers",
     "[to_integer]",
-    ( p0, p42, p56, p105, p119, n0, n42, n56, n105, n119),
+    (p0, p42, p56, p105, p119, n0, n42, n56, n105, n119),
     (int8_t, int16_t, int32_t, int64_t))
 {
+#ifndef _WIN32
 #pragma GCC diagnostic pop
+#endif
     using type = typename TestType::type;
 
     auto valueFromDec = jive::ToInteger<type, base10>(TestType::asDec);
@@ -61,16 +65,20 @@ TEMPLATE_PRODUCT_TEST_CASE(
     REQUIRE(valueFromHex == TestType::value);
 }
 
+#ifndef _WIN32
 // g++ warns about sign-conversion in this expanded macro
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wsign-conversion"
+#endif
 TEMPLATE_PRODUCT_TEST_CASE(
     "Convert positive strings to unsigned integers",
     "[to_integer]",
     ( p0, p42, p56, p105, p119),
     (uint8_t, uint16_t, uint32_t, uint64_t))
 {
+#ifndef _WIN32
 #pragma GCC diagnostic pop
+#endif
     using type = typename TestType::type;
 
     auto valueFromDec = jive::ToInteger<type, base10>(TestType::asDec);

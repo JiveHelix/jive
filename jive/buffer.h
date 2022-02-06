@@ -101,7 +101,19 @@ public:
 
     ~Buffer()
     {
-        std::free(this->data_);
+        if (this->data_ != nullptr)
+        {
+// Microsoft is non-compliant.
+// The standard states that std::free should work for over-aligned member.
+#ifdef _WIN32
+            ::operator delete(
+                this->data_,
+                this->byteCount_,
+                std::align_val_t{align});
+#else
+            std::free(this->data_);
+#endif
+        }
     }
 
     Buffer(const Buffer &) = delete;

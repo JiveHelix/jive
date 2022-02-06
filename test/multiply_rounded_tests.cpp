@@ -7,6 +7,7 @@
 
 #include "jive/multiply_rounded.h"
 #include "jive/testing/cast_limits.h"
+#include "jive/testing/random_type.h"
 
 using namespace Catch::literals;
 
@@ -22,12 +23,14 @@ TEMPLATE_TEST_CASE(
     int64_t,
     uint64_t)
 {
-    auto value = GENERATE(
-        take(
-            10,
-            random(
-                CastLimits<TestType>::Min(),
-                CastLimits<TestType>::Max())));
+    using Limits = 
+        CastLimits<TestType, typename RandomType<TestType>::type>;
+
+    auto value = static_cast<TestType>(
+        GENERATE(
+            take(
+                10,
+                random(Limits::Min(), Limits::Max()))));
 
     auto scale = GENERATE(
         take(
@@ -98,14 +101,15 @@ TEMPLATE_TEST_CASE(
     int64_t,
     uint64_t)
 {
-    auto value = GENERATE(
-        take(
-            10,
-            filter(
-                [](double v) { return v != 0.0_a; },
-                random(
-                    CastLimits<TestType>::Min(),
-                    CastLimits<TestType>::Max()))));
+    using Limits = CastLimits<TestType, typename RandomType<TestType>::type>;
+
+    auto value = static_cast<TestType>(
+        GENERATE(
+            take(
+                10,
+                filter(
+                    [](auto v) { return v != static_cast<decltype(v)>(0); },
+                    random(Limits::Min(), Limits::Max())))));
 
     // Choose a scale that is expected to cause overflow
     static constexpr auto scaleFactor = 1.5;
@@ -129,8 +133,8 @@ TEST_CASE(
 
     REQUIRE(values.size() == 5);
 
-    constexpr auto rangeLow = -3.0;
-    constexpr auto rangeHigh = 3.0;
+    static constexpr auto rangeLow = -3.0;
+    static constexpr auto rangeHigh = 3.0;
     auto scale = GENERATE(take(10, random(rangeLow, rangeHigh)));
 
     auto aValue = static_cast<int16_t>(values[0]);

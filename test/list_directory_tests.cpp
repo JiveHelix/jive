@@ -3,6 +3,10 @@
   * @copyright 2020 Jive Helix
   * Licensed under the MIT license. See LICENSE file.
   */
+#ifndef _WIN32
+// TODO: Remove ListDirectory in favor of std::filesystem
+
+
 #include <catch2/catch.hpp>
 
 #include <algorithm>
@@ -34,3 +38,5 @@ TEST_CASE(
 
     REQUIRE(result == fileNames);
 }
+
+#endif

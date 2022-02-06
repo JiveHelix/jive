@@ -10,6 +10,11 @@
 CREATE_EXCEPTION(TestException, std::runtime_error);
 CREATE_EXCEPTION(ChildException, TestException);
 
+#ifdef _WIN32
+#pragma warning(push)
+#pragma warning(disable:4702)
+#endif
+
 TEST_CASE("Created exception throws", "[exceptions]")
 {
     REQUIRE_THROWS_AS(throw TestException(""), TestException);
@@ -37,3 +42,7 @@ TEST_CASE("Subclassed exception throws with message", "[exceptions]")
         throw ChildException("Something else went wrong"),
         "Something else went wrong");
 }
+
+#ifdef _WIN32
+#pragma warning(pop)
+#endif

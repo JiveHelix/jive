@@ -13,6 +13,9 @@
 #include "jive/binary_io.h"
 #include "jive/power.h"
 #include "jive/testing/gettys_words.h"
+#include "jive/testing/random_type.h"
+
+
 
 
 TEMPLATE_TEST_CASE(
@@ -27,14 +30,13 @@ TEMPLATE_TEST_CASE(
     int64_t,
     uint64_t)
 {
-    auto value = GENERATE(
-        take(
-            100,
-            random<TestType>(
-                std::numeric_limits<TestType>::min(),
-                std::numeric_limits<TestType>::max())));
-
-    STATIC_REQUIRE(std::is_same_v<decltype(value), TestType>);
+    auto value = static_cast<TestType>(
+        GENERATE(
+            take(
+                100,
+                random<typename RandomType<TestType>::type>(
+                    std::numeric_limits<TestType>::min(),
+                    std::numeric_limits<TestType>::max()))));
 
     std::stringstream stream;
     jive::io::Write(stream, value);
@@ -58,7 +60,7 @@ TEMPLATE_TEST_CASE(
                 std::numeric_limits<TestType>::min(),
                 std::numeric_limits<TestType>::max())));
 
-    STATIC_REQUIRE(std::is_same_v<decltype(value), TestType>);
+    static_assert(std::is_same_v<decltype(value), TestType>);
 
     std::stringstream stream;
     jive::io::Write(stream, value);

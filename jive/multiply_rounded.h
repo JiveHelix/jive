@@ -47,8 +47,10 @@ Target RoundIfIntegral(Source value)
 
         return static_cast<Target>(result);
     }
-
-    return static_cast<Target>(value);
+    else
+    {
+        return static_cast<Target>(value);
+    }
 }
 
 

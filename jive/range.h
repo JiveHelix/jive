@@ -57,19 +57,23 @@ public:
 
     }
 
+    // For compatibility with range-based for loops, begin/end must use this
+    // style.
+    // NOLINTNEXTLINE(readability-identifier-naming)
     RangeIterator<T> begin() const
     {
         return RangeIterator<T>(this->begin_);
     }
 
+    // NOLINTNEXTLINE(readability-identifier-naming)
     RangeIterator<T> end() const
     {
         return RangeIterator<T>(this->end_);
     }
 
 private:
-    const T begin_;
-    const T end_;
+    T begin_;
+    T end_;
 };
 
 

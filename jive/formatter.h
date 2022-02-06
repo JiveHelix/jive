@@ -35,6 +35,8 @@
 
 #pragma once
 
+// MSVC requires this reserved identifier.
+// NOLINTNEXTLINE(bugprone-reserved-identifier)
 #define __STD_WANT_LIB_EXT1__ 1
 
 #include "jive/error.h"

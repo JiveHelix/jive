@@ -4,10 +4,14 @@
   * Licensed under the MIT license. See LICENSE file.
   */
 
+#ifndef _WIN32
+// TODO: Add support for WIN32 builds.
+
 #include <catch2/catch.hpp>
 
 #include "jive/socket/socket.h"
 #include "jive/socket/address.h"
+
 
 TEST_CASE("Ill-formed address is detected", "[socket]")
 {
@@ -24,3 +28,5 @@ TEST_CASE("Ill-formed address is detected", "[socket]")
         REQUIRE(error.code() == std::errc::bad_address);
     }
 }
+
+#endif

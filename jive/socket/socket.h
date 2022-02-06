@@ -55,19 +55,19 @@ public:
         }
     }
 
-    Socket(Socket &&other)
+    Socket(Socket &&other) noexcept
         :
         handle_{other.handle_},
-        connectedAddress_{std::move(other.connectedAddress_)}
+        connectedAddress_{other.connectedAddress_}
     {
         other.handle_ = -1;
     }
 
-    Socket & operator=(Socket &&other)
+    Socket & operator=(Socket &&other) noexcept
     {
         this->Close(); 
         this->handle_ = other.handle_;
-        this->connectedAddress_ = std::move(other.connectedAddress_);
+        this->connectedAddress_ = other.connectedAddress_;
         other.handle_ = -1;
         return *this;
     }
@@ -83,9 +83,11 @@ public:
         {
             close(this->handle_);
         }
+
+        this->handle_ = -1;
     }
 
-    void Listen()
+    void Listen() const
     {
         int result = listen(this->handle_, SOMAXCONN);
 
@@ -121,7 +123,7 @@ public:
      **
      ** @return the new socket, connected to the client and ready to be used.
      **/
-    Socket Accept()
+    Socket Accept() const
     {
         SocketAddress connectedAddress;
         socklen_t length = sizeof(SocketAddress);
@@ -169,75 +171,69 @@ public:
         return this->connectedAddress_;
     }
 
-    ssize_t Receive(void *buffer, size_t count, int flags)
+    ssize_t Receive(void *buffer, size_t count, int flags) const
     {
         return recv(this->handle_, buffer, count, flags);
     }
 
-    size_t ReceiveNoWait(void *buffer, size_t count)
+    size_t ReceiveNoWait(void *buffer, size_t count) const
     {
         ssize_t receivedCount =
             this->Receive(buffer, count, MSG_DONTWAIT);
 
         if (receivedCount < 0)
         {
-	    if (WouldBlock(errno))
+            if (WouldBlock(errno))
             {
                 receivedCount = 0;
             }
-            else
-            {
-                throw SocketError(
-                    SystemError(errno),
-                    "Failed to receieve data from socket");
-            }
+
+            throw SocketError(
+                SystemError(errno),
+                "Failed to receieve data from socket");
         }
 
         return static_cast<size_t>(receivedCount);
     }
 
-    std::optional<size_t> ReceiveWait(void *buffer, size_t count)
+    std::optional<size_t> ReceiveWait(void *buffer, size_t count) const
     {
         ssize_t receivedCount = this->Receive(buffer, count, 0);
 
         if (receivedCount < 0)
         {
-	    if (WouldBlock(errno))
+            if (WouldBlock(errno))
             {
                 return {};
             }
-            else
-            {
-                throw SocketError(
-                    SystemError(errno),
-                    "Failed to receieve data from socket");
-            }
+
+            throw SocketError(
+                SystemError(errno),
+                "Failed to receieve data from socket");
         }
         
         return {static_cast<size_t>(receivedCount)};
     }
 
-    ssize_t Send(const void *buffer, size_t byteCount, int flags)
+    ssize_t Send(const void *buffer, size_t byteCount, int flags) const
     {
         return send(this->handle_, buffer, byteCount, flags);
     }
 
-    std::optional<size_t> SendWait(const void *buffer, size_t count)
+    std::optional<size_t> SendWait(const void *buffer, size_t count) const
     {
         ssize_t sentCount = this->Send(buffer, count, 0);
 
         if (sentCount < 0)
         {
-	    if (WouldBlock(errno))
+            if (WouldBlock(errno))
             {
                 return {};
             }
-            else
-            {
-                throw SocketError(
-                    SystemError(errno),
-                    "Failed to receieve data from socket");
-            }
+
+            throw SocketError(
+                SystemError(errno),
+                "Failed to receieve data from socket");
         }
         
         return {static_cast<size_t>(sentCount)};

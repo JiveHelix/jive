@@ -13,3 +13,9 @@ target_sources(
     path.cpp
     list_directory.cpp
     format_paragraph.cpp)
+
+install(TARGETS jive DESTINATION ${CMAKE_INSTALL_LIBDIR})
+
+install(
+    DIRECTORY ${PROJECT_SOURCE_DIR}/jive
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})

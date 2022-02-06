@@ -26,11 +26,13 @@ TEMPLATE_TEST_CASE(
         std::numeric_limits<uint8_t>::max();
 
     auto generator =
-        Catch::Generators::RandomIntegerGenerator<uint8_t>(0, maxByteValue);
+        Catch::Generators::RandomIntegerGenerator<uint16_t>(0, maxByteValue);
 
     for (size_t index = 0; index < sizeof(TestType); ++index)
     {
-        value.bytes[index] = otherValue.bytes[index] = generator.get();
+        value.bytes[index] = otherValue.bytes[index] = 
+            static_cast<uint8_t>(generator.get());
+
         generator.next();
     }
 
@@ -43,7 +45,9 @@ TEMPLATE_TEST_CASE(
     {
         while (otherValue.bytes[1] == value.bytes[1])
         {
-            otherValue.bytes[1] = generator.get();
+            otherValue.bytes[1] = 
+                static_cast<uint8_t>(generator.get());
+
             generator.next();
         }
 
