@@ -3,6 +3,7 @@
   * @copyright Jive Helix
   * Licensed under the MIT license. See LICENSE file.
   */
+
 #pragma once
 
 #include <cstdint>

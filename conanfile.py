@@ -3,7 +3,7 @@ from conans import ConanFile, CMake
 
 class JiveConan(ConanFile):
     name = "jive"
-    version = "1.0.0"
+    version = "1.0.1"
 
     scm = {
         "type": "git",
@@ -30,7 +30,6 @@ class JiveConan(ConanFile):
         cmake = CMake(self)
         cmake.configure()
         cmake.build()
-        cmake.test()
 
     def package(self):
         cmake = CMake(self)

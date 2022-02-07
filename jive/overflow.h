@@ -1,3 +1,14 @@
+/**
+  * @file overflow.h
+  * 
+  * @brief Detect overflow when converting between types.
+  * 
+  * @author Jive Helix (jivehelix@gmail.com)
+  * @date 22 Apr 2021
+  * @copyright Jive Helix
+  * Licensed under the MIT license. See LICENSE file.
+**/
+
 #pragma once
 
 #include <type_traits>

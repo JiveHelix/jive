@@ -1,3 +1,15 @@
+/**
+  * @file compare.h
+  * 
+  * @brief Create a class with comparison operators for a single member. This
+  * is obsoleted by operator<=>.
+  * 
+  * @author Jive Helix (jivehelix@gmail.com)
+  * @date 15 Jul 2020
+  * @copyright Jive Helix
+  * Licensed under the MIT license. See LICENSE file.
+**/
+
 #pragma once
 
 #include <utility>
