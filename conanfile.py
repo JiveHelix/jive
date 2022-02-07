@@ -3,12 +3,13 @@ from conans import ConanFile, CMake
 
 class JiveConan(ConanFile):
     name = "jive"
-    version = "1.0.1"
+    version = "1.0.2"
 
     scm = {
         "type": "git",
-        "url": "auto",
-        "revision": "auto"}
+        "url": "https://github.com/JiveHelix/jive.git",
+        "revision": "auto",
+        "submodule": "recursive"}
 
     # Optional metadata
     license = "MIT"
