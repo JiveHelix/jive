@@ -13,6 +13,7 @@ add_executable(
     multiply_rounded_tests.cpp
     path_tests.cpp
     power_tests.cpp
+    precise_string_tests.cpp
     socket_tests.cpp
     strings_tests.cpp
     time_value_tests.cpp

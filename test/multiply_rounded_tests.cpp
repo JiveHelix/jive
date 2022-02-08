@@ -7,7 +7,7 @@
 
 #include "jive/multiply_rounded.h"
 #include "jive/testing/cast_limits.h"
-#include "jive/testing/random_type.h"
+#include "jive/testing/generator_limits.h"
 
 using namespace Catch::literals;
 
@@ -23,14 +23,13 @@ TEMPLATE_TEST_CASE(
     int64_t,
     uint64_t)
 {
-    using Limits = 
-        CastLimits<TestType, typename RandomType<TestType>::type>;
+    using Limits = GeneratorLimits<TestType>;
 
     auto value = static_cast<TestType>(
         GENERATE(
             take(
                 10,
-                random(Limits::Min(), Limits::Max()))));
+                random(Limits::Lowest(), Limits::Max()))));
 
     auto scale = GENERATE(
         take(
@@ -101,7 +100,7 @@ TEMPLATE_TEST_CASE(
     int64_t,
     uint64_t)
 {
-    using Limits = CastLimits<TestType, typename RandomType<TestType>::type>;
+    using Limits = GeneratorLimits<TestType>;
 
     auto value = static_cast<TestType>(
         GENERATE(
@@ -109,7 +108,7 @@ TEMPLATE_TEST_CASE(
                 10,
                 filter(
                     [](auto v) { return v != static_cast<decltype(v)>(0); },
-                    random(Limits::Min(), Limits::Max())))));
+                    random(Limits::Lowest(), Limits::Max())))));
 
     // Choose a scale that is expected to cause overflow
     static constexpr auto scaleFactor = 1.5;

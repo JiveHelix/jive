@@ -25,8 +25,8 @@ namespace detail
 #define STRING(token) STRING_EXPAND(token)
 #define FLOAT_FORMAT(digits, specifier) "%." STRING(digits) specifier
 
-// Extra space for potential sign, decimal, 'e', and exponent sign
-inline constexpr size_t extraSize = 4;
+// Extra space for potential sign, decimal, 'e', exponent sign, and NULL byte
+inline constexpr size_t extraSize = 5;
 
 template<typename T>
 struct FloatFormat {};
