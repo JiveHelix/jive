@@ -114,7 +114,7 @@ public:
             throw std::out_of_range("Buffer is empty");
         }
 
-        return this->elements_[this->writeIndex_ - 1];
+        return this->elements_[this->writeIndex_ - CircularIndex<N>(1)];
     }
 
     std::ostream & PrintElements(std::ostream &outputStream)
@@ -192,7 +192,7 @@ public:
                 sizeof(T) * remainder);
         }
         
-        this->writeIndex_ += count;
+        this->writeIndex_ += CircularIndex<N>(count);
 
         return true;
     }
@@ -232,11 +232,21 @@ public:
         {
             // The Peek copied to target.
             // Increment the readIndex_ to consume the data.
-            this->readIndex_ += count;
+            this->readIndex_ += CircularIndex<N>(count);
             return true;
         }
 
         return false;
+    }
+
+    size_t GetWriteIndex() const
+    {
+        return static_cast<size_t>(this->writeIndex_);
+    }
+
+    size_t GetReadIndex() const
+    {
+        return static_cast<size_t>(this->readIndex_);
     }
 
     template<typename, size_t>
@@ -249,7 +259,7 @@ private:
      **/
     size_t GetWritableSize() const
     {
-        auto countToEnd = N - this->writeIndex_;
+        auto countToEnd = N - static_cast<size_t>(this->writeIndex_);
 
         return std::min(this->GetAvailable(), countToEnd);
     }
@@ -287,7 +297,7 @@ public:
     void SetWriteCount(size_t count)
     {
         assert(count <= this->GetWritableSize());
-        this->writeCount_ = count;
+        this->writeCount_ = CircularIndex<N>(count);
     }
 
     ~AsPointer()
@@ -300,7 +310,7 @@ public:
 
 private:
     CircularBuffer<T, N> &targetBuffer_;
-    size_t writeCount_;
+    CircularIndex<N> writeCount_;
 };
 
 

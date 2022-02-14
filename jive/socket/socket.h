@@ -176,6 +176,21 @@ public:
         return recv(this->handle_, buffer, count, flags);
     }
 
+    size_t Flush() const
+    {
+        static constexpr size_t bufferSize = 64;
+        uint8_t discard[bufferSize];
+        size_t readCount = 0;
+        size_t discardedCount = 0;
+
+        while (0 != (readCount = ReceiveNoWait(discard, bufferSize)))
+        {
+            discardedCount += readCount;
+        }
+
+        return discardedCount;
+    }
+
     size_t ReceiveNoWait(void *buffer, size_t count) const
     {
         ssize_t receivedCount =
@@ -187,10 +202,12 @@ public:
             {
                 receivedCount = 0;
             }
-
-            throw SocketError(
-                SystemError(errno),
-                "Failed to receieve data from socket");
+            else
+            {
+                throw SocketError(
+                    SystemError(errno),
+                    "Failed to receieve data from socket");
+            }
         }
 
         return static_cast<size_t>(receivedCount);

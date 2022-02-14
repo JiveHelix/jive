@@ -23,6 +23,7 @@
 #include <cctype>
 #include "jive/strings.h"
 #include "jive/formatter.h"
+#include "jive/preserve_ios_flags.h"
 
 
 // A shortcut to cast single byte values to uint16_t to force operator<< to
@@ -65,6 +66,8 @@ std::ostream & PrintHex(
     const void * const voidData,
     size_t byteCount)
 {
+    PreserveIosFlags flags(outputStream);
+
     const uint8_t *data = reinterpret_cast<const uint8_t *>(voidData);
     outputStream << std::hex << std::setfill('0');
 
@@ -90,6 +93,8 @@ std::ostream & PrintHexLinesWithAscii(
     const void *voidData,
     size_t byteCount)
 {
+    PreserveIosFlags flags(outputStream);
+
     auto formatFlags = outputStream.flags();
 
     const uint8_t *data = reinterpret_cast<const uint8_t *>(voidData);
@@ -139,6 +144,8 @@ std::ostream & PrintHexLines(
     const void *voidData,
     size_t byteCount)
 {
+    PreserveIosFlags flags(outputStream);
+
     const uint8_t *data = reinterpret_cast<const uint8_t *>(voidData);
     
     outputStream << std::setfill(' ') << "Offset" << '\n'; 
@@ -193,6 +200,8 @@ PrintBytes(std::ostream &outputStream, const uint8_t *data)
 template<typename T>
 std::ostream & PrintHex(std::ostream &outputStream, const T &value)
 {
+    PreserveIosFlags flags(outputStream);
+
     outputStream << std::hex << std::setfill('0');
 
     PrintBytes<sizeof(T), 0>(
@@ -207,7 +216,7 @@ template<typename T>
 struct HexFormatter_
 {
     HexFormatter_(const T &value): value(value) {}
-    const T &value; 
+    const T &value;
 };
 
 struct VoidHexFormatter_
@@ -272,6 +281,7 @@ std::ostream & operator<<(
     std::ostream &outputStream,
     const ByteFormatter &formatter)
 {
+    PreserveIosFlags flags(outputStream);
     outputStream << PRINT_BYTE(formatter.byte);
     return outputStream;
 }
@@ -297,5 +307,6 @@ std::string GetHexString(uint8_t byte)
 {
     return FastFormatter<5>("0x%02hhX", byte);
 }
+
 
 } // namespace jive

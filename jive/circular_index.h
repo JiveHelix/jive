@@ -30,6 +30,13 @@ public:
 
     }
 
+    explicit CircularIndex(size_t index)
+        :
+        index_(index % wrapCount)
+    {
+
+    }
+
     CircularIndex(const CircularIndex &other)
         :
         index_(other.index_)
@@ -75,32 +82,29 @@ public:
         return *this;
     }
 
-    CircularIndex operator+(size_t addend)
+    CircularIndex operator+(CircularIndex<wrapCount> addend)
     {
         CircularIndex result(*this);
         return result += addend;
     }
 
-    CircularIndex & operator+=(size_t addend)
+    CircularIndex & operator+=(CircularIndex<wrapCount> addend)
     {
-        this->index_ = (this->index_ + (addend % wrapCount)) % wrapCount;
+        this->index_ = (this->index_ + addend.index_) % wrapCount;
         return *this;
     }
 
-    CircularIndex operator-(size_t addend)
+    CircularIndex operator-(CircularIndex<wrapCount> addend)
     {
         CircularIndex result(*this);
         return result -= addend;
     }
 
-    CircularIndex & operator-=(size_t addend)
+    CircularIndex & operator-=(CircularIndex<wrapCount> addend)
     {
-        size_t modulusAddend = addend % wrapCount;
-
-        // modulusAddend is guaranteed to be less than wrapCount
         // Add wrapCount before subtracting to ensure that we never go less
         // than zero. (Similar to operator--).
-        this->index_ = (this->index_ + wrapCount - modulusAddend) % wrapCount;
+        this->index_ = (this->index_ + wrapCount - addend.index_) % wrapCount;
         return *this;
     }
 
@@ -126,9 +130,22 @@ public:
     }
 
 private:
-    size_t wrapCount_;
     size_t index_;
 };
+
+
+template<size_t N>
+CircularIndex<N> operator-(CircularIndex<N> left, CircularIndex<N> right)
+{
+    return left.operator-(right);
+}
+
+template<size_t N>
+CircularIndex<N> operator+(CircularIndex<N> left, CircularIndex<N> right)
+{
+    return left.operator+(right);
+}
+
 
 template<size_t wrapCount>
 CircularIndex<wrapCount> CopyCircularIndex(

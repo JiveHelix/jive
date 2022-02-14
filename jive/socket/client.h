@@ -121,6 +121,16 @@ public:
         return result;
     }
 
+    void PrintBuffer(std::ostream &outputStream) const
+    {
+        this->readBuffer_.PrintElements(outputStream);
+    }
+
+    void DiscardBuffer()
+    {
+        this->readBuffer_.Reset();
+    }
+
 private:
     template<size_t fillCount>
     void FillReadBuffer_()

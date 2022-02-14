@@ -7,6 +7,7 @@ add_executable(
     angles_tests.cpp
     binary_io_tests.cpp
     buffer_tests.cpp
+    circular_index_tests.cpp
     create_exception_tests.cpp
     id_bytes_tests.cpp
     list_directory_tests.cpp
