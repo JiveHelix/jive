@@ -10,6 +10,7 @@
   */
 
 #ifndef _WIN32
+#ifndef __aarch64__
 
 #include "jive/list_directory.h"
 #include "jive/error.h"
@@ -93,4 +94,5 @@ std::vector<std::string> ListDirectory(const std::string &path)
 } // end namespace jive
 
 
+#endif // __aarch64__
 #endif // _WIN32

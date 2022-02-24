@@ -12,16 +12,30 @@
 
 #pragma once
 
+#include <cmath>
 #include <chrono>
 #include <ostream>
 #include <ctime>
-#include <cmath>
 
 #ifdef _WIN32
 #include <winsock.h> // timeval
 #endif
 
 #include "jive/create_exception.h"
+
+#define HAS_ROUND
+
+#ifdef __aarch64__
+#ifndef _GLIBCXX_USE_C99_MATH_TR1
+#undef HAS_ROUND
+#endif
+#endif
+
+#ifdef HAS_ROUND
+#define ROUND(arg) std::round((arg))
+#else
+#define ROUND(arg) (arg)
+#endif
 
 
 namespace jive
@@ -93,7 +107,7 @@ public:
         if constexpr (std::is_integral_v<T>)
         {
             return static_cast<T>(
-                std::round(Seconds<double>(this->nanoseconds_).count()));
+                ROUND(Seconds<double>(this->nanoseconds_).count()));
         }
         else
         {
@@ -118,7 +132,7 @@ public:
         if constexpr (std::is_integral_v<T>)
         {
             return static_cast<T>(
-                std::round(Microseconds<double>(this->nanoseconds_).count()));
+                ROUND(Microseconds<double>(this->nanoseconds_).count()));
         }
         else
         {

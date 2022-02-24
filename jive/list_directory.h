@@ -11,8 +11,9 @@
 
 #pragma once
 
-/// TODO: Create a windows compatible implementation.
+/// Remove in favor of std::filesystem
 #ifndef _WIN32
+#ifndef __aarch64__
 
 #include <sys/types.h>
 #include <dirent.h>
@@ -36,4 +37,5 @@ std::vector<std::string> ListDirectory(const std::string& path);
 
 } // end namespace jive
 
+#endif // __aarch64__
 #endif // _WIN32

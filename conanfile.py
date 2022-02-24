@@ -23,12 +23,23 @@ class JiveConan(ConanFile):
 
     generators = "cmake"
 
+    options = {
+        "CMAKE_TRY_COMPILE_TARGET_TYPE":
+            ["EXECUTABLE", "STATIC_LIBRARY", None]}
+
+    default_options = {"CMAKE_TRY_COMPILE_TARGET_TYPE": None}
+
     # Default behavior is to copy all sources to the build folder.
     # Our CMake configuration requires out-of-source builds.
     no_copy_source = True
 
     def build(self):
         cmake = CMake(self)
+
+        if (self.options.CMAKE_TRY_COMPILE_TARGET_TYPE):
+            cmake.definitions["CMAKE_TRY_COMPILE_TARGET_TYPE"] = \
+                self.options.CMAKE_TRY_COMPILE_TARGET_TYPE
+
         cmake.configure()
         cmake.build()
 

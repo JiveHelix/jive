@@ -11,7 +11,6 @@
 
 #include "jive/time_value.h"
 
-#include <cmath>
 #include <iomanip>
 #include <cstring>
 
@@ -167,7 +166,7 @@ timeval TimeValue::GetAsTimeval() const
     using suseconds_t = long;
 #endif
 
-    tv.tv_usec = static_cast<suseconds_t>(std::round(
+    tv.tv_usec = static_cast<suseconds_t>(ROUND(
         remainderNanoseconds / nanosecondsPerMicrosecond));
 
     return tv;
