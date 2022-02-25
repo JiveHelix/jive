@@ -71,7 +71,8 @@ struct FormatSpecifier {};
 template<typename T>
 struct FormatSpecifier<T, 10, std::enable_if_t<std::is_floating_point_v<T>>>
 {
-    static constexpr std::string_view value = "g";
+    // Request alternative form (always uses decimal and shows trailing zeros.
+    static constexpr std::string_view value = "#g";
 };
 
 template<typename T>
@@ -104,7 +105,7 @@ struct FormatSpecifier<
     8,
     std::enable_if_t<std::is_integral_v<T>>>
 {
-    static constexpr std::string_view value = "o";
+    static constexpr std::string_view value = "#o";
 };
 
 template<typename T>
@@ -113,7 +114,7 @@ struct FormatSpecifier<
     16,
     std::enable_if_t<std::is_integral_v<T>>>
 {
-    static constexpr std::string_view value = "X";
+    static constexpr std::string_view value = "#x";
 };
 
 

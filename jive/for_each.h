@@ -24,7 +24,7 @@ template<typename Tuple, typename Function>
 void ForEach(Tuple &&tuple, Function &&function)
 {
     std::apply(
-        [&](auto &&...item)
+        [&](auto &&...item) -> void
         {
             (
                 static_cast<void>(

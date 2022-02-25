@@ -12,7 +12,20 @@
 namespace jive
 {
 
-
+/**
+ ** Creates a format string as static class member value.
+ **
+ ** Uses T and base to select the correct length modifier and format specifier.
+ ** 
+ ** Width and Precision placeholders are included, so width and precision must
+ ** be included as the first two arguments when using this format string.
+ **
+ ** Examples:
+ ** AutoFormat<double, 10>::value is "%*.*l#g"
+ ** AutoFormat<float, 10>::value is "%*.*#g"
+ ** AutoFormat<uint16_t, 16>::value is "%*.*hX"
+ **
+ **/
 template<typename T, int base>
 struct AutoFormat
 {

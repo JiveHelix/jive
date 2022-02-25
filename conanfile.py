@@ -3,7 +3,7 @@ from conans import ConanFile, CMake
 
 class JiveConan(ConanFile):
     name = "jive"
-    version = "1.0.5"
+    version = "1.0.6"
 
     scm = {
         "type": "git",
@@ -11,14 +11,12 @@ class JiveConan(ConanFile):
         "revision": "auto",
         "submodule": "recursive"}
 
-    # Optional metadata
     license = "MIT"
     author = "Jive Helix (jivehelix@gmail.com)"
     url = "https://github.com/JiveHelix/jive"
     description = "Miscellaneous tools for C++ development."
     topics = ("utilities", "C++")
 
-    # Binary configuration
     settings = "os", "compiler", "build_type", "arch"
 
     generators = "cmake"

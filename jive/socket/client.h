@@ -74,7 +74,7 @@ public:
                     "Socket timed out");
             }
 
-            receivedCount += increment.value();
+            receivedCount += *increment;
         }
     }
 
@@ -95,7 +95,7 @@ public:
                     "Socket timed out");
             }
 
-            sentCount += increment.value();
+            sentCount += *increment;
         }
     }
 
@@ -169,7 +169,7 @@ private:
                 "Socket timed out");
         }
 
-        buffer.SetWriteCount(receivedCount.value());
+        buffer.SetWriteCount(*receivedCount);
     }
 
 private:
