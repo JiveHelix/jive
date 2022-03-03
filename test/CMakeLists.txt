@@ -4,7 +4,6 @@ target_link_libraries(jive_catch_main PRIVATE project_options)
 
 add_executable(
     jive_tests
-    angles_tests.cpp
     binary_io_tests.cpp
     buffer_tests.cpp
     circular_index_tests.cpp
