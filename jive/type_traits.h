@@ -12,6 +12,7 @@
 #pragma once
 
 #include <type_traits>
+#include <bitset>
 
 
 namespace jive
@@ -86,6 +87,13 @@ struct IsKeyValueContainer<
         >
     >
 >: std::true_type {};
+
+
+template<typename T>
+struct IsBitset : std::false_type {};
+
+template<size_t N>
+struct IsBitset<std::bitset<N>> : std::true_type {};
 
 
 } // end namespace jive
