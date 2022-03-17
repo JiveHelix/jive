@@ -36,23 +36,10 @@ void ApplyElements(Tuple &&tuple, Function &&function)
 }
 
 
-template<typename First, typename Second>
-constexpr auto Zip(First &&firsts, Second &&seconds)
+template<typename First, typename Second, size_t ... I>
+constexpr auto Zip(First &&firsts, Second &&seconds, std::index_sequence<I...>)
 {
-    return std::apply(
-        [&](auto &&...first)
-        {
-            return std::apply(
-                [&](auto &&...second)
-                {
-                    return std::tuple(
-                        std::pair(
-                            std::forward<decltype(first)>(first),
-                            std::forward<decltype(second)>(second))...);
-                },
-                std::forward<Second>(seconds));
-        },
-        std::forward<First>(firsts));
+    return std::tuple(std::pair(std::get<I>(firsts), std::get<I>(seconds))...);
 }
 
 
@@ -75,11 +62,14 @@ void ZipApply(
         std::tuple_size_v<std::remove_reference_t<First>>
             == std::tuple_size_v<std::remove_reference_t<Second>>,
         "Tuples must have the same length.");
+    
+    constexpr auto size = std::tuple_size_v<std::remove_reference_t<First>>;
 
     ApplyElements(
         Zip(
             std::forward<First>(first),
-            std::forward<Second>(second)),
+            std::forward<Second>(second),
+            std::make_index_sequence<size>{}),
         std::forward<Function>(function));
 }
 
