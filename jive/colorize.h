@@ -16,6 +16,9 @@
 #include <iostream>
 #include <cstdio>
 
+#ifndef DISABLE_JIVE_COLORIZE
+
+// Enable colorize
 
 #ifdef _WIN32
 
@@ -33,6 +36,15 @@
     inline bool IsTerminal()
     {
         return (1 == isatty(STDOUT_FILENO));
+    }
+
+#endif
+
+#else // DISABLE_JIVE_COLORIZE
+
+    inline bool IsTerminal()
+    {
+        return false;
     }
 
 #endif
