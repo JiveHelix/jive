@@ -39,11 +39,11 @@ static const size_t ROW_WIDTH = 16;
 
 inline
 void GetPrintable(
-    const void * const voidData,
+    const void *voidData,
     size_t byteCount,
     char *outPrintable)
 {
-    const char * const data = reinterpret_cast<const char * const>(voidData);
+    const char *data = reinterpret_cast<const char *>(voidData);
     for (size_t i = 0; i < byteCount; ++i) 
     {
         if (isprint(data[i]))
@@ -63,7 +63,7 @@ void GetPrintable(
 inline
 std::ostream & PrintHex(
     std::ostream &outputStream,
-    const void * const voidData,
+    const void *voidData,
     size_t byteCount)
 {
     PreserveFormat format(outputStream);

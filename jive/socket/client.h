@@ -169,6 +169,12 @@ private:
                 "Socket timed out");
         }
 
+        if (0 == *receivedCount)
+        {
+            // Remote disconnected
+            throw SocketDisconnected();
+        }
+
         buffer.SetWriteCount(*receivedCount);
     }
 

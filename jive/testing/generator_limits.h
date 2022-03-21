@@ -1,3 +1,14 @@
+/**
+  * @file generator_limits.h
+  * 
+  * @brief Helper for catch2 generators.
+  * 
+  * @author Jive Helix (jivehelix@gmail.com)
+  * @date 28 Mar 2022
+  * @copyright Jive Helix
+  * Licensed under the MIT license. See LICENSE file.
+**/
+
 #pragma once
 
 #include "jive/testing/cast_limits.h"

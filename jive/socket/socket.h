@@ -250,7 +250,7 @@ public:
 
             throw SocketError(
                 SystemError(errno),
-                "Failed to receieve data from socket");
+                "Failed to send data to socket");
         }
         
         return {static_cast<size_t>(sentCount)};
@@ -272,6 +272,34 @@ public:
                 SystemError(errno),
                 "Failed to set socket option");
         }
+    }
+
+    template<typename T>
+    T GetSocketOption(int optionName)
+    {
+        T result;
+        socklen_t optionSize = sizeof(T);
+
+        int socketResult = getsockopt(
+            this->handle_,
+            SOL_SOCKET,
+            optionName,
+            &result,
+            &optionSize);
+
+        if (socketResult == -1)
+        {
+            throw SocketError(
+                SystemError(errno),
+                "Failed to get socket option");
+        }
+
+        if (optionSize != sizeof(T))
+        {
+            throw std::runtime_error("Result size mismatch");
+        }
+
+        return result;
     }
 
     void SetReceiveTimeOut(long seconds, suseconds_t microseconds)

@@ -3,6 +3,7 @@
   * @copyright 2020 Jive Helix
   * Licensed under the MIT license. See LICENSE file.
   */
+
 #pragma once
 
 #include <string_view>
