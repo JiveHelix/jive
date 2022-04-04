@@ -3,7 +3,7 @@ from conans import ConanFile, CMake
 
 class JiveConan(ConanFile):
     name = "jive"
-    version = "1.0.11"
+    version = "1.0.12"
 
     scm = {
         "type": "git",
@@ -23,9 +23,12 @@ class JiveConan(ConanFile):
 
     options = {
         "CMAKE_TRY_COMPILE_TARGET_TYPE":
-            ["EXECUTABLE", "STATIC_LIBRARY", None]}
+            ["EXECUTABLE", "STATIC_LIBRARY", None],
+        "fPIC": [True, False]}
 
-    default_options = {"CMAKE_TRY_COMPILE_TARGET_TYPE": None}
+    default_options = {
+        "CMAKE_TRY_COMPILE_TARGET_TYPE": None,
+        "fPIC": False}
 
     # Default behavior is to copy all sources to the build folder.
     # Our CMake configuration requires out-of-source builds.
@@ -37,6 +40,9 @@ class JiveConan(ConanFile):
         if (self.options.CMAKE_TRY_COMPILE_TARGET_TYPE):
             cmake.definitions["CMAKE_TRY_COMPILE_TARGET_TYPE"] = \
                 self.options.CMAKE_TRY_COMPILE_TARGET_TYPE
+
+        if (self.options.fPIC):
+            cmake.definitions["fPIC"] = self.options.fPIC
 
         cmake.configure()
         cmake.build()

@@ -1,5 +1,9 @@
 add_library(jive)
 
+if (${fPIC})
+    set_property(TARGET jive PROPERTY POSITION_INDEPENDENT_CODE ON)
+endif ()
+
 # Projects that include this project must #include "jive/<header-name>"
 target_include_directories(jive PUBLIC ${PROJECT_SOURCE_DIR})
 
