@@ -49,7 +49,7 @@ public:
                     this->fileName_, ":",
                     this->functionName_, ":",
                     this->lineNumber_ , " ",
-                    blockTime.GetAsDouble(), " ",
+                    blockTime.GetAsSeconds<double>(), " ",
                     this->message_);
             }
             else
@@ -58,7 +58,7 @@ public:
                     this->fileName_, ":",
                     this->functionName_, ":",
                     this->lineNumber_ , " ",
-                    blockTime.GetAsDouble());
+                    blockTime.GetAsSeconds<double>());
             }
         }
     }

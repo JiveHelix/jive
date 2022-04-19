@@ -66,7 +66,7 @@ public:
         }
     }
 
-    std::string ToString()
+    std::string ToString() const
     {
         return jive::FastFormatter<16>(
             "%hhu.%hhu.%hhu",
