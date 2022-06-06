@@ -90,8 +90,10 @@ public:
         >
     >
     explicit TimeValue(T seconds)
+        :
+        nanoseconds_(Seconds<T>(seconds))
     {
-        this->nanoseconds_ = Seconds<T>(seconds);
+
     }
 
     TimeValue & SetToNow();
