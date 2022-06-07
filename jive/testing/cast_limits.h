@@ -8,9 +8,44 @@
 
 #include <limits>
 
-template<typename T, typename Target = T>
+template<typename T, typename = void>
+struct TargetHelper
+{
+    using Type = T;
+};
+
+template<typename T>
+struct TargetHelper
+<
+    T,
+    std::enable_if_t
+    <
+        sizeof(T) == 1 && std::is_signed_v<T>
+    >
+>
+{
+    using Type = int16_t;
+};
+
+template<typename T>
+struct TargetHelper
+<
+    T,
+    std::enable_if_t
+    <
+        sizeof(T) == 1 && !std::is_signed_v<T>
+    >
+>
+{
+    using Type = uint16_t;
+};
+
+
+template<typename T, typename Target_ = T>
 struct CastLimits
 {
+    using Target = typename TargetHelper<Target_>::Type;
+
     static constexpr Target Min()
     {
         return static_cast<Target>(std::numeric_limits<T>::min());
