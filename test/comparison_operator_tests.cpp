@@ -136,7 +136,13 @@ TEST_CASE("declares member equal to", "[comparison_operators]")
     STATIC_REQUIRE(!jive::HasLess<TypeUnderTest>::value);
     STATIC_REQUIRE(!jive::HasGreater<TypeUnderTest>::value);
     STATIC_REQUIRE(jive::HasEqualTo<TypeUnderTest>::value);
+#if __cplusplus < 202002L
     STATIC_REQUIRE(!jive::HasNotEqualTo<TypeUnderTest>::value);
+#else
+    // As of c++20, declaring operator== causes the implicit generation of
+    // operator!=
+    STATIC_REQUIRE(jive::HasNotEqualTo<TypeUnderTest>::value);
+#endif
     STATIC_REQUIRE(!jive::HasLessEqual<TypeUnderTest>::value);
     STATIC_REQUIRE(!jive::HasGreaterEqual<TypeUnderTest>::value);
 

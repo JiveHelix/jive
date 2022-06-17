@@ -19,7 +19,8 @@ add_executable(
     time_value_tests.cpp
     to_integer_tests.cpp
     to_float_tests.cpp
-    comparison_operator_tests.cpp)
+    comparison_operator_tests.cpp
+    revision_tests.cpp)
 
 target_link_libraries(
     jive_tests
@@ -28,5 +29,7 @@ target_link_libraries(
     project_options
     jive_catch_main
     jive)
+
+add_version_header(jive_tests)
 
 add_test(NAME JiveTests COMMAND ${CMAKE_BINARY_DIR}/bin/jive_tests)
