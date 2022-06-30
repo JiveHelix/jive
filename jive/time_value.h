@@ -19,6 +19,8 @@
 
 #ifdef _WIN32
 #include <winsock.h> // timeval
+#else
+#include <sys/time.h>
 #endif
 
 #include "jive/create_exception.h"
