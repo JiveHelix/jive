@@ -13,35 +13,45 @@ namespace jive
 {
 
 template<typename T>
-std::ostream & StreamArgs(std::ostream &outputStream, const T &arg)
+std::ostream & ToStream(std::ostream &outputStream, const T &arg)
 {
+    if constexpr (std::is_pointer_v<T>)
+    {
+        assert(arg != nullptr);
+    }
+
     return outputStream << arg << '\n';
 }
 
 template<typename T, typename... Args>
-std::ostream & StreamArgs(
+std::ostream & ToStream(
     std::ostream &outputStream,
     const T &arg,
     const Args&... args)
 {
+    if constexpr (std::is_pointer_v<T>)
+    {
+        assert(arg != nullptr);
+    }
+
     outputStream << arg;
-    return StreamArgs(outputStream, args...);
+    return ToStream(outputStream, args...);
 }
 
 template<typename T>
-std::ostream & StreamArgsFlush(std::ostream &outputStream, const T &arg)
+std::ostream & ToStreamFlush(std::ostream &outputStream, const T &arg)
 {
     return outputStream << arg << std::endl;
 }
 
 template<typename T, typename... Args>
-std::ostream & StreamArgsFlush(
+std::ostream & ToStreamFlush(
     std::ostream &outputStream,
     const T &arg,
     const Args&... args)
 {
     outputStream << arg;
-    return StreamArgsFlush(outputStream, args...);
+    return ToStreamFlush(outputStream, args...);
 }
 
 } // end namespace jive

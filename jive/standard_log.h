@@ -16,7 +16,7 @@
  **/
 
 #include <iostream>
-#include "jive/stream_args.h"
+#include "jive/to_stream.h"
 #include "jive/time_value.h"
 
 #ifndef TIME_STAMP_PRECISION
@@ -24,14 +24,14 @@
 #endif
 
 #define STANDARD_LOG(logName, ...) \
-    jive::StreamArgs( \
+    jive::ToStream( \
         std::cout, \
         jive::TimeValue::GetNow().GetAsIso8601Precise(TIME_STAMP_PRECISION), \
         " [" logName "] ", \
         ##__VA_ARGS__)
 
 #define DEBUG_LOG(logName, ...) \
-    jive::StreamArgsFlush( \
+    jive::ToStreamFlush( \
         std::cout, \
         jive::TimeValue::GetNow().GetAsIso8601Precise(TIME_STAMP_PRECISION), \
         " [" logName "] ", \
