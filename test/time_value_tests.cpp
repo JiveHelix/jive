@@ -10,7 +10,7 @@
 #include "jive/time_value.h"
 #include "jive/power.h"
 #include "jive/testing/duration_limits.h"
-#include "jive/testing/random_type.h"
+#include "jive/testing/generator_limits.h"
 
 
 template<typename T, typename Enable = void>
@@ -44,7 +44,7 @@ TEMPLATE_PRODUCT_TEST_CASE(
 #pragma GCC diagnostic pop
 #endif
     using rep = typename TestType::rep;
-    using bounds = DurationLimits<TestType, typename RandomType<rep>::type>;
+    using bounds = DurationLimits<TestType, GeneratorType<rep>>;
 
     auto value = static_cast<rep>(
         GENERATE(take( 100, random(bounds::lower, bounds::upper))));
@@ -78,7 +78,7 @@ TEMPLATE_PRODUCT_TEST_CASE(
 #pragma GCC diagnostic pop
 #endif
     using rep = typename TestType::rep;
-    using bounds = DurationLimits<TestType, typename RandomType<rep>::type>;
+    using bounds = DurationLimits<TestType, GeneratorType<rep>>;
 
     using CheckDuration = std::chrono::duration<int64_t, std::nano>;
 

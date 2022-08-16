@@ -13,7 +13,7 @@
 #include "jive/binary_io.h"
 #include "jive/power.h"
 #include "jive/testing/gettys_words.h"
-#include "jive/testing/random_type.h"
+#include "jive/testing/generator_limits.h"
 
 
 
@@ -34,7 +34,7 @@ TEMPLATE_TEST_CASE(
         GENERATE(
             take(
                 100,
-                random<typename RandomType<TestType>::type>(
+                random<GeneratorType<TestType>>(
                     std::numeric_limits<TestType>::min(),
                     std::numeric_limits<TestType>::max()))));
 

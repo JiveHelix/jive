@@ -7,6 +7,7 @@
 #include <catch2/catch.hpp>
 
 #include "jive/to_float.h"
+#include "jive/precise_string.h"
 #include <string_view>
 
 #define STRING_EXPAND(token) #token
@@ -109,9 +110,9 @@ TEMPLATE_TEST_CASE(
     double,
     long double)
 {
-    using type = TestType;
-    auto converted = jive::ToFloat<type>(Values<type>::positiveInRangeInput);
-    REQUIRE(converted == Values<type>::positiveInRangeExpected);
+    using Type = TestType;
+    auto converted = jive::ToFloat<Type>(Values<Type>::positiveInRangeInput);
+    REQUIRE(converted == Values<Type>::positiveInRangeExpected);
 }
 
 
@@ -121,9 +122,9 @@ TEMPLATE_TEST_CASE(
     double,
     long double)
 {
-    using type = TestType;
-    auto converted = jive::ToFloat<type>(Values<type>::negativeInRangeInput);
-    REQUIRE(converted == Values<type>::negativeInRangeExpected);
+    using Type = TestType;
+    auto converted = jive::ToFloat<Type>(Values<Type>::negativeInRangeInput);
+    REQUIRE(converted == Values<Type>::negativeInRangeExpected);
 }
 
 
@@ -133,9 +134,10 @@ TEMPLATE_TEST_CASE(
     double,
     long double)
 {
-    using type = TestType;
+    using Type = TestType;
+
     REQUIRE_THROWS_AS(
-        jive::ToFloat<type>(Values<type>::positiveOutOfRangeInput),
+        jive::ToFloat<Type>(Values<Type>::positiveOutOfRangeInput),
         std::out_of_range);
 }
 
@@ -146,9 +148,10 @@ TEMPLATE_TEST_CASE(
     double,
     long double)
 {
-    using type = TestType;
+    using Type = TestType;
+
     REQUIRE_THROWS_AS(
-        jive::ToFloat<type>(Values<type>::negativeOutOfRangeInput),
+        jive::ToFloat<Type>(Values<Type>::negativeOutOfRangeInput),
         std::out_of_range);
 }
 
@@ -159,8 +162,21 @@ TEMPLATE_TEST_CASE(
     double,
     long double)
 {
-    using type = TestType;
+    using Type = TestType;
+
     REQUIRE_THROWS_AS(
-        jive::ToFloat<type>(Values<type>::smallOutOfRangeInput),
+        jive::ToFloat<Type>(Values<Type>::smallOutOfRangeInput),
         std::out_of_range);
+}
+
+
+TEST_CASE("Convert string with appended non-digits", "[to_float]")
+{
+    auto value = GENERATE(take(10, random(-1e30, 1e30)));
+
+    auto asString = jive::PreciseString(value);
+    auto appended = asString + "x";
+    auto recovered = jive::ToFloat<double>(appended);
+
+    REQUIRE(recovered == Approx(value));
 }

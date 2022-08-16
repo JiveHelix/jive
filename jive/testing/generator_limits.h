@@ -11,62 +11,84 @@
 
 #pragma once
 
-#include "jive/testing/cast_limits.h"
-#include "jive/testing/random_type.h"
+
+#include <type_traits>
 
 
 template<typename T, typename Enable = void>
-struct GeneratorType {};
-
-template<typename T>
-struct GeneratorType<T, std::enable_if_t<std::is_floating_point_v<T>>>
+struct IntegralGeneratorType_
 {
-    using type = T;
 };
 
 template<typename T>
-struct GeneratorType<T, std::enable_if_t<std::is_integral_v<T>>>
+struct IntegralGeneratorType_<T, std::enable_if_t<std::is_signed_v<T>>>
 {
-    using type = typename RandomType<T>::type;
+    static_assert(std::is_integral_v<T>);
+    using Type = int64_t;
 };
+
+template<typename T>
+struct IntegralGeneratorType_<T, std::enable_if_t<std::is_unsigned_v<T>>>
+{
+    static_assert(std::is_integral_v<T>);
+    using Type = uint64_t;
+};
+
+
+template<typename T>
+using IntegralGeneratorType = typename IntegralGeneratorType_<T>::Type;
 
 
 template<typename T, typename Enable = void>
-struct GeneratorLimits {};
+struct GeneratorType_ {};
 
 template<typename T>
-struct GeneratorLimits<T, std::enable_if_t<std::is_integral_v<T>>>
+struct GeneratorType_<T, std::enable_if_t<std::is_floating_point_v<T>>>
 {
-    using Target = typename GeneratorType<T>::type;
+    using Type = T;
+};
 
-    static constexpr Target Lowest()
-    {
-        return static_cast<Target>(std::numeric_limits<T>::lowest());
-    }
-
-    static constexpr Target Max()
-    {
-        return static_cast<Target>(std::numeric_limits<T>::max());
-    }
+template<typename T>
+struct GeneratorType_<T, std::enable_if_t<std::is_integral_v<T>>>
+{
+    using Type = IntegralGeneratorType<T>;
 };
 
 
 template<typename T>
-struct GeneratorLimits<T, std::enable_if_t<std::is_floating_point_v<T>>>
+using GeneratorType = typename GeneratorType_<T>::Type;
+
+
+template<typename T, typename Target_ = T>
+struct GeneratorLimits
 {
-    using Target = typename GeneratorType<T>::type;
+    using Target = GeneratorType<Target_>;
 
     static constexpr Target Lowest()
     {
-        return static_cast<Target>(
+        if constexpr (std::is_floating_point_v<T>)
+        {
+            return static_cast<Target>(
                 std::numeric_limits<T>::lowest()
                 / static_cast<T>(2));
+        }
+        else
+        {
+            return static_cast<Target>(std::numeric_limits<T>::lowest());
+        }
     }
 
     static constexpr Target Max()
     {
-        return static_cast<Target>(
+        if constexpr (std::is_floating_point_v<T>)
+        {
+            return static_cast<Target>(
                 std::numeric_limits<T>::max()
                 / static_cast<T>(2));
+        }
+        else
+        {
+            return static_cast<Target>(std::numeric_limits<T>::max());
+        }
     }
 };

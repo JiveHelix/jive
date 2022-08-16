@@ -6,7 +6,6 @@
 #include <catch2/catch.hpp>
 
 #include "jive/multiply_rounded.h"
-#include "jive/testing/cast_limits.h"
 #include "jive/testing/generator_limits.h"
 
 using namespace Catch::literals;
@@ -35,8 +34,8 @@ TEMPLATE_TEST_CASE(
         take(
             10,
             random(
-                CastLimits<TestType, double>::Min(),
-                CastLimits<TestType, double>::Max())));
+                GeneratorLimits<TestType, double>::Lowest(),
+                GeneratorLimits<TestType, double>::Max())));
 
     STATIC_REQUIRE(std::is_same_v<decltype(value), TestType>);
     STATIC_REQUIRE(std::is_same_v<decltype(scale), double>);
@@ -63,15 +62,15 @@ TEMPLATE_TEST_CASE(
         take(
             10,
             random(
-                CastLimits<TestType>::Min(),
-                CastLimits<TestType>::Max())));
+                GeneratorLimits<TestType>::Lowest(),
+                GeneratorLimits<TestType>::Max())));
 
     auto scale = GENERATE(
         take(
             10,
             random(
-                CastLimits<TestType, double>::Min(),
-                CastLimits<TestType, double>::Max())));
+                GeneratorLimits<TestType, double>::Lowest(),
+                GeneratorLimits<TestType, double>::Max())));
 
     STATIC_REQUIRE(std::is_same_v<decltype(value), TestType>);
     STATIC_REQUIRE(std::is_same_v<decltype(scale), double>);
@@ -113,7 +112,7 @@ TEMPLATE_TEST_CASE(
     // Choose a scale that is expected to cause overflow
     static constexpr auto scaleFactor = 1.5;
     auto valueAsDouble = static_cast<double>(value);
-    auto maximumValue = CastLimits<TestType, double>::Max();
+    auto maximumValue = GeneratorLimits<TestType, double>::Max();
     auto scaleToCauseOverflow = (maximumValue * scaleFactor) / valueAsDouble;
 
     REQUIRE_THROWS_AS(
