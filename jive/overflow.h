@@ -13,6 +13,7 @@
 
 #include <type_traits>
 #include <cmath>
+#include "jive/constexpr_shim.h"
 
 
 namespace jive
@@ -57,6 +58,8 @@ WillOverflow(Source value)
 }
 
 
+CONSTEXPR_SHIM_PUSH
+
 template<typename Target, typename Source>
 bool CheckConvertible(Source value)
 {
@@ -100,8 +103,12 @@ bool CheckConvertible(Source value)
             // Consider all integral types convertible to floats.
             return true;
         }
+
     }
+
 }
+
+CONSTEXPR_SHIM_POP
 
 
 } // namespace jive
