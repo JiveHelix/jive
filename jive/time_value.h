@@ -18,7 +18,10 @@
 #include <ctime>
 
 #ifdef _WIN32
-#include <winsock.h> // timeval
+// If winsock.h is included before winsock2.h, compiler errors abound.
+// Make winsock2.h the default to save us from Microsoft's poor header hygiene.
+// https://stackoverflow.com/a/9168850/15751056
+#include <winsock2.h> // timeval
 #else
 #include <sys/time.h>
 #endif
