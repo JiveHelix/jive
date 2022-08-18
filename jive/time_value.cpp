@@ -211,7 +211,7 @@ void GetUtcTime(struct tm *result, time_t seconds)
 {
 #ifdef _WIN32
     errno_t valid = gmtime_s(result, &seconds);
-    bool success = (valid != 0);
+    bool success = (valid == 0);
 #else
     struct tm * valid = gmtime_r(&seconds, result);
     bool success = (valid != NULL);
