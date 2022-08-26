@@ -16,6 +16,9 @@
 #include <ctime>
 #include <sys/socket.h>
 #include <unistd.h>
+#include <fcntl.h>
+#include <poll.h>
+
 #include "jive/strings.h"
 #include "jive/range.h"
 #include "jive/endian_tools.h"
@@ -26,6 +29,53 @@
 
 namespace jive
 {
+
+
+inline
+bool AddFlag(int handle, int flag)
+{
+    int flags = fcntl(handle, F_GETFL);
+
+    if (-1 == flags)
+    {
+        // Failed to get flags
+        return false;
+    }
+
+    int result = fcntl(handle, F_SETFL, flags | flag);
+
+    if (-1 == result)
+    {
+        // Failed to set flags
+        return false;
+    }
+
+    return true;
+}
+
+inline
+bool RemoveFlag(int handle, int flag)
+{
+    int flags = fcntl(handle, F_GETFL);
+
+    if (-1 == flags)
+    {
+        // Failed to get flags
+        return false;
+    }
+
+    flags &= ~flag;
+
+    int result = fcntl(handle, F_SETFL, flags);
+
+    if (-1 == result)
+    {
+        // Failed to set flags
+        return false;
+    }
+
+    return true;
+}
 
 
 inline
@@ -147,9 +197,21 @@ public:
         return result;
     }
 
-    void Connect(const ServiceAddress &serviceAddress)
+    void Connect(
+        const ServiceAddress &serviceAddress,
+        int timeOutMilliseconds = 2000)
     {
         SocketAddress socketAddress = serviceAddress.GetSocketAddress();
+
+        if (timeOutMilliseconds >= 0)
+        {
+            if (!AddFlag(this->handle_, O_NONBLOCK))
+            {
+                std::cout
+                    << "Failed to make socket non-blocking for connection."
+                    << std::endl;
+            }
+        }
 
         int result = connect(
             this->handle_,
@@ -158,9 +220,59 @@ public:
 
         if (result == -1)
         {
-            throw SocketError(
-                SystemError(errno),
-                "Failed to connect to " + serviceAddress.ToString());
+            if (errno != EINPROGRESS)
+            {
+                throw SocketError(
+                    SystemError(errno),
+                    "Failed to connect to " + serviceAddress.ToString());
+            }
+
+            // The socket is non-blocking.
+            // Use poll to determine when it is ready.
+            struct pollfd events{};
+            events.fd = this->handle_;
+            events.events = POLLOUT | POLLPRI;
+            
+            result = poll(&events, 1, timeOutMilliseconds);
+
+            if (0 == result)
+            {
+                // time out
+                throw SocketError(
+                    SystemError(ETIMEDOUT),
+                    "Connection timed out");
+            }
+            else if (-1 == result)
+            {
+                throw SocketError(
+                    SystemError(errno),
+                    "Failed to connect to " + serviceAddress.ToString());
+            }
+            else
+            {
+                // Check for connection success
+                int socketError = this->GetSocketOption<int>(SO_ERROR);
+
+                if (socketError != 0)
+                {
+                    // An error occurred
+                    throw SocketError(
+                        SystemError(errno),
+                        "Failed to connect to " + serviceAddress.ToString());
+                }
+                // else
+                // Success!
+            }
+        }
+
+        if (timeOutMilliseconds >= 0)
+        {
+            if (!RemoveFlag(this->handle_, O_NONBLOCK))
+            {
+                std::cout
+                    << "Failed to make socket blocking after connection."
+                    << std::endl;
+            }
         }
 
         this->connectedAddress_ = serviceAddress;

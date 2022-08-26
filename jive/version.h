@@ -85,6 +85,21 @@ public:
         return this->GetAsTuple() < other.GetAsTuple();
     }
 
+    bool operator>(const Version &other) const
+    {
+        return this->GetAsTuple() > other.GetAsTuple();
+    }
+
+    bool operator<=(const Version &other) const
+    {
+        return this->GetAsTuple() <= other.GetAsTuple();
+    }
+
+    bool operator>=(const Version &other) const
+    {
+        return this->GetAsTuple() >= other.GetAsTuple();
+    }
+
     bool operator==(const Version &other) const
     {
         return this->GetAsTuple() == other.GetAsTuple();
