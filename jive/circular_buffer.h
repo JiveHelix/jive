@@ -248,6 +248,12 @@ public:
     {
         return static_cast<size_t>(this->readIndex_);
     }
+ 
+    void Remove(size_t count)
+    {
+        // Increment the readIndex_ to consume the data.
+        this->readIndex_ += CircularIndex<N>(count);
+    }
 
     template<typename, size_t>
     friend class AsPointer;
