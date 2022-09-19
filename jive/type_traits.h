@@ -96,4 +96,21 @@ template<size_t N>
 struct IsBitset<std::bitset<N>> : std::true_type {};
 
 
+template<typename T, typename Enable = void>
+struct HasOutputStreamOperator: std::false_type {};
+
+template<typename T>
+struct HasOutputStreamOperator
+<
+    T,
+    std::enable_if_t<
+        std::is_same_v
+        <
+            std::ostream &,
+            decltype(std::cout << std::declval<T>())
+        >
+    >
+>: std::true_type {};
+
+
 } // end namespace jive
