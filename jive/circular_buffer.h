@@ -12,6 +12,10 @@
 #include <iomanip>
 #include "jive/circular_index.h"
 
+#undef min
+#undef max
+
+
 namespace jive
 {
 

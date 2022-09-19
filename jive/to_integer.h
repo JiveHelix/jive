@@ -13,6 +13,9 @@
 
 #pragma once
 
+#undef min
+#undef max
+
 #include <type_traits>
 #include <string_view>
 #include <typeinfo>

@@ -11,6 +11,9 @@
 
 #pragma once
 
+#undef min
+#undef max
+
 #include <limits>
 #include <cmath>
 #include "jive/power.h"

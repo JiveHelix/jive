@@ -11,6 +11,9 @@
 
 #pragma once
 
+#undef min
+#undef max
+
 #include <iostream>
 #include <iomanip>
 #include <ostream>

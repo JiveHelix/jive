@@ -7,6 +7,7 @@
 #pragma once
 
 #undef min
+#undef max
 
 #include <limits>
 #include <chrono>

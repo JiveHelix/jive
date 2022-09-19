@@ -4,6 +4,10 @@
   * Licensed under the MIT license. See LICENSE file.
   */
 
+
+#undef min
+#undef max
+
 #include "jive/numeric_string_compare.h"
 #include <vector>
 #include <algorithm>

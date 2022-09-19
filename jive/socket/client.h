@@ -11,6 +11,8 @@
 
 #pragma once
 
+#undef min
+#undef max
 
 #include "jive/socket/socket.h"
 #include "jive/circular_buffer.h"
