@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include <iostream>
+#include <ostream>
 #include <type_traits>
 #include <bitset>
 
@@ -108,7 +108,8 @@ struct HasOutputStreamOperator
         std::is_same_v
         <
             std::ostream &,
-            decltype(std::cout << std::declval<T>())
+            decltype(
+                std::declval<std::ostream>() << std::declval<T>())
         >
     >
 >: std::true_type {};
