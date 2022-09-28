@@ -42,6 +42,11 @@ struct Zero
     static constexpr std::string_view value = "0";
 };
 
+struct Alternate
+{
+    static constexpr std::string_view value = "#";
+};
+
 } // end namespace flag
 
 
