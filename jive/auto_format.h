@@ -82,7 +82,7 @@ struct AutoFormat
 
 
 template<int base, typename T>
-std::string AutoFormatter(T value, int width = -1 , int precision = -1)
+std::string AutoFormatter(T value, int width = 0 , int precision = -1)
 {
     return Formatter<32>(
         AutoFormat<T, base>::value.data(),
