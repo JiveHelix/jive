@@ -1,7 +1,7 @@
 /**
   * @file cleanup.h
   *
-  * @brief Calls a cleanup function when Cleanup is destructed.
+  * @brief Calls a cleanup function when Cleanup is destroyed.
   *
   * @author Jive Helix jivehelix@gmail.com)
   * @date 02 Mar 2018
