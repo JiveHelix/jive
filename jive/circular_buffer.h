@@ -10,6 +10,7 @@
 #include <type_traits>
 #include <ostream>
 #include <iomanip>
+#include <cstring>
 #include "jive/circular_index.h"
 
 #undef min
