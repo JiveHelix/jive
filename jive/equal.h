@@ -1,8 +1,8 @@
 /**
   * @file equal.h
-  * 
+  *
   * @brief Compare floating point values to within specified precision.
-  * 
+  *
   * @author Jive Helix (jivehelix@gmail.com)
   * @date 10 Aug 2020
   * @copyright Jive Helix
@@ -26,7 +26,7 @@ namespace jive
  ** A value of 1 (the default) uses the epsilon.
  ** Higher values make the comparison less precise,
  ** zero makes the comparison equivalent to '=='.
- ** 
+ **
  ** It has no effect on integer types.
  **/
 template<typename T, size_t imprecision = 1, typename = void>
@@ -51,7 +51,6 @@ struct Equal<T, imprecision, std::enable_if_t<std::is_floating_point_v<T>>>
     bool operator()(T left, T right)
     {
         auto difference = std::abs(left - right);
-                
         auto tolerance = std::abs(left + right) * precision;
 
         // left and right compare equal when the difference is less than the
@@ -59,7 +58,67 @@ struct Equal<T, imprecision, std::enable_if_t<std::is_floating_point_v<T>>>
         return (difference < tolerance)
             || (difference < std::numeric_limits<T>::min());
     }
+
+    bool operator()(T left, T right, T tolerance)
+    {
+        auto difference = std::abs(left - right);
+
+        // left and right compare equal when the difference is less than the
+        // tolerance, or when the difference is subnormal.
+        return (difference < tolerance)
+            || (difference < std::numeric_limits<T>::min());
+    }
 };
+
+
+template<typename T, size_t imprecision = 1>
+class About
+{
+public:
+    explicit About(T value_)
+        :
+        value(value_)
+    {
+
+    }
+
+    bool operator==(T other) const
+    {
+        return jive::Equal<T, imprecision>{}(this->value, other);
+    }
+
+    T value;
+};
+
+
+template<typename T>
+class Roughly: public About<T>
+{
+public:
+    explicit Roughly(T value_, T tolerance_)
+        :
+        About<T>(value_),
+        tolerance(tolerance_)
+    {
+
+    }
+
+    bool operator==(T other) const
+    {
+        return jive::Equal<T>{}(this->value, other, tolerance);
+    }
+
+    T tolerance;
+};
+
+
+template<typename T, size_t imprecision>
+std::ostream & operator<<(
+    std::ostream &output,
+    const About<T, imprecision> &about)
+{
+    return output << about.value;
+}
 
 
 /**
