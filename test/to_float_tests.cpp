@@ -91,7 +91,7 @@ struct Values<long double>
     static constexpr std::string_view negativeInRangeInput =
         STRING(NEGATIVE_IN_RANGE_LONG_DOUBLE);
 
-    static constexpr long double negativeInRangeExpected = 
+    static constexpr long double negativeInRangeExpected =
         MAKE_LITERAL(NEGATIVE_IN_RANGE_LONG_DOUBLE, L);
 
     static constexpr std::string_view positiveOutOfRangeInput = "1.1898e4932";

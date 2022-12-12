@@ -23,13 +23,12 @@ namespace jive
 {
 
 /** @tparam imprecision Scales the unit of least precision.
- ** A value of 1 (the default) uses the epsilon.
- ** Higher values make the comparison less precise,
- ** zero makes the comparison equivalent to '=='.
+ ** A value of 0 (the default) uses the epsilon.
+ ** Higher values make the comparison less precise.
  **
  ** It has no effect on integer types.
  **/
-template<typename T, size_t imprecision = 1, typename = void>
+template<typename T, size_t imprecision = 0, typename = void>
 struct Equal
 {
     // For all non-floating point comparisons.
@@ -46,7 +45,7 @@ template<typename T, size_t imprecision>
 struct Equal<T, imprecision, std::enable_if_t<std::is_floating_point_v<T>>>
 {
     static constexpr auto precision =
-        std::numeric_limits<T>::epsilon() * imprecision;
+        std::numeric_limits<T>::epsilon() * Power<2, imprecision>();
 
     bool operator()(T left, T right)
     {
@@ -71,7 +70,8 @@ struct Equal<T, imprecision, std::enable_if_t<std::is_floating_point_v<T>>>
 };
 
 
-template<typename T, size_t imprecision = 1>
+// Estimates tolerance using the imprecision and the magnitude of the operands.
+template<typename T, size_t imprecision = 0>
 class About
 {
 public:
@@ -91,11 +91,12 @@ public:
 };
 
 
+// Specify the tolerance to use for equality test.
 template<typename T>
 class Roughly: public About<T>
 {
 public:
-    explicit Roughly(T value_, T tolerance_)
+    explicit Roughly(T value_, T tolerance_ = std::numeric_limits<T>::epsilon())
         :
         About<T>(value_),
         tolerance(tolerance_)
@@ -153,7 +154,7 @@ struct DigitsEqual<
     std::enable_if_t<std::is_floating_point_v<T>>
 >
 {
-    static constexpr auto precision = 
+    static constexpr auto precision =
         static_cast<T>(1.0) / static_cast<T>(jive::Power<10, digits>());
 
     bool operator()(T left, T right)

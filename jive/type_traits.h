@@ -40,7 +40,7 @@ struct IsIterable<
 /** If the container defines key_type and mapped_type, it is close enough
  ** to be considered map-like for our purposes.**/
 template<typename T, typename = std::void_t<>>
-struct IsMapLike: public std::false_type {};
+struct IsMapLike: std::false_type {};
 
 template<typename T>
 struct IsMapLike<

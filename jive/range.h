@@ -36,7 +36,7 @@ public:
     {
         return this->value_;
     }
-    
+
     RangeIterator & operator++()
     {
         ++(this->value_);

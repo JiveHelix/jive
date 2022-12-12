@@ -39,7 +39,8 @@ void ApplyElements(Tuple &&tuple, Function &&function)
 template<typename First, typename Second, size_t ... I>
 constexpr auto Zip(First &&firsts, Second &&seconds, std::index_sequence<I...>)
 {
-    return std::tuple(std::pair(std::get<I>(firsts), std::get<I>(seconds))...);
+    return std::make_tuple(
+        std::pair(std::get<I>(firsts), std::get<I>(seconds))...);
 }
 
 
@@ -62,7 +63,7 @@ void ZipApply(
         std::tuple_size_v<std::remove_reference_t<First>>
             == std::tuple_size_v<std::remove_reference_t<Second>>,
         "Tuples must have the same length.");
-    
+
     constexpr auto size = std::tuple_size_v<std::remove_reference_t<First>>;
 
     ApplyElements(
