@@ -55,4 +55,4 @@ class JiveConan(ConanFile):
         self.cpp_info.libs = ["jive"]
 
     def build_requirements(self):
-        self.test_requires("catch2/2.13.8")
+        self.test_requires("catch2/2.13.9")
