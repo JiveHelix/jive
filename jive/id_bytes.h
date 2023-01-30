@@ -13,6 +13,7 @@
 #pragma once
 
 #include <ostream>
+#include <utility>
 
 namespace jive
 {
