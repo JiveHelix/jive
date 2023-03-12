@@ -16,9 +16,30 @@ TEST_CASE("Join paths", "[path]")
 
 TEST_CASE("Split path", "[path]")
 {
-    auto [dirName, baseName] = jive::path::Split("foo/bar/frob.txt");
-    REQUIRE(dirName == "foo/bar");
-    REQUIRE(baseName == "frob.txt");
+    auto [directory, base] = jive::path::Split("foo/bar/frob.txt");
+    REQUIRE(directory == "foo/bar");
+    REQUIRE(base == "frob.txt");
+}
+
+TEST_CASE("Split path with only directory", "[path]")
+{
+    auto [directory, base] = jive::path::Split("foo/bar/");
+    REQUIRE(directory == "foo/bar");
+    REQUIRE(base == "");
+}
+
+TEST_CASE("Split empty path", "[path]")
+{
+    auto [directory, base] = jive::path::Split("");
+    REQUIRE(directory == "");
+    REQUIRE(base == "");
+}
+
+TEST_CASE("Split path with only file", "[path]")
+{
+    auto [directory, base] = jive::path::Split("frob.txt");
+    REQUIRE(directory == "");
+    REQUIRE(base == "frob.txt");
 }
 
 TEST_CASE("Get directory of path", "[path]")
