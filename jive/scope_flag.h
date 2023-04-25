@@ -2,6 +2,7 @@
 
 
 #include <atomic>
+#include <stdexcept>
 
 
 namespace jive
@@ -16,6 +17,13 @@ public:
         :
         flag_(flag)
     {
+#ifndef NDEBUG
+        if (this->flag_)
+        {
+            throw std::logic_error(
+                "flag is already set. Did you intend to use CountFlag?");
+        }
+#endif
         this->flag_ = true;
     }
 

@@ -54,13 +54,13 @@ struct Alternate
  ** Creates a format string as static class member value.
  **
  ** Uses T and base to select the correct length modifier and format specifier.
- ** 
+ **
  ** Width and Precision placeholders are included, so width and precision must
  ** be included as the first two arguments when using this format string.
  **
  ** Examples:
- ** AutoFormat<double, 10>::value is "%*.*l#g"
- ** AutoFormat<float, 10>::value is "%*.*#g"
+ ** AutoFormat<double, 10>::value is "%#*.*lg"
+ ** AutoFormat<float, 10>::value is "%#*.*g"
  ** AutoFormat<uint16_t, 16>::value is "%*.*hX"
  **
  **/
@@ -69,6 +69,7 @@ struct AutoFormat
 {
     static constexpr std::string_view percent = "%";
     static constexpr std::string_view widthAndPrecision = "*.*";
+
     static constexpr std::string_view value =
         jive::StaticJoin
         <
@@ -77,6 +78,42 @@ struct AutoFormat
             widthAndPrecision,
             detail::LengthModifier<T>::value,
             detail::FormatSpecifier<T, base>::value
+        >::value;
+};
+
+
+template<typename T, int base, typename Flag = flag::None>
+struct FixedFormat
+{
+    static constexpr std::string_view percent = "%";
+    static constexpr std::string_view widthAndPrecision = "*.*";
+
+    static constexpr std::string_view value =
+        jive::StaticJoin
+        <
+            percent,
+            Flag::value,
+            widthAndPrecision,
+            detail::LengthModifier<T>::value,
+            detail::FixedSpecifier<T, base>::value
+        >::value;
+};
+
+
+template<typename T, int base, typename Flag = flag::None>
+struct ScientificFormat
+{
+    static constexpr std::string_view percent = "%";
+    static constexpr std::string_view widthAndPrecision = "*.*";
+
+    static constexpr std::string_view value =
+        jive::StaticJoin
+        <
+            percent,
+            Flag::value,
+            widthAndPrecision,
+            detail::LengthModifier<T>::value,
+            detail::ScientificSpecifier<T, base>::value
         >::value;
 };
 

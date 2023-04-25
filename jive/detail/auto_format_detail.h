@@ -117,6 +117,33 @@ struct FormatSpecifier<
 };
 
 
-} // end namespace jive
+template<typename T, int base, typename Enable = void>
+struct FixedSpecifier
+{
+    static constexpr std::string_view value =
+        FormatSpecifier<T, base>::value;
+};
+
+template<typename T>
+struct FixedSpecifier<T, 10, std::enable_if_t<std::is_floating_point_v<T>>>
+{
+    static constexpr std::string_view value = "f";
+};
+
+template<typename T, int base, typename Enable = void>
+struct ScientificSpecifier
+{
+    static constexpr std::string_view value =
+        FormatSpecifier<T, base>::value;
+};
+
+template<typename T>
+struct ScientificSpecifier<T, 10, std::enable_if_t<std::is_floating_point_v<T>>>
+{
+    static constexpr std::string_view value = "e";
+};
+
 
 } // end namespace detail
+
+} // end namespace jive

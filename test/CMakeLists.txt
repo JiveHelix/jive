@@ -8,12 +8,14 @@ add_executable(
     buffer_tests.cpp
     circular_index_tests.cpp
     create_exception_tests.cpp
+    format_tests.cpp
     id_bytes_tests.cpp
     list_directory_tests.cpp
     multiply_rounded_tests.cpp
     path_tests.cpp
     power_tests.cpp
     precise_string_tests.cpp
+    scope_flag_tests.cpp
     socket_tests.cpp
     strings_tests.cpp
     time_value_tests.cpp
