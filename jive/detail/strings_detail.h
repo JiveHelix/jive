@@ -46,6 +46,7 @@ ContainerT SplitToContainer(
 {
     std::string::size_type position = 0;
     size_t tokenSize = GetTokenSize(token);
+
     if (tokenSize == 0)
     {
         throw std::invalid_argument("token must have non-zero length.");
@@ -53,9 +54,11 @@ ContainerT SplitToContainer(
 
     ContainerT result;
     std::string::size_type tokenIndex;
+
     for (int i = 0; i != limit; i++)
     {
         tokenIndex = input.find(token, position);
+
         if (tokenIndex == std::string::npos)
         {
             break;

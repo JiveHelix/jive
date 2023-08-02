@@ -76,7 +76,7 @@ public:
 
     }
 
-    template<typename T, long N, long D>
+    template<typename T, std::intmax_t N, std::intmax_t D>
     explicit TimeValue(
         std::chrono::duration<T, std::ratio<N, D>> duration)
         :

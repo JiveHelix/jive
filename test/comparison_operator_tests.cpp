@@ -53,19 +53,19 @@ TEST_CASE("No operators declared", "[comparison_operators]")
 {
     using TypeUnderTest = NoOperators;
 
-    STATIC_REQUIRE(!jive::HasLess<TypeUnderTest>::value);
-    STATIC_REQUIRE(!jive::HasGreater<TypeUnderTest>::value);
-    STATIC_REQUIRE(!jive::HasEqualTo<TypeUnderTest>::value);
-    STATIC_REQUIRE(!jive::HasNotEqualTo<TypeUnderTest>::value);
-    STATIC_REQUIRE(!jive::HasLessEqual<TypeUnderTest>::value);
-    STATIC_REQUIRE(!jive::HasGreaterEqual<TypeUnderTest>::value);
+    STATIC_REQUIRE(!jive::HasLess<TypeUnderTest>);
+    STATIC_REQUIRE(!jive::HasGreater<TypeUnderTest>);
+    STATIC_REQUIRE(!jive::HasEqualTo<TypeUnderTest>);
+    STATIC_REQUIRE(!jive::HasNotEqualTo<TypeUnderTest>);
+    STATIC_REQUIRE(!jive::HasLessEqual<TypeUnderTest>);
+    STATIC_REQUIRE(!jive::HasGreaterEqual<TypeUnderTest>);
 
-    STATIC_REQUIRE(!jive::HasMemberLess<TypeUnderTest>::value);
-    STATIC_REQUIRE(!jive::HasMemberGreater<TypeUnderTest>::value);
-    STATIC_REQUIRE(!jive::HasMemberEqualTo<TypeUnderTest>::value);
-    STATIC_REQUIRE(!jive::HasMemberNotEqualTo<TypeUnderTest>::value);
-    STATIC_REQUIRE(!jive::HasMemberLessEqual<TypeUnderTest>::value);
-    STATIC_REQUIRE(!jive::HasMemberGreaterEqual<TypeUnderTest>::value);
+    STATIC_REQUIRE(!jive::HasMemberLess<TypeUnderTest>);
+    STATIC_REQUIRE(!jive::HasMemberGreater<TypeUnderTest>);
+    STATIC_REQUIRE(!jive::HasMemberEqualTo<TypeUnderTest>);
+    STATIC_REQUIRE(!jive::HasMemberNotEqualTo<TypeUnderTest>);
+    STATIC_REQUIRE(!jive::HasMemberLessEqual<TypeUnderTest>);
+    STATIC_REQUIRE(!jive::HasMemberGreaterEqual<TypeUnderTest>);
 }
 
 
@@ -73,19 +73,19 @@ TEST_CASE("float has comparisons but not as members", "[comparison_operators]")
 {
     using TypeUnderTest = float;
 
-    STATIC_REQUIRE(jive::HasLess<TypeUnderTest>::value);
-    STATIC_REQUIRE(jive::HasGreater<TypeUnderTest>::value);
-    STATIC_REQUIRE(jive::HasEqualTo<TypeUnderTest>::value);
-    STATIC_REQUIRE(jive::HasNotEqualTo<TypeUnderTest>::value);
-    STATIC_REQUIRE(jive::HasLessEqual<TypeUnderTest>::value);
-    STATIC_REQUIRE(jive::HasGreaterEqual<TypeUnderTest>::value);
+    STATIC_REQUIRE(jive::HasLess<TypeUnderTest>);
+    STATIC_REQUIRE(jive::HasGreater<TypeUnderTest>);
+    STATIC_REQUIRE(jive::HasEqualTo<TypeUnderTest>);
+    STATIC_REQUIRE(jive::HasNotEqualTo<TypeUnderTest>);
+    STATIC_REQUIRE(jive::HasLessEqual<TypeUnderTest>);
+    STATIC_REQUIRE(jive::HasGreaterEqual<TypeUnderTest>);
 
-    STATIC_REQUIRE(!jive::HasMemberLess<TypeUnderTest>::value);
-    STATIC_REQUIRE(!jive::HasMemberGreater<TypeUnderTest>::value);
-    STATIC_REQUIRE(!jive::HasMemberEqualTo<TypeUnderTest>::value);
-    STATIC_REQUIRE(!jive::HasMemberNotEqualTo<TypeUnderTest>::value);
-    STATIC_REQUIRE(!jive::HasMemberLessEqual<TypeUnderTest>::value);
-    STATIC_REQUIRE(!jive::HasMemberGreaterEqual<TypeUnderTest>::value);
+    STATIC_REQUIRE(!jive::HasMemberLess<TypeUnderTest>);
+    STATIC_REQUIRE(!jive::HasMemberGreater<TypeUnderTest>);
+    STATIC_REQUIRE(!jive::HasMemberEqualTo<TypeUnderTest>);
+    STATIC_REQUIRE(!jive::HasMemberNotEqualTo<TypeUnderTest>);
+    STATIC_REQUIRE(!jive::HasMemberLessEqual<TypeUnderTest>);
+    STATIC_REQUIRE(!jive::HasMemberGreaterEqual<TypeUnderTest>);
 }
 
 
@@ -93,19 +93,19 @@ TEST_CASE("declares member less", "[comparison_operators]")
 {
     using TypeUnderTest = DeclaresLess;
 
-    STATIC_REQUIRE(jive::HasLess<TypeUnderTest>::value);
-    STATIC_REQUIRE(!jive::HasGreater<TypeUnderTest>::value);
-    STATIC_REQUIRE(!jive::HasEqualTo<TypeUnderTest>::value);
-    STATIC_REQUIRE(!jive::HasNotEqualTo<TypeUnderTest>::value);
-    STATIC_REQUIRE(!jive::HasLessEqual<TypeUnderTest>::value);
-    STATIC_REQUIRE(!jive::HasGreaterEqual<TypeUnderTest>::value);
+    STATIC_REQUIRE(jive::HasLess<TypeUnderTest>);
+    STATIC_REQUIRE(!jive::HasGreater<TypeUnderTest>);
+    STATIC_REQUIRE(!jive::HasEqualTo<TypeUnderTest>);
+    STATIC_REQUIRE(!jive::HasNotEqualTo<TypeUnderTest>);
+    STATIC_REQUIRE(!jive::HasLessEqual<TypeUnderTest>);
+    STATIC_REQUIRE(!jive::HasGreaterEqual<TypeUnderTest>);
 
-    STATIC_REQUIRE(jive::HasMemberLess<TypeUnderTest>::value);
-    STATIC_REQUIRE(!jive::HasMemberGreater<TypeUnderTest>::value);
-    STATIC_REQUIRE(!jive::HasMemberEqualTo<TypeUnderTest>::value);
-    STATIC_REQUIRE(!jive::HasMemberNotEqualTo<TypeUnderTest>::value);
-    STATIC_REQUIRE(!jive::HasMemberLessEqual<TypeUnderTest>::value);
-    STATIC_REQUIRE(!jive::HasMemberGreaterEqual<TypeUnderTest>::value);
+    STATIC_REQUIRE(jive::HasMemberLess<TypeUnderTest>);
+    STATIC_REQUIRE(!jive::HasMemberGreater<TypeUnderTest>);
+    STATIC_REQUIRE(!jive::HasMemberEqualTo<TypeUnderTest>);
+    STATIC_REQUIRE(!jive::HasMemberNotEqualTo<TypeUnderTest>);
+    STATIC_REQUIRE(!jive::HasMemberLessEqual<TypeUnderTest>);
+    STATIC_REQUIRE(!jive::HasMemberGreaterEqual<TypeUnderTest>);
 }
 
 
@@ -113,19 +113,19 @@ TEST_CASE("declares member greater", "[comparison_operators]")
 {
     using TypeUnderTest = DeclaresGreater;
 
-    STATIC_REQUIRE(!jive::HasLess<TypeUnderTest>::value);
-    STATIC_REQUIRE(jive::HasGreater<TypeUnderTest>::value);
-    STATIC_REQUIRE(!jive::HasEqualTo<TypeUnderTest>::value);
-    STATIC_REQUIRE(!jive::HasNotEqualTo<TypeUnderTest>::value);
-    STATIC_REQUIRE(!jive::HasLessEqual<TypeUnderTest>::value);
-    STATIC_REQUIRE(!jive::HasGreaterEqual<TypeUnderTest>::value);
+    STATIC_REQUIRE(!jive::HasLess<TypeUnderTest>);
+    STATIC_REQUIRE(jive::HasGreater<TypeUnderTest>);
+    STATIC_REQUIRE(!jive::HasEqualTo<TypeUnderTest>);
+    STATIC_REQUIRE(!jive::HasNotEqualTo<TypeUnderTest>);
+    STATIC_REQUIRE(!jive::HasLessEqual<TypeUnderTest>);
+    STATIC_REQUIRE(!jive::HasGreaterEqual<TypeUnderTest>);
 
-    STATIC_REQUIRE(!jive::HasMemberLess<TypeUnderTest>::value);
-    STATIC_REQUIRE(jive::HasMemberGreater<TypeUnderTest>::value);
-    STATIC_REQUIRE(!jive::HasMemberEqualTo<TypeUnderTest>::value);
-    STATIC_REQUIRE(!jive::HasMemberNotEqualTo<TypeUnderTest>::value);
-    STATIC_REQUIRE(!jive::HasMemberLessEqual<TypeUnderTest>::value);
-    STATIC_REQUIRE(!jive::HasMemberGreaterEqual<TypeUnderTest>::value);
+    STATIC_REQUIRE(!jive::HasMemberLess<TypeUnderTest>);
+    STATIC_REQUIRE(jive::HasMemberGreater<TypeUnderTest>);
+    STATIC_REQUIRE(!jive::HasMemberEqualTo<TypeUnderTest>);
+    STATIC_REQUIRE(!jive::HasMemberNotEqualTo<TypeUnderTest>);
+    STATIC_REQUIRE(!jive::HasMemberLessEqual<TypeUnderTest>);
+    STATIC_REQUIRE(!jive::HasMemberGreaterEqual<TypeUnderTest>);
 }
 
 
@@ -133,25 +133,25 @@ TEST_CASE("declares member equal to", "[comparison_operators]")
 {
     using TypeUnderTest = DeclaresEqualTo;
 
-    STATIC_REQUIRE(!jive::HasLess<TypeUnderTest>::value);
-    STATIC_REQUIRE(!jive::HasGreater<TypeUnderTest>::value);
-    STATIC_REQUIRE(jive::HasEqualTo<TypeUnderTest>::value);
+    STATIC_REQUIRE(!jive::HasLess<TypeUnderTest>);
+    STATIC_REQUIRE(!jive::HasGreater<TypeUnderTest>);
+    STATIC_REQUIRE(jive::HasEqualTo<TypeUnderTest>);
 #if __cplusplus < 202002L
-    STATIC_REQUIRE(!jive::HasNotEqualTo<TypeUnderTest>::value);
+    STATIC_REQUIRE(!jive::HasNotEqualTo<TypeUnderTest>);
 #else
     // As of c++20, declaring operator== causes the implicit generation of
     // operator!=
-    STATIC_REQUIRE(jive::HasNotEqualTo<TypeUnderTest>::value);
+    STATIC_REQUIRE(jive::HasNotEqualTo<TypeUnderTest>);
 #endif
-    STATIC_REQUIRE(!jive::HasLessEqual<TypeUnderTest>::value);
-    STATIC_REQUIRE(!jive::HasGreaterEqual<TypeUnderTest>::value);
+    STATIC_REQUIRE(!jive::HasLessEqual<TypeUnderTest>);
+    STATIC_REQUIRE(!jive::HasGreaterEqual<TypeUnderTest>);
 
-    STATIC_REQUIRE(!jive::HasMemberLess<TypeUnderTest>::value);
-    STATIC_REQUIRE(!jive::HasMemberGreater<TypeUnderTest>::value);
-    STATIC_REQUIRE(jive::HasMemberEqualTo<TypeUnderTest>::value);
-    STATIC_REQUIRE(!jive::HasMemberNotEqualTo<TypeUnderTest>::value);
-    STATIC_REQUIRE(!jive::HasMemberLessEqual<TypeUnderTest>::value);
-    STATIC_REQUIRE(!jive::HasMemberGreaterEqual<TypeUnderTest>::value);
+    STATIC_REQUIRE(!jive::HasMemberLess<TypeUnderTest>);
+    STATIC_REQUIRE(!jive::HasMemberGreater<TypeUnderTest>);
+    STATIC_REQUIRE(jive::HasMemberEqualTo<TypeUnderTest>);
+    STATIC_REQUIRE(!jive::HasMemberNotEqualTo<TypeUnderTest>);
+    STATIC_REQUIRE(!jive::HasMemberLessEqual<TypeUnderTest>);
+    STATIC_REQUIRE(!jive::HasMemberGreaterEqual<TypeUnderTest>);
 }
 
 
@@ -159,19 +159,19 @@ TEST_CASE("declares member not equal to", "[comparison_operators]")
 {
     using TypeUnderTest = DeclaresNotEqualTo;
 
-    STATIC_REQUIRE(!jive::HasLess<TypeUnderTest>::value);
-    STATIC_REQUIRE(!jive::HasGreater<TypeUnderTest>::value);
-    STATIC_REQUIRE(!jive::HasEqualTo<TypeUnderTest>::value);
-    STATIC_REQUIRE(jive::HasNotEqualTo<TypeUnderTest>::value);
-    STATIC_REQUIRE(!jive::HasLessEqual<TypeUnderTest>::value);
-    STATIC_REQUIRE(!jive::HasGreaterEqual<TypeUnderTest>::value);
+    STATIC_REQUIRE(!jive::HasLess<TypeUnderTest>);
+    STATIC_REQUIRE(!jive::HasGreater<TypeUnderTest>);
+    STATIC_REQUIRE(!jive::HasEqualTo<TypeUnderTest>);
+    STATIC_REQUIRE(jive::HasNotEqualTo<TypeUnderTest>);
+    STATIC_REQUIRE(!jive::HasLessEqual<TypeUnderTest>);
+    STATIC_REQUIRE(!jive::HasGreaterEqual<TypeUnderTest>);
 
-    STATIC_REQUIRE(!jive::HasMemberLess<TypeUnderTest>::value);
-    STATIC_REQUIRE(!jive::HasMemberGreater<TypeUnderTest>::value);
-    STATIC_REQUIRE(!jive::HasMemberEqualTo<TypeUnderTest>::value);
-    STATIC_REQUIRE(jive::HasMemberNotEqualTo<TypeUnderTest>::value);
-    STATIC_REQUIRE(!jive::HasMemberLessEqual<TypeUnderTest>::value);
-    STATIC_REQUIRE(!jive::HasMemberGreaterEqual<TypeUnderTest>::value);
+    STATIC_REQUIRE(!jive::HasMemberLess<TypeUnderTest>);
+    STATIC_REQUIRE(!jive::HasMemberGreater<TypeUnderTest>);
+    STATIC_REQUIRE(!jive::HasMemberEqualTo<TypeUnderTest>);
+    STATIC_REQUIRE(jive::HasMemberNotEqualTo<TypeUnderTest>);
+    STATIC_REQUIRE(!jive::HasMemberLessEqual<TypeUnderTest>);
+    STATIC_REQUIRE(!jive::HasMemberGreaterEqual<TypeUnderTest>);
 }
 
 
@@ -179,19 +179,19 @@ TEST_CASE("declares member less equal", "[comparison_operators]")
 {
     using TypeUnderTest = DeclaresLessEqual;
 
-    STATIC_REQUIRE(!jive::HasLess<TypeUnderTest>::value);
-    STATIC_REQUIRE(!jive::HasGreater<TypeUnderTest>::value);
-    STATIC_REQUIRE(!jive::HasEqualTo<TypeUnderTest>::value);
-    STATIC_REQUIRE(!jive::HasNotEqualTo<TypeUnderTest>::value);
-    STATIC_REQUIRE(jive::HasLessEqual<TypeUnderTest>::value);
-    STATIC_REQUIRE(!jive::HasGreaterEqual<TypeUnderTest>::value);
+    STATIC_REQUIRE(!jive::HasLess<TypeUnderTest>);
+    STATIC_REQUIRE(!jive::HasGreater<TypeUnderTest>);
+    STATIC_REQUIRE(!jive::HasEqualTo<TypeUnderTest>);
+    STATIC_REQUIRE(!jive::HasNotEqualTo<TypeUnderTest>);
+    STATIC_REQUIRE(jive::HasLessEqual<TypeUnderTest>);
+    STATIC_REQUIRE(!jive::HasGreaterEqual<TypeUnderTest>);
 
-    STATIC_REQUIRE(!jive::HasMemberLess<TypeUnderTest>::value);
-    STATIC_REQUIRE(!jive::HasMemberGreater<TypeUnderTest>::value);
-    STATIC_REQUIRE(!jive::HasMemberEqualTo<TypeUnderTest>::value);
-    STATIC_REQUIRE(!jive::HasMemberNotEqualTo<TypeUnderTest>::value);
-    STATIC_REQUIRE(jive::HasMemberLessEqual<TypeUnderTest>::value);
-    STATIC_REQUIRE(!jive::HasMemberGreaterEqual<TypeUnderTest>::value);
+    STATIC_REQUIRE(!jive::HasMemberLess<TypeUnderTest>);
+    STATIC_REQUIRE(!jive::HasMemberGreater<TypeUnderTest>);
+    STATIC_REQUIRE(!jive::HasMemberEqualTo<TypeUnderTest>);
+    STATIC_REQUIRE(!jive::HasMemberNotEqualTo<TypeUnderTest>);
+    STATIC_REQUIRE(jive::HasMemberLessEqual<TypeUnderTest>);
+    STATIC_REQUIRE(!jive::HasMemberGreaterEqual<TypeUnderTest>);
 }
 
 
@@ -199,17 +199,17 @@ TEST_CASE("declares member greater equal", "[comparison_operators]")
 {
     using TypeUnderTest = DeclaresGreaterEqual;
 
-    STATIC_REQUIRE(!jive::HasLess<TypeUnderTest>::value);
-    STATIC_REQUIRE(!jive::HasGreater<TypeUnderTest>::value);
-    STATIC_REQUIRE(!jive::HasEqualTo<TypeUnderTest>::value);
-    STATIC_REQUIRE(!jive::HasNotEqualTo<TypeUnderTest>::value);
-    STATIC_REQUIRE(!jive::HasLessEqual<TypeUnderTest>::value);
-    STATIC_REQUIRE(jive::HasGreaterEqual<TypeUnderTest>::value);
+    STATIC_REQUIRE(!jive::HasLess<TypeUnderTest>);
+    STATIC_REQUIRE(!jive::HasGreater<TypeUnderTest>);
+    STATIC_REQUIRE(!jive::HasEqualTo<TypeUnderTest>);
+    STATIC_REQUIRE(!jive::HasNotEqualTo<TypeUnderTest>);
+    STATIC_REQUIRE(!jive::HasLessEqual<TypeUnderTest>);
+    STATIC_REQUIRE(jive::HasGreaterEqual<TypeUnderTest>);
 
-    STATIC_REQUIRE(!jive::HasMemberLess<TypeUnderTest>::value);
-    STATIC_REQUIRE(!jive::HasMemberGreater<TypeUnderTest>::value);
-    STATIC_REQUIRE(!jive::HasMemberEqualTo<TypeUnderTest>::value);
-    STATIC_REQUIRE(!jive::HasMemberNotEqualTo<TypeUnderTest>::value);
-    STATIC_REQUIRE(!jive::HasMemberLessEqual<TypeUnderTest>::value);
-    STATIC_REQUIRE(jive::HasMemberGreaterEqual<TypeUnderTest>::value);
+    STATIC_REQUIRE(!jive::HasMemberLess<TypeUnderTest>);
+    STATIC_REQUIRE(!jive::HasMemberGreater<TypeUnderTest>);
+    STATIC_REQUIRE(!jive::HasMemberEqualTo<TypeUnderTest>);
+    STATIC_REQUIRE(!jive::HasMemberNotEqualTo<TypeUnderTest>);
+    STATIC_REQUIRE(!jive::HasMemberLessEqual<TypeUnderTest>);
+    STATIC_REQUIRE(jive::HasMemberGreaterEqual<TypeUnderTest>);
 }

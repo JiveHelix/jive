@@ -19,147 +19,183 @@ namespace jive
 
 
 template<typename T, typename = void>
-struct HasLess: std::false_type {};
+struct HasLess_: std::false_type {};
 
 template<typename T>
-struct HasLess<
+struct HasLess_<
     T,
     std::void_t<
         decltype(std::declval<T>() < std::declval<T>())
     >
 >: std::true_type {};
 
+template<typename T>
+inline constexpr bool HasLess = HasLess_<T>::value;
+
 
 template<typename T, typename = void>
-struct HasGreater: std::false_type {};
+struct HasGreater_: std::false_type {};
 
 template<typename T>
-struct HasGreater<
+struct HasGreater_<
     T,
     std::void_t<
         decltype(std::declval<T>() > std::declval<T>())
     >
 >: std::true_type {};
 
+template<typename T>
+inline constexpr bool HasGreater = HasGreater_<T>::value;
+
 
 template<typename T, typename = void>
-struct HasLessEqual: std::false_type {};
+struct HasLessEqual_: std::false_type {};
 
 template<typename T>
-struct HasLessEqual<
+struct HasLessEqual_<
     T,
     std::void_t<
         decltype(std::declval<T>() <= std::declval<T>())
     >
 >: std::true_type {};
 
+template<typename T>
+inline constexpr bool HasLessEqual = HasLessEqual_<T>::value;
+
 
 template<typename T, typename = void>
-struct HasGreaterEqual: std::false_type {};
+struct HasGreaterEqual_: std::false_type {};
 
 template<typename T>
-struct HasGreaterEqual<
+struct HasGreaterEqual_<
     T,
     std::void_t<
         decltype(std::declval<T>() >= std::declval<T>())
     >
 >: std::true_type {};
 
+template<typename T>
+inline constexpr bool HasGreaterEqual = HasGreaterEqual_<T>::value;
+
 
 template<typename T, typename = void>
-struct HasEqualTo: std::false_type {};
+struct HasEqualTo_: std::false_type {};
 
 template<typename T>
-struct HasEqualTo<
+struct HasEqualTo_<
     T,
     std::void_t<
         decltype(std::declval<T>() == std::declval<T>())
     >
 >: std::true_type {};
 
+template<typename T>
+inline constexpr bool HasEqualTo = HasEqualTo_<T>::value;
+
 
 template<typename T, typename = void>
-struct HasNotEqualTo: std::false_type {};
+struct HasNotEqualTo_: std::false_type {};
 
 template<typename T>
-struct HasNotEqualTo<
+struct HasNotEqualTo_<
     T,
     std::void_t<
         decltype(std::declval<T>() != std::declval<T>())
     >
 >: std::true_type {};
 
+template<typename T>
+inline constexpr bool HasNotEqualTo = HasNotEqualTo_<T>::value;
+
 
 template<typename T, typename = void>
-struct HasMemberLess: std::false_type {};
+struct HasMemberLess_: std::false_type {};
 
 template<typename T>
-struct HasMemberLess<
+struct HasMemberLess_<
     T,
     std::void_t<
         decltype(std::declval<T>().operator<(std::declval<T>()))
     >
 >: std::true_type {};
 
+template<typename T>
+inline constexpr bool HasMemberLess = HasMemberLess_<T>::value;
+
 
 template<typename T, typename = void>
-struct HasMemberGreater: std::false_type {};
+struct HasMemberGreater_: std::false_type {};
 
 template<typename T>
-struct HasMemberGreater<
+struct HasMemberGreater_<
     T,
     std::void_t<
         decltype(std::declval<T>().operator>(std::declval<T>()))
     >
 >: std::true_type {};
 
+template<typename T>
+inline constexpr bool HasMemberGreater = HasMemberGreater_<T>::value;
+
 
 template<typename T, typename = void>
-struct HasMemberLessEqual: std::false_type {};
+struct HasMemberLessEqual_: std::false_type {};
 
 template<typename T>
-struct HasMemberLessEqual<
+struct HasMemberLessEqual_<
     T,
     std::void_t<
         decltype(std::declval<T>().operator<=(std::declval<T>()))
     >
 >: std::true_type {};
 
+template<typename T>
+inline constexpr bool HasMemberLessEqual = HasMemberLessEqual_<T>::value;
+
 
 template<typename T, typename = void>
-struct HasMemberGreaterEqual: std::false_type {};
+struct HasMemberGreaterEqual_: std::false_type {};
 
 template<typename T>
-struct HasMemberGreaterEqual<
+struct HasMemberGreaterEqual_<
     T,
     std::void_t<
         decltype(std::declval<T>().operator>=(std::declval<T>()))
     >
 >: std::true_type {};
 
+template<typename T>
+inline constexpr bool HasMemberGreaterEqual = HasMemberGreaterEqual_<T>::value;
+
 
 template<typename T, typename = void>
-struct HasMemberEqualTo: std::false_type {};
+struct HasMemberEqualTo_: std::false_type {};
 
 template<typename T>
-struct HasMemberEqualTo<
+struct HasMemberEqualTo_<
     T,
     std::void_t<
         decltype(std::declval<T>().operator==(std::declval<T>()))
     >
 >: std::true_type {};
 
+template<typename T>
+inline constexpr bool HasMemberEqualTo = HasMemberEqualTo_<T>::value;
+
 
 template<typename T, typename = void>
-struct HasMemberNotEqualTo: std::false_type {};
+struct HasMemberNotEqualTo_: std::false_type {};
 
 template<typename T>
-struct HasMemberNotEqualTo<
+struct HasMemberNotEqualTo_<
     T,
     std::void_t<
         decltype(std::declval<T>().operator!=(std::declval<T>()))
     >
 >: std::true_type {};
+
+template<typename T>
+inline constexpr bool HasMemberNotEqualTo = HasMemberNotEqualTo_<T>::value;
 
 
 } // end namespace jive

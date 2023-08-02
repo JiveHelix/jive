@@ -59,7 +59,7 @@ public:
 
     }
 
-    CountFlag(const CountFlag &other)
+    CountFlag([[maybe_unused]] const CountFlag &other)
         :
         count_{}
     {
@@ -78,7 +78,7 @@ public:
 
     }
 
-    CountFlag<T> & operator=(const CountFlag &other)
+    CountFlag<T> & operator=([[maybe_unused]] const CountFlag &other)
     {
         this->count_ = 0;
 
