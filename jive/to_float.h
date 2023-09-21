@@ -60,4 +60,43 @@ ToFloat(const std::string_view &asString)
     return result;
 }
 
+
+template<typename T>
+std::enable_if_t<std::is_floating_point_v<T>, std::optional<T>>
+MaybeFloat(const std::string_view &asString)
+{
+    T result;
+    char *end;
+
+    if constexpr (std::is_same_v<float, T>)
+    {
+        result = strtof(asString.data(), &end);
+    }
+    else if constexpr (std::is_same_v<double, T>)
+    {
+        result = strtod(asString.data(), &end);
+    }
+    else
+    {
+        static_assert(std::is_same_v<long double, T>);
+        result = strtold(asString.data(), &end);
+    }
+
+    if (end != std::end(asString))
+    {
+        return {};
+    }
+
+    if ((std::fabs(result) == std::numeric_limits<T>::infinity())
+        || (result == static_cast<T>(0.0)))
+    {
+        if (errno == ERANGE)
+        {
+            return {};
+        }
+    }
+
+    return result;
+}
+
 } // end namespace jive
