@@ -139,7 +139,7 @@ std::string FastFormatter(const char *format, ...)
         vsprintf_s(&result[0], charCount, format, args);
 #else
     int formatResult =
-        vsprintf(&result[0], format, args);
+        vsnprintf(&result[0], charCount, format, args);
 #endif
 
     va_end(args);
