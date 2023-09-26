@@ -4,9 +4,7 @@
   * Licensed under the MIT license. See LICENSE file.
   */
 #include <catch2/catch.hpp>
-
 #include "jive/to_integer.h"
-#include <string_view>
 
 // Create types to use with the product test case.
 #define MAKE_TEST_VALUES(asDec_, asOct_, asHex_)                    \
@@ -14,18 +12,18 @@
     struct p ## asDec_                                              \
     {                                                               \
         using type = T;                                             \
-        static constexpr std::string_view asDec = #asDec_;          \
-        static constexpr std::string_view asOct = #asOct_;          \
-        static constexpr std::string_view asHex = #asHex_;          \
+        static constexpr auto asDec = #asDec_;          \
+        static constexpr auto asOct = #asOct_;          \
+        static constexpr auto asHex = #asHex_;          \
         static constexpr auto value = (asDec_);                     \
     };                                                              \
     template<typename T>                                            \
     struct n ## asDec_                                              \
     {                                                               \
         using type = T;                                             \
-        static constexpr std::string_view asDec = "-" #asDec_;      \
-        static constexpr std::string_view asOct = "-" #asOct_;      \
-        static constexpr std::string_view asHex = "-" #asHex_;      \
+        static constexpr auto asDec = "-" #asDec_;      \
+        static constexpr auto asOct = "-" #asOct_;      \
+        static constexpr auto asHex = "-" #asHex_;      \
         static constexpr auto value = -(asDec_);                    \
     }
 

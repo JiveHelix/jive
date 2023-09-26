@@ -13,10 +13,8 @@
 
 #include <stdexcept>
 #include <type_traits>
-#include <string_view>
-#include <limits>
-#include <cerrno>
-#include <cmath>
+#include <string>
+#include <iostream>
 
 
 namespace jive
@@ -24,79 +22,65 @@ namespace jive
 
 template<typename T>
 std::enable_if_t<std::is_floating_point_v<T>, T>
-ToFloat(const std::string_view &asString)
+ToFloat(const std::string &asString)
 {
-    T result;
-    char *end;
-
     if constexpr (std::is_same_v<float, T>)
     {
-        result = strtof(asString.data(), &end);
+        return std::stof(asString);
     }
     else if constexpr (std::is_same_v<double, T>)
     {
-        result = strtod(asString.data(), &end);
+        return std::stod(asString);
     }
     else
     {
         static_assert(std::is_same_v<long double, T>);
-        result = strtold(asString.data(), &end);
+        return std::stold(asString);
     }
-
-    if (end == asString.data())
-    {
-        throw std::invalid_argument("Unable to convert string");
-    }
-
-    if ((std::fabs(result) == std::numeric_limits<T>::infinity())
-        || (result == static_cast<T>(0.0)))
-    {
-        if (errno == ERANGE)
-        {
-            throw std::out_of_range("Input is out-of-range.");
-        }
-    }
-
-    return result;
 }
 
 
 template<typename T>
 std::enable_if_t<std::is_floating_point_v<T>, std::optional<T>>
-MaybeFloat(const std::string_view &asString)
+MaybeFloat(const std::string &asString)
 {
     T result;
-    char *end;
+    size_t end;
 
-    if constexpr (std::is_same_v<float, T>)
+    try
     {
-        result = strtof(asString.data(), &end);
+        if constexpr (std::is_same_v<float, T>)
+        {
+            result = std::stof(asString, &end);
+        }
+        else if constexpr (std::is_same_v<double, T>)
+        {
+            result = std::stod(asString, &end);
+        }
+        else
+        {
+            static_assert(std::is_same_v<long double, T>);
+            result = std::stold(asString, &end);
+        }
     }
-    else if constexpr (std::is_same_v<double, T>)
+    catch (std::invalid_argument &)
     {
-        result = strtod(asString.data(), &end);
+        std::cerr << "Unable to convert " << asString << std::endl;
+        return {};
     }
-    else
+    catch (std::out_of_range &)
     {
-        static_assert(std::is_same_v<long double, T>);
-        result = strtold(asString.data(), &end);
+        std::cerr << "Result is out of range: " << asString << std::endl;
+        return {};
     }
 
-    if (end != std::end(asString))
+    if (end != asString.size())
     {
         return {};
     }
 
-    if ((std::fabs(result) == std::numeric_limits<T>::infinity())
-        || (result == static_cast<T>(0.0)))
-    {
-        if (errno == ERANGE)
-        {
-            return {};
-        }
-    }
-
     return result;
 }
+
 
 } // end namespace jive

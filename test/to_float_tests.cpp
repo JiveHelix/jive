@@ -8,7 +8,7 @@
 
 #include "jive/to_float.h"
 #include "jive/precise_string.h"
-#include <string_view>
+#include <string>
 
 #define STRING_EXPAND(token) #token
 #define STRING(token) STRING_EXPAND(token)
@@ -26,21 +26,21 @@ struct Values;
 template<>
 struct Values<float>
 {
-    static constexpr std::string_view positiveInRangeInput =
+    static constexpr auto positiveInRangeInput =
         STRING(POSITIVE_IN_RANGE_FLOAT);
 
     static constexpr float positiveInRangeExpected =
         MAKE_LITERAL(POSITIVE_IN_RANGE_FLOAT, f);
 
-    static constexpr std::string_view negativeInRangeInput =
+    static constexpr auto negativeInRangeInput =
         STRING(NEGATIVE_IN_RANGE_FLOAT);
 
     static constexpr float negativeInRangeExpected =
         MAKE_LITERAL(NEGATIVE_IN_RANGE_FLOAT, f);
 
-    static constexpr std::string_view positiveOutOfRangeInput = "3.41e38";
-    static constexpr std::string_view negativeOutOfRangeInput = "-3.41e38";
-    static constexpr std::string_view smallOutOfRangeInput = "1.3e-46";
+    static constexpr auto positiveOutOfRangeInput = "3.41e38";
+    static constexpr auto negativeOutOfRangeInput = "-3.41e38";
+    static constexpr auto smallOutOfRangeInput = "1.3e-46";
 };
 
 
@@ -51,21 +51,21 @@ struct Values<float>
 template<>
 struct Values<double>
 {
-    static constexpr std::string_view positiveInRangeInput =
+    static constexpr auto positiveInRangeInput =
         STRING(POSITIVE_IN_RANGE_DOUBLE);
 
     static constexpr double positiveInRangeExpected =
         POSITIVE_IN_RANGE_DOUBLE;
 
-    static constexpr std::string_view negativeInRangeInput =
+    static constexpr auto negativeInRangeInput =
         STRING(NEGATIVE_IN_RANGE_DOUBLE);
 
     static constexpr double negativeInRangeExpected =
         NEGATIVE_IN_RANGE_DOUBLE;
 
-    static constexpr std::string_view positiveOutOfRangeInput = "1.798e308";
-    static constexpr std::string_view negativeOutOfRangeInput = "-3.41e309";
-    static constexpr std::string_view smallOutOfRangeInput = "4.93e-325";
+    static constexpr auto positiveOutOfRangeInput = "1.798e308";
+    static constexpr auto negativeOutOfRangeInput = "-3.41e309";
+    static constexpr auto smallOutOfRangeInput = "4.93e-325";
 };
 
 
@@ -82,24 +82,24 @@ struct Values<double>
 template<>
 struct Values<long double>
 {
-    static constexpr std::string_view positiveInRangeInput =
+    static constexpr auto positiveInRangeInput =
         STRING(POSITIVE_IN_RANGE_LONG_DOUBLE);
 
     static constexpr long double positiveInRangeExpected =
         MAKE_LITERAL(POSITIVE_IN_RANGE_LONG_DOUBLE, L);
 
-    static constexpr std::string_view negativeInRangeInput =
+    static constexpr auto negativeInRangeInput =
         STRING(NEGATIVE_IN_RANGE_LONG_DOUBLE);
 
     static constexpr long double negativeInRangeExpected =
         MAKE_LITERAL(NEGATIVE_IN_RANGE_LONG_DOUBLE, L);
 
-    static constexpr std::string_view positiveOutOfRangeInput = "1.1898e4932";
+    static constexpr auto positiveOutOfRangeInput = "1.1898e4932";
 
-    static constexpr std::string_view negativeOutOfRangeInput =
+    static constexpr auto negativeOutOfRangeInput =
         "-1.189732e4932";
 
-    static constexpr std::string_view smallOutOfRangeInput = "3.645e-4952";
+    static constexpr auto smallOutOfRangeInput = "3.645e-4952";
 };
 
 
@@ -179,4 +179,94 @@ TEST_CASE("Convert string with appended non-digits", "[to_float]")
     auto recovered = jive::ToFloat<double>(appended);
 
     REQUIRE(recovered == Approx(value));
+}
+
+
+TEMPLATE_TEST_CASE(
+    "Use MaybeFloat to convert positive in-range string to floating-point",
+    "[to_float]",
+    float,
+    double,
+    long double)
+{
+    using Type = TestType;
+    auto converted = jive::MaybeFloat<Type>(Values<Type>::positiveInRangeInput);
+    REQUIRE(*converted == Values<Type>::positiveInRangeExpected);
+}
+
+
+TEMPLATE_TEST_CASE(
+    "Use MaybeFloat to convert negative in-range string to floating-point",
+    "[to_float]",
+    float,
+    double,
+    long double)
+{
+    using Type = TestType;
+    auto converted = jive::MaybeFloat<Type>(Values<Type>::negativeInRangeInput);
+    REQUIRE((*converted) == Values<Type>::negativeInRangeExpected);
+}
+
+
+TEMPLATE_TEST_CASE(
+    "Use MaybeFloat to convert positive out-of-range string to floating-point",
+    "[to_float]",
+    float,
+    double,
+    long double)
+{
+    using Type = TestType;
+    std::optional<Type> result;
+
+    REQUIRE_NOTHROW(
+        result = jive::MaybeFloat<Type>(Values<Type>::positiveOutOfRangeInput));
+
+    REQUIRE(!result);
+}
+
+
+TEMPLATE_TEST_CASE(
+    "Use MaybeFloat to convert negative out-of-range string to floating-point",
+    "[to_float]",
+    float,
+    double,
+    long double)
+{
+    using Type = TestType;
+    std::optional<Type> result;
+
+    REQUIRE_NOTHROW(
+        result = jive::MaybeFloat<Type>(Values<Type>::negativeOutOfRangeInput));
+
+    REQUIRE(!result);
+}
+
+
+TEMPLATE_TEST_CASE(
+    "Use MaybeFloat to convert small out-of-range string to floating-point",
+    "[to_float]",
+    float,
+    double,
+    long double)
+{
+    using Type = TestType;
+    std::optional<Type> result;
+
+    REQUIRE_NOTHROW(
+        result = jive::MaybeFloat<Type>(Values<Type>::smallOutOfRangeInput));
+}
+
+
+TEST_CASE(
+    "Use MaybeFloat to convert string with appended non-digits",
+    "[to_float]")
+{
+    auto value = GENERATE(take(10, random(-1e30, 1e30)));
+
+    auto asString = jive::PreciseString(value);
+    auto appended = asString + "x";
+    auto recovered = jive::MaybeFloat<double>(appended);
+
+    // MaybeFloat requires the entire string to be used in the conversion.
+    REQUIRE(!recovered);
 }
