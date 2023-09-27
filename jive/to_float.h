@@ -15,6 +15,7 @@
 #include <type_traits>
 #include <string>
 #include <iostream>
+#include <optional>
 
 
 namespace jive
