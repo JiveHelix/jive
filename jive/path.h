@@ -36,7 +36,11 @@ namespace path
 // Windows NT.
 inline constexpr char pathSeparator = '/';
 
+inline constexpr char backwardsSeparator = '\\';
+
 CREATE_SYSTEM_ERROR(PathError, std::system_error);
+
+std::string & FilterSeparators(std::string &path);
 
 std::string Join(std::initializer_list<std::string> il);
 

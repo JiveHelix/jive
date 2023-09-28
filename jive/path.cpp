@@ -44,11 +44,36 @@
 #include <unistd.h>
 #endif
 
+
 namespace jive
 {
 
+
 namespace path
 {
+
+
+std::string & FilterSeparators(std::string &path)
+{
+
+#ifdef _WIN32
+    std::replace(path.begin(), path.end(), backwardsSeparator, pathSeparator);
+#endif
+
+    // Remove repeated separators.
+    auto last = std::unique(
+        std::begin(path),
+        std::end(path),
+        [] (char left, char right) -> bool
+        {
+            return left == pathSeparator && right == pathSeparator;
+        });
+
+    path.erase(last, std::end(path));
+
+    return path;
+}
+
 
 // InputIterator must dereference to a std::string
 template<typename InputIterator>
@@ -56,108 +81,87 @@ static std::string Join(InputIterator first, InputIterator last)
 {
     std::string result = strings::Join(first, last, pathSeparator);
 
-    auto getAdjacentPathSeparator =
-        [](const char &one, const char &another)->bool
-        {
-            return one == another && one == pathSeparator;
-        };
+    // Replace all backslashes with forward slashes.
+    FilterSeparators(result);
 
-    auto it = std::adjacent_find(
-        result.begin(),
-        result.end(),
-        getAdjacentPathSeparator);
-
-    if (it == result.end())
-    {
-        // There are no adjacent PATH_SEPARATORs
-        return result;
-    }
-
-    // @todo test the execution speed of list vs vector for removing duplicate
-    // path separators.
-    // We know that there is at least one extra pathSeparator
-    std::list<char> resultAsList(result.begin(), result.end());
-    auto listIt = resultAsList.begin();
-
-    while (resultAsList.end() != (listIt = std::adjacent_find(
-        listIt,
-        resultAsList.end(),
-        getAdjacentPathSeparator)))
-    {
-        listIt = resultAsList.erase(listIt);
-    }
-
-    return std::string(resultAsList.begin(), resultAsList.end());
+    return result;
 }
+
 
 std::string Join(std::initializer_list<std::string> il)
 {
     return Join(il.begin(), il.end());
 }
 
+
 std::string Join(const std::string& path1, const std::string& path2)
 {
     return Join({path1, path2});
 }
 
-std::string Base(const std::string& filename)
+
+std::string Base(const std::string& fileName)
 {
-    std::string::size_type pos = filename.find_last_of(pathSeparator);
+    std::string filtered = fileName;
+    FilterSeparators(filtered);
+
+    std::string::size_type pos = filtered.find_last_of(pathSeparator);
 
     if (pos == std::string::npos)
     {
-        return filename;
+        return filtered;
     }
 
-    return filename.substr(pos + 1);
+    return filtered.substr(pos + 1);
 }
 
-std::string Directory(const std::string& filename)
+
+std::string Directory(const std::string& fileName)
 {
-    std::string::size_type pos = filename.find_last_of(pathSeparator);
+    std::string filtered = fileName;
+    FilterSeparators(filtered);
+
+    std::string::size_type pos = fileName.find_last_of(pathSeparator);
 
     if (pos == std::string::npos)
     {
         return "";
     }
 
-    return filename.substr(0, pos);
+    return fileName.substr(0, pos);
 }
 
-std::pair<std::string, std::string> Split(const std::string& filename)
-{
 
-#ifdef _WIN32
-    std::string fixed(filename);
-    std::replace(fixed.begin(), fixed.end(), '\\', '/');
-    const std::string &input = fixed;
-#else
-    const std::string &input = filename;
-#endif
+std::pair<std::string, std::string> Split(const std::string& fileName)
+{
+    std::string filtered(fileName);
+    FilterSeparators(filtered);
     
-    std::string::size_type pos = input.find_last_of(pathSeparator);
+    std::string::size_type pos = filtered.find_last_of(pathSeparator);
 
     if (pos == std::string::npos)
     {
-        return std::make_pair("", input);
+        return std::make_pair("", filtered);
     }
 
     return std::make_pair(
-        input.substr(0, pos),
-        input.substr(pos + 1));
+        filtered.substr(0, pos),
+        filtered.substr(pos + 1));
 }
 
-std::pair<std::string, std::string> SplitExtension(const std::string& filename)
+
+std::pair<std::string, std::string> SplitExtension(const std::string& fileName)
 {
-    std::string::size_type pos = filename.find_last_of('.');
+    std::string::size_type pos = fileName.find_last_of('.');
 
     if (pos == std::string::npos)
     {
-        return std::make_pair(filename, "");
+        return std::make_pair(fileName, "");
     }
 
-    return std::make_pair(filename.substr(0, pos), filename.substr(pos));
+    return std::make_pair(fileName.substr(0, pos), fileName.substr(pos));
 }
+
 
 std::string MakeUniqueSystemName(const std::string &systemName)
 {
@@ -182,11 +186,13 @@ std::string MakeUniqueSystemName(const std::string &systemName)
     return uniqueName;
 }
 
+
 bool Exists(const std::string &name)
 {
     static struct stat st;
     return (stat(name.c_str(), &st) == 0);
 }
+
 
 #ifndef _WIN32
 bool IsFifo(const std::string &name)
@@ -206,6 +212,7 @@ bool IsFifo(const std::string &name)
 }
 #endif
 
+
 bool IsFile(const std::string &name)
 {
     struct stat st;
@@ -222,9 +229,11 @@ bool IsFile(const std::string &name)
     return false;
 }
 
+
 bool IsDirectory(const std::string &name)
 {
     struct stat st;
+
     if (stat(name.c_str(), &st) == 0)
     {
         // Something with this name exists
@@ -237,6 +246,7 @@ bool IsDirectory(const std::string &name)
 
     return false;
 }
+
 
 #ifndef _WIN32
 void MakeFifo(const std::string &fifoName)
@@ -251,6 +261,7 @@ void MakeFifo(const std::string &fifoName)
     }
 }
 #endif
+
 
 std::map<int, std::string> mkdirErrorsByErrno({
     { EACCES, "Search permission is denied on a component of the path "
@@ -272,6 +283,7 @@ std::map<int, std::string> mkdirErrorsByErrno({
     { EROFS, "The parent directory resides on a read-only file system." }
 });
 
+
 void MakeDirectory(const std::string &pathName)
 {
 #ifdef _WIN32
@@ -282,35 +294,40 @@ void MakeDirectory(const std::string &pathName)
         S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
 #endif
 
-    if (result == -1)
+    if (result != -1)
     {
-        if (errno == EEXIST)
-        {
-            if (!IsDirectory(pathName))
-            {
-                throw PathError(
-                    SystemError(errno),
-                    "Failed to create directory "
-                        + pathName
-                        + ". File already exists.");
-            }
-        }
-        else
-        {
-            std::string errorMessage(
-                "Failed to create directory: " + pathName + ", ");
-            try
-            {
-                errorMessage += mkdirErrorsByErrno.at(errno);
-            } catch (std::out_of_range &)
-            {
-                errorMessage += "Unknown errno " + std::to_string(errno);
-            }
+        // Success.
+        return;
+    }
 
-            throw PathError(SystemError(errno), errorMessage);
+    if (errno == EEXIST)
+    {
+        // An existing item is only an error if it is not a directory.
+        if (!IsDirectory(pathName))
+        {
+            throw PathError(
+                SystemError(errno),
+                "Failed to create directory "
+                    + pathName
+                    + ". File already exists.");
         }
     }
+    else
+    {
+        std::string errorMessage(
+            "Failed to create directory: " + pathName + ", ");
+        try
+        {
+            errorMessage += mkdirErrorsByErrno.at(errno);
+        } catch (std::out_of_range &)
+        {
+            errorMessage += "Unknown errno " + std::to_string(errno);
+        }
+
+        throw PathError(SystemError(errno), errorMessage);
+    }
 }
+
 
 void MakeDirectories(const std::string &pathname)
 {
@@ -319,7 +336,10 @@ void MakeDirectories(const std::string &pathname)
         return;
     }
 
-    auto subDirectoryVector = strings::Split(pathname, pathSeparator);
+    auto filtered = pathname;
+    FilterSeparators(filtered);
+
+    auto subDirectoryVector = strings::Split(filtered, pathSeparator);
 
     if (subDirectoryVector.empty())
     {
@@ -381,5 +401,6 @@ time_t GetCreationTime(const std::string &fileName)
 
 
 } // end namespace path
+
 
 } // end namespace jive
