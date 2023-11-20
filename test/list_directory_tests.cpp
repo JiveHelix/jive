@@ -4,6 +4,7 @@
   * Licensed under the MIT license. See LICENSE file.
   */
 #ifndef _WIN32
+#ifndef __aarch64__
 // TODO: Remove ListDirectory in favor of std::filesystem
 
 
@@ -39,4 +40,5 @@ TEST_CASE(
     REQUIRE(result == fileNames);
 }
 
-#endif
+#endif // not __aarch64__
+#endif // not _WIN32

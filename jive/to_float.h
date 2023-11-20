@@ -66,12 +66,16 @@ MaybeFloat(const std::string &asString)
     }
     catch (std::invalid_argument &)
     {
+#ifndef NDEBUG
         std::cerr << "Unable to convert " << asString << std::endl;
+#endif
         return {};
     }
     catch (std::out_of_range &)
     {
+#ifndef NDEBUG
         std::cerr << "Result is out of range: " << asString << std::endl;
+#endif
         return {};
     }
 
