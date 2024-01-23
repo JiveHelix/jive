@@ -20,18 +20,21 @@ namespace jive
 {
 
 
-template<typename T, typename = std::void_t<>>
+template<typename T, typename = void>
 struct IsIterable: std::false_type {};
 
 template<typename T>
-struct IsIterable<
+struct IsIterable
+<
     T,
-    std::void_t<
-        std::enable_if_t<
-            std::is_same_v<
-                decltype(std::declval<T>().begin()),
-                decltype(std::declval<T>().end())
-            >
+    std::enable_if_t
+    <
+        !std::is_void_v<decltype(std::declval<T>().begin())>
+        &&
+        std::is_same_v
+        <
+            decltype(std::declval<T>().begin()),
+            decltype(std::declval<T>().end())
         >
     >
 >: std::true_type {};
