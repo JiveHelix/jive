@@ -54,6 +54,12 @@ TEST_CASE("Get base name of path", "[path]")
     REQUIRE(base == "frob");
 }
 
+TEST_CASE("Get empty base name of path", "[path]")
+{
+    auto base = jive::path::Base("/wibble/wobble/frob/");
+    REQUIRE(base.empty());
+}
+
 TEST_CASE("Split path on extension", "[path]")
 {
     std::string extension;
