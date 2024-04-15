@@ -12,6 +12,7 @@ target_link_libraries(jive PUBLIC project_warnings project_options)
 target_sources(
     jive
     PRIVATE
+    huffman.cpp
     numeric_string_compare.cpp
     time_value.cpp
     path.cpp

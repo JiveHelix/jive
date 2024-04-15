@@ -200,14 +200,14 @@ public:
 
         std::vector<std::string> words;
 
-        std::mt19937_64 generator(this->randomDevice_());
         std::uniform_int_distribution<size_t> distribution(
             0,
             gettysWords.size() - 1);
 
         while (wordCount--)
         {
-            auto word = std::string(gettysWords[distribution(generator)]);
+            auto word =
+                std::string(gettysWords[distribution(this->generator_)]);
 
             if (std::find(words.begin(), words.end(), word) != words.end())
             {
@@ -223,28 +223,31 @@ public:
 
     std::string MakeWord()
     {
-        std::mt19937_64 generator(this->randomDevice_());
         std::uniform_int_distribution<size_t> distribution(
             0,
             gettysWords.size() - 1);
 
-        return std::string(gettysWords[distribution(generator)]);
+        return std::string(gettysWords[distribution(this->generator_)]);
+    }
+
+    void Seed(size_t seed)
+    {
+        this->generator_.seed(seed);
     }
 
 private:
     void Make_(std::string& result, size_t wordCount)
     {
-        std::mt19937_64 generator(this->randomDevice_());
         std::uniform_int_distribution<size_t> distribution(
             0,
             gettysWords.size() - 1);
 
         while (wordCount--)
         {
-            result += gettysWords[distribution(generator)];
+            result += gettysWords[distribution(this->generator_)];
             result += ' ';
         }
     }
 
-    std::random_device randomDevice_;
+    std::mt19937_64 generator_;
 };
