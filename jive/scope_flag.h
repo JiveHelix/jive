@@ -59,12 +59,12 @@ public:
 
     }
 
-    CountFlag([[maybe_unused]] const CountFlag &other)
+#ifndef NDEBUG
+
+    CountFlag(const CountFlag &other)
         :
         count_{}
     {
-
-#ifndef NDEBUG
         bool test = (other.count_ == 0);
 
         if (!test)
@@ -74,15 +74,12 @@ public:
                 << " Stern Warning: other.count_ is not zero!"
                 << std::endl;
         }
-#endif
-
     }
 
-    CountFlag<T> & operator=([[maybe_unused]] const CountFlag &other)
+    CountFlag<T> & operator=(const CountFlag &other)
     {
         this->count_ = 0;
 
-#ifndef NDEBUG
         // TODO: on Apple Clang 13.0.0 target x86_64-apple-darwin20.6.0
         // assert(other.count_ == 0) causes SIGILL EXC_I386_INVOP
         // assert(test) causes SIGILL EXC_I386_INVOP
@@ -96,10 +93,27 @@ public:
                 << " Stern Warning: other.count_ is not zero!"
                 << std::endl;
         }
-#endif
 
         return *this;
     }
+
+#else
+
+    CountFlag(const CountFlag &)
+        :
+        count_{}
+    {
+
+    }
+
+    CountFlag<T> & operator=(const CountFlag &)
+    {
+        this->count_ = 0;
+
+        return *this;
+    }
+
+#endif
 
     operator bool () const
     {
