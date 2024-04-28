@@ -12,6 +12,7 @@ add_executable(
     id_bytes_tests.cpp
     list_directory_tests.cpp
     multiply_rounded_tests.cpp
+    overflow_tests.cpp
     path_tests.cpp
     power_tests.cpp
     precise_string_tests.cpp

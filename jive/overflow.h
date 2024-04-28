@@ -73,9 +73,29 @@ bool CheckConvertible(Source value)
         if constexpr (std::is_integral_v<Source>)
         {
             // Both Target and Source are integrals
-            // Check the round trip
+
+            if constexpr (std::is_signed_v<Source> && !std::is_signed_v<Target>)
+            {
+                if (value < 0)
+                {
+                    return false;
+                }
+            }
+
+            if constexpr (
+                std::is_signed_v<Target>
+                && !std::is_signed_v<Source>)
+            {
+                if (static_cast<Target>(value) < 0)
+                {
+                    return false;
+                }
+            }
+
+            // Check the round trip.
             Target result = static_cast<Target>(value);
             Source check = static_cast<Source>(result);
+
             return (check == value);
         }
         else
