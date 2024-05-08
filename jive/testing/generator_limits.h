@@ -1,8 +1,8 @@
 /**
   * @file generator_limits.h
-  * 
+  *
   * @brief Helper for catch2 generators.
-  * 
+  *
   * @author Jive Helix (jivehelix@gmail.com)
   * @date 28 Mar 2022
   * @copyright Jive Helix

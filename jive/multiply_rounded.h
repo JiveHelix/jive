@@ -39,9 +39,9 @@ Target RoundIfIntegral(Source value)
 
         if constexpr (std::is_same_v<Overflow, CheckOverflow>)
         {
-            if (WillOverflow<Target>(result))
+            if (ExceedsTarget<Target>(result))
             {
-                throw std::overflow_error("value will overflow target type.");
+                throw std::overflow_error("value exceeds target type.");
             }
         }
 

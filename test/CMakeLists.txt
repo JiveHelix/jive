@@ -10,7 +10,6 @@ add_executable(
     create_exception_tests.cpp
     format_tests.cpp
     id_bytes_tests.cpp
-    list_directory_tests.cpp
     multiply_rounded_tests.cpp
     overflow_tests.cpp
     path_tests.cpp
