@@ -41,10 +41,17 @@ public:
         this->key_ = key;
     }
 
+#ifdef __GNUC__ && __GNUC__ <= 9
+    auto operator<(const OrderedKey &other) const
+    {
+        return (this->sortOrder_ < other.sortOrder_);
+    }
+#else
     auto operator<=>(const OrderedKey &other) const
     {
         return (this->sortOrder_ <=> other.sortOrder_);
     }
+#endif
 
     const Key & GetKey() const
     {
