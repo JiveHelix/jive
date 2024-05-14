@@ -8,9 +8,13 @@ setup_project()
 add_subdirectory(jive)
 
 if (${PROJECT_IS_TOP_LEVEL})
+
     if (ENABLE_TESTING)
         add_subdirectory(test)
     endif ()
+
+    add_subdirectory(examples)
+
 elseif (${RECURSIVE_BUILD_TESTS} AND ${ENABLE_TESTING})
     add_subdirectory(test)
 endif ()

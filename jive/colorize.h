@@ -23,10 +23,11 @@
 #ifdef _WIN32
 
     #include <io.h>
+    #include <windows.h>
 
     inline bool IsTerminal()
     {
-        return (1 == _isatty(_fileno(stdout)));
+        return (0 != _isatty(_fileno(stdout)));
     }
 
 #else // *NIX
@@ -35,7 +36,7 @@
 
     inline bool IsTerminal()
     {
-        return (1 == isatty(STDOUT_FILENO));
+        return (0 != isatty(STDOUT_FILENO));
     }
 
 #endif
@@ -82,6 +83,32 @@ inline constexpr auto reversed = "\u001b[7m";
 } // end namespace color
 
 
+#ifdef _WIN32
+
+class ConsoleMode
+{
+public:
+    ConsoleMode(bool isTerminal)
+    {
+        if (!isTerminal)
+        {
+            return;
+        }
+
+        auto handle = GetStdHandle(STD_OUTPUT_HANDLE);
+
+        if (0 == SetConsoleMode(
+            handle,
+            ENABLE_PROCESSED_OUTPUT | ENABLE_VIRTUAL_TERMINAL_PROCESSING))
+        {
+            std::cerr << "Failed to SetConsoleMode" << std::endl;
+        }
+    }
+};
+
+#endif
+
+
 /** Only colorizes output to stdout **/
 class Colorize
 {
@@ -96,6 +123,11 @@ public:
             // The output stream is writing to stdout
             this->isTerminal_ = IsTerminal();
         }
+
+#ifdef _WIN32
+        // Use static to run this code only once.
+        static ConsoleMode consoleMode(this->isTerminal_);
+#endif
     }
 
 public:
