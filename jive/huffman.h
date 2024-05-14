@@ -6,6 +6,7 @@
 #include <ostream>
 #include <istream>
 #include <cassert>
+#include <memory>
 
 #include "jive/binary_io.h"
 
