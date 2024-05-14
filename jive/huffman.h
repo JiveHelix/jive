@@ -7,6 +7,7 @@
 #include <istream>
 #include <cassert>
 #include <memory>
+#include <optional>
 
 #include "jive/binary_io.h"
 
@@ -146,7 +147,7 @@ public:
     template<typename T>
     std::pair<size_t, T> GetCode() const
     {
-        T result;
+        T result{};
 
         if (this->turns_.size() > sizeof(T) * 8)
         {
@@ -157,7 +158,7 @@ public:
 
         while (it != std::end(this->turns_))
         {
-            result = static_cast<T>((result << 1) | *it++);
+            result = (result << 1) | T(*it++);
         }
 
         return std::make_pair(this->turns_.size(), result);
@@ -166,7 +167,7 @@ public:
     void Describe(std::ostream &output) const
     {
         auto code = this->GetCode<uint64_t>();
-        auto mask = static_cast<uint64_t>(1 << (code.first - 1));
+        auto mask = 1ULL << (code.first - 1);
 
         for (size_t i = 0; i < code.first; ++i)
         {

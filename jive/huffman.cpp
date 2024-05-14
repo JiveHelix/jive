@@ -1,5 +1,5 @@
 #include "jive/huffman.h"
-
+#include <algorithm>
 
 namespace huffman
 {
