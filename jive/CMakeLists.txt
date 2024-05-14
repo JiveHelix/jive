@@ -16,7 +16,6 @@ target_sources(
     numeric_string_compare.cpp
     time_value.cpp
     path.cpp
-    list_directory.cpp
     format_paragraph.cpp)
 
 install(TARGETS jive DESTINATION ${CMAKE_INSTALL_LIBDIR})
