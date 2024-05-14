@@ -16,6 +16,10 @@
 #include <limits>
 #include "jive/constexpr_shim.h"
 
+#ifdef _WIN32
+#undef max
+#undef min
+#endif
 
 namespace jive
 {
