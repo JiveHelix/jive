@@ -23,7 +23,6 @@
 #ifdef _WIN32
 
     #include <io.h>
-    #include <windows.h>
 
     inline bool IsTerminal()
     {
@@ -88,22 +87,7 @@ inline constexpr auto reversed = "\u001b[7m";
 class ConsoleMode
 {
 public:
-    ConsoleMode(bool isTerminal)
-    {
-        if (!isTerminal)
-        {
-            return;
-        }
-
-        auto handle = GetStdHandle(STD_OUTPUT_HANDLE);
-
-        if (0 == SetConsoleMode(
-            handle,
-            ENABLE_PROCESSED_OUTPUT | ENABLE_VIRTUAL_TERMINAL_PROCESSING))
-        {
-            std::cerr << "Failed to SetConsoleMode" << std::endl;
-        }
-    }
+    ConsoleMode(bool isTerminal);
 };
 
 #endif
