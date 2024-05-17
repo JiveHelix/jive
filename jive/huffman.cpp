@@ -21,7 +21,9 @@ std::ostream & operator<<(std::ostream &output, const FrequencyNode &node)
 }
 
 
-std::ostream & operator<<(std::ostream &output, const FrequencyNodePointer &node)
+std::ostream & operator<<(
+    std::ostream &output,
+    const FrequencyNodePointer &node)
 {
     return output << *node << std::endl;
 }
@@ -181,13 +183,16 @@ void TraverseWrite(
 }
 
 
-NodeTree BuildTree(const char *data, size_t count)
+NodeTree BuildTree(std::istream &input, size_t count)
 {
     std::map<char, FrequencyNode> nodesByLetter;
 
+    char data;
+
     for (size_t i = 0; i < count; ++i)
     {
-        nodesByLetter[data[i]].frequency++;
+        input.get(data);
+        nodesByLetter[data].frequency++;
     }
 
     std::deque<std::shared_ptr<FrequencyNode>> sortedNodes;
@@ -221,16 +226,27 @@ NodeTree BuildTree(const char *data, size_t count)
 }
 
 
-size_t Compress(std::ostream &output, const char *data, size_t byteCount)
+size_t Compress(std::ostream &output, std::istream &input, size_t byteCount)
 {
     auto start = output.tellp();
-    auto nodeTree = BuildTree(data, byteCount);
+
+    auto inputStart = input.tellg();
+    auto nodeTree = BuildTree(input, byteCount);
+    input.seekg(inputStart);
+
+    assert(input.good());
+
     OutputBitstream outputBitstream(output, byteCount, nodeTree);
+
+    char data;
 
     while (byteCount--)
     {
-        outputBitstream.Write(*(data++));
+        input.get(data);
+        outputBitstream.Write(data);
     }
+
+    assert(input.good());
 
     outputBitstream.Flush();
 
