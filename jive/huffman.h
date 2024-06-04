@@ -211,7 +211,7 @@ struct NodeTree
 };
 
 
-NodeTree BuildTree(const char *data, size_t count);
+NodeTree BuildTree(std::istream &input, size_t count);
 
 
 class OutputBitstream
@@ -410,12 +410,23 @@ public:
         return this->inputBitstream_.GetExpandedSize();
     }
 
-    void Expand(char *output, size_t byteCount)
+    void Expand(std::ostream &output, size_t byteCount)
     {
+        if (byteCount > this->inputBitstream_.GetExpandedSize())
+        {
+            throw std::out_of_range("byteCount exceeds availabe data");
+        }
+
         while (byteCount--)
         {
-            *output++ = this->inputBitstream_.ExpandValue();
+            output.put(this->inputBitstream_.ExpandValue());
         }
+    }
+
+    void Expand(std::ostream &output)
+    {
+        size_t byteCount = this->inputBitstream_.GetExpandedSize();
+        this->Expand(output, byteCount);
     }
 
 private:
@@ -423,7 +434,10 @@ private:
 };
 
 
-size_t Compress(std::ostream &output, const char *data, size_t byteCount);
+size_t Compress(
+    std::ostream &output,
+    std::istream &input,
+    size_t byteCount);
 
 
 } // end namespace huffman
