@@ -168,6 +168,11 @@ public:
     ScopedCountFlag & operator=(const ScopedCountFlag &) = delete;
     ScopedCountFlag & operator=(ScopedCountFlag &&) = delete;
 
+    T GetCount() const
+    {
+        return this->flag_.GetCount();
+    }
+
 private:
     CountFlag<T> &flag_;
 };
