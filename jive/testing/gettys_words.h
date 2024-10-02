@@ -230,9 +230,10 @@ public:
         return std::string(gettysWords[distribution(this->generator_)]);
     }
 
-    void Seed(size_t seed)
+    RandomGettysWords & Seed(size_t seed)
     {
         this->generator_.seed(seed);
+        return *this;
     }
 
 private:

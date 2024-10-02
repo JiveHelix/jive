@@ -1,8 +1,8 @@
 /**
   * @file type_traits.h
-  * 
+  *
   * @brief Additional utilities for working with types.
-  * 
+  *
   * @author Jive Helix (jivehelix@gmail.com)
   * @date 24 Aug 2021
   * @copyright Jive Helix
