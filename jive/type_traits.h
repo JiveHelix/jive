@@ -118,4 +118,8 @@ struct HasOutputStreamOperator
 >: std::true_type {};
 
 
+template<typename U, typename ...Ts>
+concept IsOneOf = std::disjunction_v<std::is_same<U, Ts>...>;
+
+
 } // end namespace jive
