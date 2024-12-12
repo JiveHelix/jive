@@ -44,12 +44,14 @@ CREATE_EXCEPTION(BinaryIoError, std::runtime_error);
   * be written out to the file/stream.
   */
 
+
 /**
   * @param target data (where to store the read bytes)
   * @param itemSize
   * @param itemCount
   */
 using ReadFunction = std::function<void (void * const, size_t, size_t)>;
+
 
 /**
   * @param source data
@@ -58,20 +60,24 @@ using ReadFunction = std::function<void (void * const, size_t, size_t)>;
   */
 using WriteFunction = std::function<void (const void * const, size_t, size_t)>;
 
+
 template<
     typename T,
     typename std::enable_if_t<detail::EnableBinaryIo<T>::value, int> = 0>
 T Read(std::istream &inputStream);
+
 
 template<
     typename T,
     typename std::enable_if_t<detail::EnableBinaryIo<T>::value, int> = 0>
 T Read(const ReadFunction &readFunction);
 
+
 template<
     typename T,
     typename std::enable_if_t<detail::EnableBinaryIo<T>::value, int> = 0>
 void Write(std::ostream &outputStream, const T &value);
+
 
 template<
     typename T,
@@ -97,6 +103,11 @@ void Skip(std::istream &inputStream)
 }
 
 
+/*
+ * Serialize strings with CountType other than uint8_t
+ *
+ */
+
 template<typename CountType = uint32_t>
 void WriteString(
     std::ostream &outputStream,
@@ -106,8 +117,11 @@ void WriteString(
 template<typename CountType = uint32_t>
 std::string ReadString(std::istream &inputStream);
 
+
 } // end namespace io
 
+
 } // end namespace jive
+
 
 #include "jive/detail/binary_io_impl.h"

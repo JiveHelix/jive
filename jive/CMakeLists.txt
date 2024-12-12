@@ -7,7 +7,12 @@ endif ()
 # Projects that include this project must #include "jive/<header-name>"
 target_include_directories(jive PUBLIC ${PROJECT_SOURCE_DIR})
 
-target_link_libraries(jive PUBLIC project_warnings project_options)
+target_link_libraries(
+    jive
+    PUBLIC
+    project_warnings
+    project_options
+    CONAN_PKG::fmt)
 
 target_sources(
     jive

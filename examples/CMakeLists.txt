@@ -6,3 +6,13 @@ target_link_libraries(
     project_warnings
     project_options
     jive)
+
+
+add_executable(version version.cpp)
+
+target_link_libraries(
+    version
+    PRIVATE
+    project_warnings
+    project_options
+    jive)

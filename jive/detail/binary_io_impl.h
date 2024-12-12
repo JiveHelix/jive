@@ -6,15 +6,20 @@
 
 #pragma once
 
+
 namespace jive
 {
+
 
 namespace io
 {
 
-template<
+
+template
+<
     typename T,
-    typename std::enable_if_t<detail::EnableBinaryIo<T>::value, int>>
+    typename std::enable_if_t<detail::EnableBinaryIo<T>::value, int>
+>
 T Read(std::istream &inputStream)
 {
     T value;

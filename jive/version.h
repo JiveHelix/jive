@@ -6,13 +6,15 @@
 
 #pragma once
 
+#include <fmt/core.h>
 #include "jive/create_exception.h"
 #include "jive/strings.h"
-#include "jive/formatter.h"
 #include "jive/to_integer.h"
+#include "jive/binary_io.h"
 
 #undef major
 #undef minor
+
 
 namespace jive
 {
@@ -25,6 +27,9 @@ template<typename T>
 class Version
 {
 public:
+    static_assert(std::is_integral_v<T>);
+    static_assert(sizeof(T) <= 2);
+
     constexpr Version(): major(0), minor(0), revision(0) {}
 
     constexpr Version(T major_, T minor_, T revision_)
@@ -35,7 +40,7 @@ public:
     {
 
     }
-    
+
     Version(const std::string &versionAsString)
     {
         auto split = jive::strings::Split(versionAsString, '.');
@@ -45,7 +50,7 @@ public:
             throw VersionError(
                 "Unrecognized version format: " + versionAsString);
         }
-        
+
         try
         {
             this->major = jive::ToInteger<T>(split[0]);
@@ -68,8 +73,8 @@ public:
 
     std::string ToString() const
     {
-        return jive::FastFormatter<16>(
-            "%hhu.%hhu.%hhu",
+        return fmt::format(
+            "{}.{}.{}",
             this->major,
             this->minor,
             this->revision);
@@ -115,12 +120,28 @@ public:
         return {this->major, this->minor, this->revision};
     }
 
+    void Write(std::ostream &outputStream)
+    {
+        io::Write(outputStream, this->major);
+        io::Write(outputStream, this->minor);
+        io::Write(outputStream, this->revision);
+    }
+
+    static Version Read(std::istream &inputStream)
+    {
+        Version result;
+
+        result.major = io::Read<T>(inputStream);
+        result.minor = io::Read<T>(inputStream);
+        result.revision = io::Read<T>(inputStream);
+
+        return result;
+    }
+
     T major;
     T minor;
     T revision;
 };
-
-
 
 
 } // end namespace jive

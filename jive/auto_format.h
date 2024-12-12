@@ -7,8 +7,8 @@
 #pragma once
 
 #include "jive/static_join.h"
-#include "jive/formatter.h"
 #include "jive/detail/auto_format_detail.h"
+
 
 namespace jive
 {
@@ -117,15 +117,5 @@ struct ScientificFormat
         >::value;
 };
 
-
-template<int base, typename T>
-std::string AutoFormatter(T value, int width = 0 , int precision = -1)
-{
-    return Formatter<32>(
-        AutoFormat<T, base>::value.data(),
-        width,
-        precision,
-        value);
-}
 
 } // end namespace jive

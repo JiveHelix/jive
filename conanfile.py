@@ -56,3 +56,6 @@ class JiveConan(ConanFile):
 
     def build_requirements(self):
         self.test_requires("catch2/2.13.9")
+
+    def requirements(self):
+        self.requires("fmt/[>=8]")
