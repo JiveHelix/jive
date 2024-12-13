@@ -14,6 +14,7 @@
 
 #include <errno.h>
 #include <cstring>
+#include <cstdint>
 #include <deque>
 #include <utility>
 

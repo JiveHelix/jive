@@ -58,4 +58,4 @@ class JiveConan(ConanFile):
         self.test_requires("catch2/2.13.9")
 
     def requirements(self):
-        self.requires("fmt/[>=8]")
+        self.requires("fmt/[~10]")
