@@ -16,6 +16,7 @@
 
 #include <limits>
 #include <cmath>
+#include <cstddef>
 #include "jive/power.h"
 
 
