@@ -12,6 +12,7 @@
 
 #pragma once
 
+
 #include <type_traits>
 #include <vector>
 #include <deque>
@@ -197,34 +198,55 @@ struct IsSupportedContainer<
     std::void_t<decltype(ContainerName<T>::value)>>: public std::true_type {};
 
 
-/** Fallback for types that do not have static descriptions **/
-#ifdef _WIN32
+} // end namespace detail
 
-template <class T>
-std::string DemangleTypeName()
+
+namespace detail
 {
-    return typeid(T).name();
-}
+
+template <typename T>
+consteval std::string_view TypeName()
+{
+#if defined(__clang__)
+
+    constexpr std::string_view p = __PRETTY_FUNCTION__;
+
+    constexpr std::string_view prefix =
+        "std::string_view jive::detail::TypeName() [T = ";
+
+    constexpr std::string_view suffix = "]";
+
+#elif defined(__GNUC__)
+
+    constexpr std::string_view p = __PRETTY_FUNCTION__;
+
+    constexpr std::string_view prefix =
+        "constexpr std::string_view jive::detail::TypeName() [with T = ";
+
+    constexpr std::string_view suffix = "]";
+
+#elif defined(_MSC_VER)
+
+    constexpr std::string_view p = __FUNCSIG__;
+
+    constexpr std::string_view prefix =
+        "class std::basic_string_view<char,struct std::char_traits<char> > "
+        "__cdecl jive::detail::TypeName<";
+
+    constexpr std::string_view suffix = ">(void)";
 
 #else
-
-template <class T>
-std::string DemangleTypeName()
-{
-    // Compiler warns about uninitialized value.
-    int status = -4;
-    auto name = typeid(T).name();
-
-    auto result = std::unique_ptr<char, decltype(std::free) *>{
-        abi::__cxa_demangle(name, NULL, NULL, &status),
-        std::free};
-
-    return (status == 0) ? result.get() : name;
-}
-
+#   error Unsupported compiler
 #endif
 
+    const auto start = p.find(prefix) + prefix.size();
+    const auto end = p.rfind(suffix);
 
-} // end namespace detail
+    return p.substr(start, end - start);
+}
+
+
+} // namespace detail
+
 
 } // end namespace jive

@@ -112,7 +112,7 @@ struct HasOutputStreamOperator
         <
             std::ostream &,
             decltype(
-                std::declval<std::ostream>() << std::declval<T>())
+                std::declval<std::ostream &>() << std::declval<const T &>())
         >
     >
 >: std::true_type {};
@@ -120,6 +120,22 @@ struct HasOutputStreamOperator
 
 template<typename U, typename ...Ts>
 concept IsOneOf = std::disjunction_v<std::is_same<U, Ts>...>;
+
+
+template<typename ...Ts>
+struct TupleContains_
+{
+    static constexpr bool value = false;
+};
+
+template<typename U, typename ...Ts>
+struct TupleContains_<U, std::tuple<Ts...>>
+{
+    static constexpr bool value = IsOneOf<U, Ts...>;
+};
+
+template<typename U, typename T>
+concept TupleContains = TupleContains_<U, T>::value;
 
 
 } // end namespace jive

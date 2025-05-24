@@ -98,17 +98,17 @@ struct DescribeType<std::wstring>
 
 
 template<typename T>
-constexpr std::enable_if_t<HasStaticDescribeType<T>::value, std::string_view>
+consteval std::enable_if_t<HasStaticDescribeType<T>::value, std::string_view>
 GetTypeName()
 {
     return DescribeType<T>::value;
 }
 
 template<typename T>
-std::enable_if_t<!HasStaticDescribeType<T>::value, std::string>
+consteval std::enable_if_t<!HasStaticDescribeType<T>::value, std::string_view>
 GetTypeName()
 {
-    return detail::DemangleTypeName<T>();
+    return detail::TypeName<T>();
 }
 
 } // end namespace jive

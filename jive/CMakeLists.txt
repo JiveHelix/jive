@@ -4,6 +4,8 @@ if (${fPIC})
     set_property(TARGET jive PROPERTY POSITION_INDEPENDENT_CODE ON)
 endif ()
 
+find_package(Fmt REQUIRED)
+
 # Projects that include this project must #include "jive/<header-name>"
 target_include_directories(jive PUBLIC ${PROJECT_SOURCE_DIR})
 
@@ -12,7 +14,7 @@ target_link_libraries(
     PUBLIC
     project_warnings
     project_options
-    CONAN_PKG::fmt)
+    fmt::fmt)
 
 target_sources(
     jive
