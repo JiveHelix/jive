@@ -14,6 +14,7 @@
 #include <ostream>
 #include <type_traits>
 #include <bitset>
+#include <array>
 
 
 namespace jive
@@ -59,6 +60,15 @@ struct IsString: std::false_type {};
 template<>
 struct IsString<std::string>: std::true_type {};
 
+template<typename T>
+struct IsArray_: std::false_type {};
+
+template<typename T, size_t N>
+struct IsArray_<std::array<T, N>>: std::true_type {};
+
+template<typename T>
+concept IsArray = IsArray_<T>::value;
+
 
 template<typename T, typename = std::void_t<>>
 struct IsValueContainer: std::false_type {};
@@ -70,6 +80,7 @@ struct IsValueContainer<
         std::enable_if_t<
             jive::IsIterable<T>::value
             && std::is_integral_v<decltype(std::declval<T>().size())>
+            && !IsArray<T>
             && !jive::IsMapLike<T>::value
             && !IsString<T>::value
         >,
