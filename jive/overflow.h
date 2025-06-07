@@ -14,6 +14,7 @@
 #include <type_traits>
 #include <cmath>
 #include <limits>
+#include <utility>
 #include "jive/constexpr_shim.h"
 
 #ifdef _WIN32

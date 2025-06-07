@@ -364,7 +364,7 @@ public:
                 SystemError(errno),
                 "Failed to send data to socket");
         }
-        
+
         return {static_cast<size_t>(sentCount)};
     }
 
@@ -420,7 +420,7 @@ public:
         timeValue.tv_sec = seconds;
         timeValue.tv_usec = microseconds;
 
-        this->template SetSocketOption(SO_RCVTIMEO, timeValue);
+        this->SetSocketOption(SO_RCVTIMEO, timeValue);
     }
 
     void SetSendTimeOut(long seconds, suseconds_t microseconds)
@@ -429,7 +429,7 @@ public:
         timeValue.tv_sec = seconds;
         timeValue.tv_usec = microseconds;
 
-        this->template SetSocketOption(SO_SNDTIMEO, timeValue);
+        this->SetSocketOption(SO_SNDTIMEO, timeValue);
     }
 
     /* @return true when Accept will not block */
