@@ -15,3 +15,6 @@ class JiveConan(LibraryConanFile):
 
     def build_requirements(self):
         self.test_requires("catch2/2.13.9")
+
+    def export_sources(self):
+        super().export_sources()
