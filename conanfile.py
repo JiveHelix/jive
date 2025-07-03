@@ -1,7 +1,10 @@
-from cmake_includes.conan import LibraryConanFile
+from conan import ConanFile
 
 
-class JiveConan(LibraryConanFile):
+class JiveConan(ConanFile):
+    python_requires = "boiler/0.1"
+    python_requires_extend = "boiler.LibraryConanFile"
+
     name = "jive"
     version = "1.3.0"
     license = "MIT"
@@ -15,6 +18,3 @@ class JiveConan(LibraryConanFile):
 
     def build_requirements(self):
         self.test_requires("catch2/2.13.9")
-
-    def export_sources(self):
-        super().export_sources()
