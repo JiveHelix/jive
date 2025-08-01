@@ -93,6 +93,13 @@ template<typename T>
 inline constexpr bool HasEqualTo = HasEqualTo_<T>::value;
 
 
+template<typename T>
+concept HasMemberEqual = requires (const T &left, const T &right)
+{
+    { left.operator==(right) } -> std::convertible_to<bool>;
+};
+
+
 template<typename T, typename = void>
 struct HasNotEqualTo_: std::false_type {};
 
