@@ -33,6 +33,7 @@
 #pragma once
 
 #include <type_traits>
+#include <new>
 
 namespace jive
 {
@@ -103,10 +104,16 @@ public:
     {
         if (this->data_ != nullptr)
         {
+#if defined(__cpp_sized_deallocation)
             ::operator delete(
                 this->data_,
                 this->byteCount_,
                 std::align_val_t{align});
+#else
+            ::operator delete(
+                this->data_,
+                std::align_val_t{align});
+#endif
         }
     }
 
