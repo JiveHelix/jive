@@ -221,9 +221,10 @@ consteval std::string_view TypeName()
     constexpr std::string_view p = __PRETTY_FUNCTION__;
 
     constexpr std::string_view prefix =
-        "constexpr std::string_view jive::detail::TypeName() [with T = ";
+        "consteval std::string_view jive::detail::TypeName() [with T = ";
 
-    constexpr std::string_view suffix = "]";
+    constexpr std::string_view suffix =
+        "; std::string_view = std::basic_string_view<char>]";
 
 #elif defined(_MSC_VER)
 
