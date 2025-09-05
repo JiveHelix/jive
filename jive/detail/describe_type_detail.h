@@ -29,6 +29,7 @@
 #endif // !_WIN32
 
 #include "jive/static_join.h"
+#include <jive/compiler.h>
 
 
 namespace jive
@@ -207,7 +208,7 @@ namespace detail
 template <typename T>
 consteval std::string_view TypeName()
 {
-#if defined(__clang__)
+#if defined(CLANG_COMPILER)
 
     constexpr std::string_view p = __PRETTY_FUNCTION__;
 
@@ -216,7 +217,7 @@ consteval std::string_view TypeName()
 
     constexpr std::string_view suffix = "]";
 
-#elif defined(__GNUC__)
+#elif defined(GCC_COMPILER)
 
     constexpr std::string_view p = __PRETTY_FUNCTION__;
 
@@ -226,7 +227,7 @@ consteval std::string_view TypeName()
     constexpr std::string_view suffix =
         "; std::string_view = std::basic_string_view<char>]";
 
-#elif defined(_MSC_VER)
+#elif defined(MSC_COMPILER)
 
     constexpr std::string_view p = __FUNCSIG__;
 

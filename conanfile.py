@@ -6,7 +6,7 @@ class JiveConan(ConanFile):
     python_requires_extend = "boiler.LibraryConanFile"
 
     name = "jive"
-    version = "1.3.0"
+    version = "1.4.0"
     license = "MIT"
     author = "Jive Helix (jivehelix@gmail.com)"
     url = "https://github.com/JiveHelix/jive"
