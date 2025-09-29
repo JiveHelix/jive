@@ -137,3 +137,24 @@ TEST_CASE("strings::Join creates a new string around token", "[strings]")
 
     REQUIRE(joined == "let's-make-this-hyphenated");
 }
+
+
+TEST_CASE("strings::Upper converts to upper-case", "[strings]")
+{
+    REQUIRE(jive::strings::Upper("foo") == "FOO");
+}
+
+TEST_CASE("strings::Lower converts to lower-case", "[strings]")
+{
+    REQUIRE(jive::strings::Lower("FOO") == "foo");
+}
+
+TEST_CASE("strings::Upper handles mixed-case", "[strings]")
+{
+    REQUIRE(jive::strings::Upper("fOo") == "FOO");
+}
+
+TEST_CASE("strings::Lower handles mixed-case", "[strings]")
+{
+    REQUIRE(jive::strings::Lower("fOo") == "foo");
+}

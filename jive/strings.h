@@ -24,6 +24,7 @@
 
 #include <cstring>
 #include <cstdarg>
+#include <cctype>
 
 #include "jive/detail/strings_detail.h"
 
@@ -163,6 +164,35 @@ bool AllOfAlphas(const std::string& s)
         s.begin(),
         s.end(),
         [](char c)->bool { return isalpha(c); });
+}
+
+
+inline std::string Upper(std::string value)
+{
+    std::transform(
+        value.begin(),
+        value.end(),
+        value.begin(),
+        [](unsigned char c)
+        {
+            return std::toupper(c);
+        });
+
+    return value;
+}
+
+inline std::string Lower(std::string value)
+{
+    std::transform(
+        value.begin(),
+        value.end(),
+        value.begin(),
+        [](unsigned char c)
+        {
+            return std::tolower(c);
+        });
+
+    return value;
 }
 
 
