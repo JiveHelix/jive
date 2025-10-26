@@ -82,17 +82,30 @@ template<typename Key, typename T>
 class InsertionMap
 {
     using Map = std::map<OrderedKey<Key>, T>;
-    using Iterator = typename Map::iterator;
-
     Map map_;
 
 public:
+
+    using Iterator = typename Map::iterator;
+    using ValueType = typename Map::value_type;
+    using InsertionType = std::pair<OrderedKey<Key>, T>;
+
     InsertionMap()
         :
         map_(),
         insertionIndex_(0)
     {
 
+    }
+
+    InsertionMap(std::initializer_list<InsertionType> initializer)
+        :
+        InsertionMap()
+    {
+        for (auto &value: initializer)
+        {
+            this->insert(value);
+        }
     }
 
     auto Find(const Key &key)

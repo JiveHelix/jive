@@ -40,6 +40,31 @@ template<typename T>
 using RemoveOptional = typename RemoveOptional_<T>::Type;
 
 
+
+template<typename T, typename Enable = void>
+struct MakeOptional_
+{
+    using Type = std::optional<T>;
+};
+
+
+template<typename T>
+struct MakeOptional_
+<
+    T,
+    std::enable_if_t<IsOptional<T>>
+>
+{
+    using Type = T;
+};
+
+
+template<typename T>
+using MakeOptional = typename MakeOptional_<T>::Type;
+
+
+
+
 template<typename T, typename U, typename Enable = void>
 struct MatchOptional_
 {
