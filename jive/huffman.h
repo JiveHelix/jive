@@ -8,6 +8,7 @@
 #include <cassert>
 #include <memory>
 #include <optional>
+#include <cstddef>
 
 #include "jive/binary_io.h"
 
@@ -320,12 +321,12 @@ public:
         while (recoveredSymbols--)
         {
 #ifdef VERBOSE
-            ssize_t startPosition = input.tellg();
+            std::ptrdiff_t startPosition = input.tellg();
 #endif
             ReadNode(input, &this->root_);
 #ifdef VERBOSE
-            ssize_t endPosition = input.tellg();
-            ssize_t thisSymbol = endPosition - startPosition;
+            std::ptrdiff_t endPosition = input.tellg();
+            std::ptrdiff_t thisSymbol = endPosition - startPosition;
 
             std::cout << "  consumed: " << thisSymbol << " bytes. "
                 << endPosition - 3

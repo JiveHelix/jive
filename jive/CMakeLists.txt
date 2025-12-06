@@ -22,6 +22,7 @@ target_sources(
     colorize.cpp
     huffman.cpp
     numeric_string_compare.cpp
+    thread_pool.cpp
     time_value.cpp
     path.cpp
     format_paragraph.cpp)

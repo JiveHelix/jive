@@ -12,13 +12,8 @@
 #pragma once
 
 #include <utility>
+#include <cstdint>
 
-#ifdef _WIN32
-#include <BaseTsd.h>
-typedef SSIZE_T ssize_t;
-#else
-#include <sys/types.h>
-#endif
 
 namespace jive
 {
@@ -26,7 +21,7 @@ namespace jive
 namespace detail
 {
 
-template<ssize_t base, size_t ...Index>
+template<int64_t base, size_t ...Index>
 constexpr auto Power(std::index_sequence<Index...>)
 {
     return ((static_cast<void>(Index), base) * ... * 1);
@@ -34,7 +29,7 @@ constexpr auto Power(std::index_sequence<Index...>)
 
 } // end namespace detail
 
-template<ssize_t base, auto exponent>
+template<int64_t base, auto exponent>
 constexpr auto Power()
 {
     return detail::Power<base>(std::make_index_sequence<exponent>{});

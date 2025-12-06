@@ -175,7 +175,7 @@ inline std::string Upper(std::string value)
         value.begin(),
         [](unsigned char c)
         {
-            return std::toupper(c);
+            return static_cast<unsigned char>(std::toupper(c));
         });
 
     return value;
@@ -189,7 +189,7 @@ inline std::string Lower(std::string value)
         value.begin(),
         [](unsigned char c)
         {
-            return std::tolower(c);
+            return static_cast<unsigned char>(std::tolower(c));
         });
 
     return value;

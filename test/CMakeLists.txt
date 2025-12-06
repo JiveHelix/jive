@@ -15,6 +15,7 @@ add_catch2_test(
         scope_flag_tests.cpp
         socket_tests.cpp
         strings_tests.cpp
+        thread_pool_tests.cpp
         time_value_tests.cpp
         to_integer_tests.cpp
         to_float_tests.cpp

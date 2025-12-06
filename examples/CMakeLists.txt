@@ -16,3 +16,6 @@ target_link_libraries(
     project_warnings
     project_options
     jive)
+
+
+add_executable(cpuinfo cpuinfo.cpp)

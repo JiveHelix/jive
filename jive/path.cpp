@@ -12,6 +12,7 @@
 #include "jive/path.h"
 #include "jive/error.h"
 
+#include <filesystem>
 #include <errno.h>
 #include <cstring>
 #include <cstdint>
@@ -330,60 +331,14 @@ void MakeDirectory(const std::string &pathName)
 }
 
 
-void MakeDirectories(const std::string &pathname)
+void MakeDirectories(const std::string &pathName)
 {
-    if (pathname.empty())
+    if (pathName.empty())
     {
         return;
     }
 
-    auto filtered = pathname;
-    FilterSeparators(filtered);
-
-    auto subDirectoryVector = strings::Split(filtered, pathSeparator);
-
-    if (subDirectoryVector.empty())
-    {
-        return;
-    }
-
-    std::deque<std::string> subDirectories(
-        subDirectoryVector.begin(),
-        subDirectoryVector.end());
-
-    std::deque<std::string> pathsToCreate;
-
-    if (subDirectories.front().empty())
-    {
-        // path is absolute, beginning with '/'
-        // strings::Split left an empty string in the front representing that
-        // nothing came before the initial '/'
-        subDirectories.pop_front();
-
-        // The first directory needs to be begin with a '/'
-        pathsToCreate.emplace_back(
-            std::string(1, pathSeparator) + subDirectories.front());
-    }
-    else
-    {
-        // relative path
-        pathsToCreate.emplace_back(subDirectories.front());
-    }
-
-    subDirectories.pop_front();
-
-    while (!subDirectories.empty())
-    {
-        pathsToCreate.emplace_back(
-            path::Join(pathsToCreate.back(), subDirectories.front()));
-
-        subDirectories.pop_front();
-    }
-
-    for (const auto &subdir: pathsToCreate)
-    {
-        MakeDirectory(subdir);
-    }
+    std::filesystem::create_directories(pathName);
 }
 
 

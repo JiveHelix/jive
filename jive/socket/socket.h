@@ -14,6 +14,7 @@
 #include <cstring>
 #include <optional>
 #include <ctime>
+#include <cstddef>
 #include <sys/socket.h>
 #include <unistd.h>
 #include <fcntl.h>
@@ -283,7 +284,7 @@ public:
         return this->connectedAddress_;
     }
 
-    ssize_t Receive(void *buffer, size_t count, int flags) const
+    std::ptrdiff_t Receive(void *buffer, size_t count, int flags) const
     {
         return recv(this->handle_, buffer, count, flags);
     }
@@ -305,7 +306,7 @@ public:
 
     size_t ReceiveNoWait(void *buffer, size_t count) const
     {
-        ssize_t receivedCount =
+        std::ptrdiff_t receivedCount =
             this->Receive(buffer, count, MSG_DONTWAIT);
 
         if (receivedCount < 0)
@@ -327,7 +328,7 @@ public:
 
     std::optional<size_t> ReceiveWait(void *buffer, size_t count) const
     {
-        ssize_t receivedCount = this->Receive(buffer, count, 0);
+        std::ptrdiff_t receivedCount = this->Receive(buffer, count, 0);
 
         if (receivedCount < 0)
         {
@@ -344,14 +345,14 @@ public:
         return {static_cast<size_t>(receivedCount)};
     }
 
-    ssize_t Send(const void *buffer, size_t byteCount, int flags) const
+    std::ptrdiff_t Send(const void *buffer, size_t byteCount, int flags) const
     {
         return send(this->handle_, buffer, byteCount, flags);
     }
 
     std::optional<size_t> SendWait(const void *buffer, size_t count) const
     {
-        ssize_t sentCount = this->Send(buffer, count, 0);
+        std::ptrdiff_t sentCount = this->Send(buffer, count, 0);
 
         if (sentCount < 0)
         {

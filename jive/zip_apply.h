@@ -45,7 +45,7 @@ constexpr auto Zip(First &&firsts, Second &&seconds, std::index_sequence<I...>)
         std::pair(std::get<I>(firsts), std::get<I>(seconds))...);
 }
 
-
+#if 1
 template<typename First, typename Second, typename Function>
 void ZipApply(
     Function &&function,
@@ -75,5 +75,30 @@ void ZipApply(
             std::make_index_sequence<size>{}),
         std::forward<Function>(function));
 }
+
+#else
+
+template<typename F, typename A, typename B, std::size_t... I>
+inline void ZipForEachImpl(F &&f, A &&a, B &&b, std::index_sequence<I...>)
+{
+    (std::invoke(std::forward<F>(f),
+                 std::get<I>(std::forward<A>(a)),
+                 std::get<I>(std::forward<B>(b))), ...);
+}
+
+template<typename F, typename A, typename B>
+inline void ZipApply(F &&f, A &&a, B &&b)
+{
+    using TA = std::remove_reference_t<A>;
+    using TB = std::remove_reference_t<B>;
+    static_assert(std::tuple_size_v<TA> == std::tuple_size_v<TB>);
+
+    ZipForEachImpl(std::forward<F>(f),
+                   std::forward<A>(a),
+                   std::forward<B>(b),
+                   std::make_index_sequence<std::tuple_size_v<TA>>{});
+}
+
+#endif
 
 } // namespace jive
