@@ -136,7 +136,8 @@ Queue::Queue()
     jobsCondition_{},
     concurrency_(std::thread::hardware_concurrency()),
     sentryPool_{},
-    jobs_{}
+    jobs_{},
+    activeCount_(0)
 {
     // Initially allow queueing twice as many jobs as the hardware allows
     // to run concurrently.
@@ -174,6 +175,14 @@ SharedSentry Queue::AddJob(const std::function<void()> &job)
 }
 
 
+void Queue::ReportJobDone()
+{
+    std::lock_guard lock(this->mutex_);
+
+    this->activeCount_--;
+}
+
+
 std::optional<Job> Queue::RequestJob()
 {
     std::unique_lock lock(this->mutex_);
@@ -198,6 +207,8 @@ std::optional<Job> Queue::RequestJob()
     auto job = this->jobs_.front();
     this->jobs_.pop_front();
 
+    this->activeCount_++;
+
     return job;
 }
 
@@ -217,6 +228,13 @@ void Queue::Stop()
 }
 
 
+void Queue::Start()
+{
+    std::lock_guard lock(this->mutex_);
+    this->isRunning_ = true;
+}
+
+
 void Queue::ReturnSentry(const SharedSentry &sharedSentry)
 {
     std::lock_guard lock(this->mutex_);
@@ -224,10 +242,35 @@ void Queue::ReturnSentry(const SharedSentry &sharedSentry)
 }
 
 
+size_t Queue::GetQueuedCount() const
+{
+    std::lock_guard lock(this->mutex_);
+
+    return this->jobs_.size();
+}
+
+
+int64_t Queue::GetActiveCount() const
+{
+    std::lock_guard lock(this->mutex_);
+
+    return this->activeCount_;
+}
+
+
+Thread::Thread()
+    :
+    queue_(),
+    thread_()
+{
+
+}
+
+
 Thread::Thread(const std::shared_ptr<Queue> &queue)
     :
     queue_(queue),
-    thread_(std::bind(&Thread::Run_, this))
+    thread_()
 {
 
 }
@@ -257,6 +300,22 @@ Thread & Thread::operator=(Thread &&other)
 
 Thread::~Thread()
 {
+    this->Stop();
+}
+
+
+void Thread::Start()
+{
+    if (!this->thread_.joinable())
+    {
+        this->thread_ =
+            std::thread(std::bind(&Thread::Run_, this));
+    }
+}
+
+
+void Thread::Stop()
+{
     if (this->thread_.joinable())
     {
         this->thread_.join();
@@ -273,6 +332,7 @@ void Thread::Run_()
         if (job)
         {
             job->Run();
+            this->queue_->ReportJobDone();
         }
     }
 }
@@ -283,7 +343,10 @@ void Thread::Run_()
 
 ThreadPool::ThreadPool()
     :
-    queue_(std::make_shared<detail::Queue>())
+    mutex_(),
+    queue_(std::make_shared<detail::Queue>()),
+    threads_(),
+    loadFactor_(1.0)
 {
     auto count = std::thread::hardware_concurrency();
     this->threads_.reserve(count);
@@ -292,11 +355,14 @@ ThreadPool::ThreadPool()
     {
         this->threads_.emplace_back(this->queue_);
     }
+
+    this->ResumeThreads_();
 }
+
 
 ThreadPool::~ThreadPool()
 {
-    this->queue_->Stop();
+    this->PauseThreads_();
 }
 
 
@@ -305,6 +371,122 @@ Sentry ThreadPool::AddJob(const std::function<void()> &job)
     return Sentry(
         this->queue_->AddJob(job),
         this->queue_);
+}
+
+
+size_t ThreadPool::GetConcurrency() const
+{
+    std::lock_guard lock(this->mutex_);
+
+    return this->threads_.size();
+}
+
+
+size_t ThreadPool::GetQueuedCount() const
+{
+    return this->queue_->GetQueuedCount();
+}
+
+
+int64_t ThreadPool::GetActiveCount() const
+{
+    return this->queue_->GetActiveCount();
+}
+
+
+double ThreadPool::GetLoadFactor() const
+{
+    std::lock_guard lock(this->mutex_);
+
+    return this->loadFactor_;
+}
+
+
+double ThreadPool::GetMinLoadFactor() const
+{
+    auto hardwareConcurrency =
+        static_cast<double>(std::thread::hardware_concurrency());
+
+    assert(hardwareConcurrency >= 1.0);
+
+    // The minimum is to use 1 process.
+    // If I allowed this to go to zero, there would be no threads in the pool.
+    return 1.0 / hardwareConcurrency;
+}
+
+
+double ThreadPool::GetPressure() const
+{
+    auto queueCount = this->queue_->GetQueuedCount();
+
+    std::lock_guard lock(this->mutex_);
+
+    return queueCount / static_cast<double>(this->threads_.size());
+}
+
+
+void ThreadPool::SetLoadFactor(double loadFactor)
+{
+    auto hardwareConcurrency =
+        static_cast<double>(std::thread::hardware_concurrency());
+
+    auto minLoadFactor = this->GetMinLoadFactor();
+
+    loadFactor = std::max(loadFactor, minLoadFactor);
+    loadFactor = std::min(loadFactor, 1.0);
+
+    auto count = static_cast<size_t>(
+        std::round(loadFactor * hardwareConcurrency));
+
+    count = std::min<size_t>(std::thread::hardware_concurrency(), count);
+
+    std::lock_guard lock(this->mutex_);
+
+    if (count > this->threads_.size())
+    {
+        this->PauseThreads_();
+
+        this->threads_.reserve(count);
+        size_t toInitialize = count - this->threads_.size();
+
+        while (toInitialize--)
+        {
+            this->threads_.emplace_back(this->queue_);
+        }
+
+        this->ResumeThreads_();
+    }
+    else if (count < this->threads_.size())
+    {
+        this->PauseThreads_();
+        this->threads_.resize(count);
+        this->ResumeThreads_();
+    }
+
+    this->loadFactor_ =
+        static_cast<double>(count)
+        / static_cast<double>(std::thread::hardware_concurrency());
+}
+
+
+void ThreadPool::PauseThreads_()
+{
+    this->queue_->Stop();
+
+    for (auto &thread: this->threads_)
+    {
+        thread.Stop();
+    }
+}
+
+void ThreadPool::ResumeThreads_()
+{
+    this->queue_->Start();
+
+    for (auto &thread: this->threads_)
+    {
+        thread.Start();
+    }
 }
 
 

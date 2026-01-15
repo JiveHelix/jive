@@ -82,11 +82,19 @@ public:
 
     std::optional<Job> RequestJob();
 
+    void ReportJobDone();
+
     bool IsRunning() const;
 
     void Stop();
 
+    void Start();
+
     void ReturnSentry(const SharedSentry &sharedSentry);
+
+    size_t GetQueuedCount() const;
+
+    int64_t GetActiveCount() const;
 
 private:
     mutable std::mutex mutex_;
@@ -95,12 +103,15 @@ private:
     size_t concurrency_;
     std::deque<SharedSentry> sentryPool_;
     std::deque<Job> jobs_;
+    int64_t activeCount_;
 };
 
 
 class Thread
 {
 public:
+    Thread();
+
     Thread(const std::shared_ptr<Queue> &queue);
 
     Thread(const Thread &) = delete;
@@ -112,6 +123,10 @@ public:
     Thread & operator=(Thread &&other);
 
     ~Thread();
+
+    void Start();
+
+    void Stop();
 
 private:
     void Run_();
@@ -194,11 +209,16 @@ private:
 class ThreadPool
 {
 private:
+    mutable std::mutex mutex_;
     std::shared_ptr<detail::Queue> queue_;
     std::vector<detail::Thread> threads_;
+    double loadFactor_;
 
 private:
     ThreadPool();
+
+    void PauseThreads_();
+    void ResumeThreads_();
 
 public:
     ~ThreadPool();
@@ -209,6 +229,20 @@ public:
     ThreadPool & operator=(ThreadPool &&) = delete;
 
     Sentry AddJob(const std::function<void()> &job);
+
+    size_t GetConcurrency() const;
+
+    size_t GetQueuedCount() const;
+
+    int64_t GetActiveCount() const;
+
+    double GetLoadFactor() const;
+
+    void SetLoadFactor(double loadFactor);
+
+    double GetMinLoadFactor() const;
+
+    double GetPressure() const;
 
     friend std::shared_ptr<ThreadPool> GetThreadPool();
 };
