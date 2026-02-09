@@ -69,6 +69,12 @@ T Read(std::istream &inputStream);
 
 template<
     typename T,
+    typename std::enable_if_t<detail::EnableOptionalIo<T>::value, int> = 0>
+T Read(std::istream &inputStream);
+
+
+template<
+    typename T,
     typename std::enable_if_t<detail::EnableBinaryIo<T>::value, int> = 0>
 T Read(const ReadFunction &readFunction);
 
@@ -76,6 +82,12 @@ T Read(const ReadFunction &readFunction);
 template<
     typename T,
     typename std::enable_if_t<detail::EnableBinaryIo<T>::value, int> = 0>
+void Write(std::ostream &outputStream, const T &value);
+
+
+template<
+    typename T,
+    typename std::enable_if_t<detail::EnableOptionalIo<T>::value, int> = 0>
 void Write(std::ostream &outputStream, const T &value);
 
 

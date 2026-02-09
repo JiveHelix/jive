@@ -7,6 +7,7 @@
 #pragma once
 
 #include <type_traits>
+#include <jive/optional.h>
 
 namespace jive
 {
@@ -45,7 +46,20 @@ struct EnableBinaryIo
         || std::is_same<T, std::string>::value
         || std::is_standard_layout<T>::value)
         && !std::is_same<typename std::remove_const<T>::type, char *>::value
+        && !::jive::IsOptional<T>
     > {};
+
+
+template<typename T>
+struct EnableOptionalIo
+    :
+    std::integral_constant
+    <
+        bool,
+        ::jive::IsOptional<T>
+        && EnableBinaryIo<::jive::RemoveOptional<T>>::value
+    > {};
+
 
 } // end namespace detail
 

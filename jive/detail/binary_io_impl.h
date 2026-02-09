@@ -27,6 +27,7 @@ T Read(std::istream &inputStream)
     return value;
 }
 
+
 /** Read specialization for std::string **/
 template<>
 inline std::string Read<std::string>(std::istream &inputStream)
@@ -44,6 +45,32 @@ inline std::string Read<std::string>(std::istream &inputStream)
     return std::string(&buffer[0], resultLength);
 }
 
+
+template
+<
+    typename T,
+    typename std::enable_if_t<detail::EnableOptionalIo<T>::value, int>
+>
+T Read(std::istream &inputStream)
+{
+    using U = ::jive::RemoveOptional<T>;
+    int hasValue = inputStream.get();
+
+    if (hasValue < 0)
+    {
+        throw BinaryIoError("Failed to extract optional.");
+    }
+
+    if (hasValue == 0)
+    {
+        // Leave std::optional unset.
+        return {};
+    }
+
+    return Read<U>(inputStream);
+}
+
+
 template<
     typename T,
     typename std::enable_if_t<detail::EnableBinaryIo<T>::value, int>>
@@ -51,6 +78,7 @@ void Write(std::ostream &outputStream, const T &value)
 {
     outputStream.write(reinterpret_cast<const char *>(&value), sizeof(T));
 }
+
 
 /** Write specialization for std::string **/
 template<>
@@ -70,6 +98,24 @@ inline void Write<std::string>(
     outputStream.put(static_cast<char>(stringSize));
     outputStream.write(value.c_str(), stringSize);
 }
+
+
+template<
+    typename T,
+    typename std::enable_if_t<detail::EnableOptionalIo<T>::value, int>>
+void Write(std::ostream &outputStream, const T &value)
+{
+    if (!value)
+    {
+        outputStream.put(static_cast<char>(0));
+
+        return;
+    }
+
+    outputStream.put(static_cast<char>(1));
+    Write(outputStream, *value);
+}
+
 
 template<
     typename T,
