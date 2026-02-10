@@ -1,4 +1,5 @@
 #include <jive/thread_pool.h>
+#include <cmath>
 
 
 namespace jive
@@ -417,7 +418,7 @@ double ThreadPool::GetMinLoadFactor() const
 
 double ThreadPool::GetPressure() const
 {
-    auto queueCount = this->queue_->GetQueuedCount();
+    auto queueCount = static_cast<double>(this->queue_->GetQueuedCount());
 
     std::lock_guard lock(this->mutex_);
 
