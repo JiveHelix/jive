@@ -1,5 +1,7 @@
-// InstructionSet.cpp
-// Compile by using: cl /EHsc /W4 InstructionSet.cpp
+// Only tested for WIN32 x86/x64 builds.
+//
+// cpuinfo.cpp
+// Compile by using: cl /EHsc /W4 cpuinfo.cpp
 // processor: x86, x64
 // Uses the __cpuid intrinsic to get information about
 // CPU extended instruction set support.

@@ -18,4 +18,7 @@ target_link_libraries(
     jive)
 
 
-add_executable(cpuinfo cpuinfo.cpp)
+# MSVC only
+if (MSVC)
+    add_executable(cpuinfo cpuinfo.cpp)
+endif ()

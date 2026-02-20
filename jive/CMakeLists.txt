@@ -14,18 +14,20 @@ target_link_libraries(
     PUBLIC
     project_warnings
     project_options
-    fmt::fmt)
+    fmt::fmt
+    pthread)
 
 target_sources(
     jive
     PRIVATE
     colorize.cpp
+    format_paragraph.cpp
     huffman.cpp
     numeric_string_compare.cpp
-    thread_pool.cpp
-    time_value.cpp
     path.cpp
-    format_paragraph.cpp)
+    thread_pool.cpp
+    thread_priority.cpp
+    time_value.cpp)
 
 install(TARGETS jive DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
