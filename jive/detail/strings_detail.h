@@ -9,6 +9,7 @@
 
 #undef min
 #undef max
+#include <stdexcept>
 #include <algorithm>
 
 namespace jive

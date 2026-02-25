@@ -6,6 +6,7 @@
 
 #pragma once
 
+#include <stdexcept>
 #include <fmt/core.h>
 #include "jive/create_exception.h"
 #include "jive/strings.h"

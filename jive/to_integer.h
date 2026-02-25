@@ -16,6 +16,7 @@
 #undef min
 #undef max
 
+#include <stdexcept>
 #include <type_traits>
 #include <string_view>
 #include <typeinfo>
