@@ -228,6 +228,8 @@ NodeTree BuildTree(std::istream &input, size_t count)
 
 size_t Compress(std::ostream &output, std::istream &input, size_t byteCount)
 {
+    assert(input.good());
+    assert(output.good());
     auto start = output.tellp();
 
     auto inputStart = input.tellg();

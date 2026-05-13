@@ -228,12 +228,12 @@ public:
         bitIndex_(7),
         codeByLetter_{}
     {
-        if (expandedSize > 65535)
+        if (expandedSize > std::numeric_limits<uint32_t>::max())
         {
             throw std::runtime_error("Exceeds current compression limit.");
         }
 
-        jive::io::Write(this->output_, static_cast<uint16_t>(expandedSize));
+        jive::io::Write(this->output_, static_cast<uint32_t>(expandedSize));
         jive::io::Write(this->output_, static_cast<uint8_t>(nodeTree.count));
 
         Code code{};
@@ -313,10 +313,16 @@ public:
         root_{},
         buffer_{},
         bitIndex_(7),
-        expandedSize_(jive::io::Read<uint16_t>(input)),
+        expandedSize_(jive::io::Read<uint32_t>(input)),
         expandedCount_(0)
     {
-        auto recoveredSymbols = jive::io::Read<uint8_t>(input);
+        auto recoveredSymbols =
+            static_cast<uint16_t>(jive::io::Read<uint8_t>(input));
+
+        if (recoveredSymbols == 0)
+        {
+            recoveredSymbols = 256;
+        }
 
         while (recoveredSymbols--)
         {
