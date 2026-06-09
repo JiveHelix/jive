@@ -126,7 +126,7 @@ public:
     {
         auto index = this->readIndex_;
         auto endIndex = this->writeIndex_;
-        
+
         while (index != endIndex)
         {
             if constexpr (std::is_integral_v<T> && sizeof(T) == 1)
@@ -149,7 +149,7 @@ public:
     {
         auto index = 0;
         auto endIndex = N;
-        
+
         while (index != endIndex)
         {
             if constexpr (std::is_integral_v<T> && sizeof(T) == 1)
@@ -165,6 +165,11 @@ public:
         }
 
         return outputStream;
+    }
+
+    void AddValue(T value)
+    {
+        this->elements_[static_cast<size_t>(this->writeIndex_++)] = value;
     }
 
     bool Write(const T *source, size_t count)
@@ -196,7 +201,7 @@ public:
                 source + tailCount,
                 sizeof(T) * remainder);
         }
-        
+
         this->writeIndex_ += CircularIndex<N>(count);
 
         return true;
@@ -253,11 +258,23 @@ public:
     {
         return static_cast<size_t>(this->readIndex_);
     }
- 
+
     void Remove(size_t count)
     {
         // Increment the readIndex_ to consume the data.
         this->readIndex_ += CircularIndex<N>(count);
+    }
+
+    T Sum() const
+    {
+        T result{};
+
+        for (size_t i = 0; i < N; ++i)
+        {
+            result += this->elements_[i];
+        }
+
+        return result;
     }
 
     template<typename, size_t>
