@@ -31,19 +31,19 @@ public:
     static_assert(std::is_integral_v<T>);
     static_assert(sizeof(T) <= 2);
 
-    constexpr Version(): major(0), minor(0), revision(0) {}
-
-    constexpr Version(T major_, T minor_, T revision_)
-        :
-        major(major_),
-        minor(minor_),
-        revision(revision_)
+    std::string ToString() const
     {
-
+        return fmt::format(
+            "{}.{}.{}",
+            this->major,
+            this->minor,
+            this->revision);
     }
 
-    Version(const std::string &versionAsString)
+    static Version FromString(const std::string &versionAsString)
     {
+        Version result{};
+
         auto split = jive::strings::Split(versionAsString, '.');
 
         if (split.size() != 3)
@@ -54,9 +54,9 @@ public:
 
         try
         {
-            this->major = jive::ToInteger<T>(split[0]);
-            this->minor = jive::ToInteger<T>(split[1]);
-            this->revision = jive::ToInteger<T>(split[2]);
+            result.major = jive::ToInteger<T>(split[0]);
+            result.minor = jive::ToInteger<T>(split[1]);
+            result.revision = jive::ToInteger<T>(split[2]);
         }
         catch (std::invalid_argument &error)
         {
@@ -70,20 +70,8 @@ public:
         {
             throw VersionError(error.what());
         }
-    }
 
-    std::string ToString() const
-    {
-        return fmt::format(
-            "{}.{}.{}",
-            this->major,
-            this->minor,
-            this->revision);
-    }
-
-    static Version FromString(const std::string &versionAsString)
-    {
-        return Version(versionAsString);
+        return result;
     }
 
     bool operator<(const Version &other) const

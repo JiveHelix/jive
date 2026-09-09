@@ -43,14 +43,18 @@ template<typename Tuple, typename Function, std::size_t... I>
 void ForEach(Tuple &&tuple, Function &&function, std::index_sequence<I...>)
 {
     auto ignored =
-        { 0, (static_cast<void>(function(std::get<I>(tuple))), 0)... };
+        {
+            0,
+            (static_cast<void>(
+                function(std::get<I>(std::forward<Tuple>(tuple)))), 0)...
+        };
 }
 
 template<typename Tuple, typename Function>
 void ForEach(Tuple &&tuple, Function &&function)
 {
-    constexpr auto itemCount = std::tuple_size<
-        typename std::remove_reference<decltype(tuple)>::type>::value;
+    constexpr auto itemCount =
+        std::tuple_size_v<std::remove_cvref_t<decltype(tuple)>>;
 
     ForEach(
         std::forward<Tuple>(tuple),

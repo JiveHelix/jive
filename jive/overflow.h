@@ -90,31 +90,70 @@ bool CheckConvertible(Source value)
 
             return (check == value);
         }
+        else if constexpr (std::is_floating_point_v<Source>)
+        {
+            return !ExceedsTarget<Target>(value);
+        }
+        else if constexpr (std::is_constructible_v<Target, Source>)
+        {
+            /**
+
+            Autodiff scalar, strong typedef, numeric wrapper, etc.
+
+            We cannot generically prove range preservation here without knowing
+            the wrapped scalar type, but construction itself is valid.
+
+            **/
+
+            return true;
+        }
         else
         {
             static_assert(
                 std::is_floating_point_v<Source>,
-                "Source type must be either integral or floating-point");
-
-            return !ExceedsTarget<Target>(value);
+                "Source type must be integral, floating-point, "
+                "or constructible from Target");
         }
     }
     else
     {
         // Target is not integral.
-        static_assert(
-            std::is_floating_point_v<Target>,
-            "Target type must be either integral or floating-point");
+        // static_assert(
+            // std::is_floating_point_v<Target>,
+            // "Target type must be either integral or floating-point");
 
-        if constexpr (std::is_floating_point_v<Source>)
+        if constexpr (std::is_floating_point_v<Target>)
         {
-            // Both are floating-point
-            return !ExceedsTarget<Target>(value);
+            if constexpr (std::is_floating_point_v<Source>)
+            {
+                // Both are floating-point
+                return !ExceedsTarget<Target>(value);
+            }
+            else
+            {
+                // Consider all integral types convertible to floats.
+                return true;
+            }
+        }
+        else if constexpr (std::is_constructible_v<Target, Source>)
+        {
+            /**
+
+            Autodiff scalar, strong typedef, numeric wrapper, etc.
+
+            We cannot generically prove range preservation here without knowing
+            the wrapped scalar type, but construction itself is valid.
+
+            **/
+
+            return true;
         }
         else
         {
-            // Consider all integral types convertible to floats.
-            return true;
+            static_assert(
+                std::is_floating_point_v<Target>,
+                "Target type must be integral, floating-point, "
+                "or constructible from Source");
         }
     }
 }
