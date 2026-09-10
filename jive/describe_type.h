@@ -34,19 +34,45 @@ struct HasStaticDescribeType<
     std::void_t<decltype(DescribeType<T>::value)>> : std::true_type {};
 
 
+template<typename T, typename Enable = void>
+struct DescribeAnyType
+{
+
+};
+
+
+template<typename T>
+struct DescribeAnyType
+<
+    T,
+    std::enable_if_t<HasStaticDescribeType<T>::value>
+>
+{
+    static constexpr std::string_view value = DescribeType<T>::value;
+};
+
+
+template<typename T>
+struct DescribeAnyType
+<
+    T,
+    std::enable_if_t<!HasStaticDescribeType<T>::value>
+>
+{
+    static constexpr std::string_view value = detail::TypeName<T>();
+};
+
+
+
 /** Describe all containers except the map-like ones. **/
 template<typename T, typename = std::void_t<>>
 struct DescribeContainer
 {
-    static_assert(
-        HasStaticDescribeType<typename T::value_type>::value,
-        "Static DescribeType not found.");
-
     static constexpr std::string_view value =
         jive::StaticJoin<
             detail::ContainerName<T>::value,
             detail::tOpen,
-            DescribeType<typename T::value_type>::value,
+            DescribeAnyType<typename T::value_type>::value,
             detail::tClose>::value;
 };
 
@@ -56,17 +82,13 @@ struct DescribeContainer<
     T,
     std::void_t<std::enable_if_t<jive::IsMapLike<T>::value>>>
 {
-    static_assert(
-        HasStaticDescribeType<typename T::mapped_type>::value,
-        "Static DescribeType not found.");
-
     static constexpr std::string_view value =
         jive::StaticJoin<
             detail::ContainerName<T>::value,
             detail::tOpen,
-            DescribeType<typename T::key_type>::value,
+            DescribeAnyType<typename T::key_type>::value,
             detail::comma,
-            DescribeType<typename T::mapped_type>::value,
+            DescribeAnyType<typename T::mapped_type>::value,
             detail::tClose>::value;
 };
 
