@@ -78,9 +78,11 @@ struct DescribeContainer
 
 /** Describe both the key_type and mapped_type of the map-like container.**/
 template<typename T>
-struct DescribeContainer<
+struct DescribeContainer
+<
     T,
-    std::void_t<std::enable_if_t<jive::IsMapLike<T>::value>>>
+    std::void_t<std::enable_if_t<jive::IsMapLike<T>>>
+>
 {
     static constexpr std::string_view value =
         jive::StaticJoin<
