@@ -6,6 +6,7 @@
 
 #pragma once
 
+#include <string_view>
 #include <string>
 #include <map>
 #include <vector>
@@ -13,10 +14,15 @@
 namespace jive
 {
 
+
+namespace detail
+{
+
+
 class Chunk
 {
 public:
-    Chunk(const std::string &valueAsString, bool isNumeric);
+    Chunk(std::string_view valueAsString, bool isNumeric);
 
     // Comparison operators compare as int only if both values are int.
     // Otherwise, compare as strings
@@ -25,7 +31,7 @@ public:
 
 private:
     bool isNumeric_;
-    std::string valueAsString_;
+    std::string_view valueAsString_;
     int valueAsInt_;
 };
 
@@ -35,31 +41,35 @@ class NumericString
 public:
     NumericString() = default;
 
-    NumericString(const std::string &value);
+    NumericString(std::string_view value);
 
     bool operator<(const NumericString &other) const;
 
     bool operator==(const NumericString &other) const;
 
-    explicit operator const std::string & () const { return this->value_; }
+    explicit operator std::string_view () const { return this->value_; }
 
 private:
-    std::string value_;
+    std::string_view value_;
     std::vector<Chunk> chunks_;
 };
+
+
+std::ostream & operator<<(std::ostream &, const NumericString &);
+
+
+} // end namespace detail
 
 
 class NumericStringCompare
 {
 public:
-    bool operator()(const std::string &first, const std::string &second) const;
+    bool operator()(std::string_view first, std::string_view second) const;
 };
 
-typedef std::map<
-    std::string,
-    std::string,
-    NumericStringCompare> SortedStringMapT;
 
-std::ostream & operator<<(std::ostream &, const NumericString &);
+using SortedStringMap =
+    std::map<std::string, std::string, NumericStringCompare>;
+
 
 } // namespace jive

@@ -13,7 +13,7 @@
 
 #include <stdexcept>
 #include <type_traits>
-#include <string>
+#include <string_view>
 #include <iostream>
 #include <optional>
 
@@ -23,27 +23,27 @@ namespace jive
 
 template<typename T>
 std::enable_if_t<std::is_floating_point_v<T>, T>
-ToFloat(const std::string &asString)
+ToFloat(std::string_view asString)
 {
     if constexpr (std::is_same_v<float, T>)
     {
-        return std::stof(asString);
+        return std::stof(asString.data());
     }
     else if constexpr (std::is_same_v<double, T>)
     {
-        return std::stod(asString);
+        return std::stod(asString.data());
     }
     else
     {
         static_assert(std::is_same_v<long double, T>);
-        return std::stold(asString);
+        return std::stold(asString.data());
     }
 }
 
 
 template<typename T>
 std::enable_if_t<std::is_floating_point_v<T>, std::optional<T>>
-MaybeFloat(const std::string &asString)
+MaybeFloat(std::string_view asString)
 {
     T result;
     size_t end;
@@ -52,16 +52,16 @@ MaybeFloat(const std::string &asString)
     {
         if constexpr (std::is_same_v<float, T>)
         {
-            result = std::stof(asString, &end);
+            result = std::stof(asString.data(), &end);
         }
         else if constexpr (std::is_same_v<double, T>)
         {
-            result = std::stod(asString, &end);
+            result = std::stod(asString.data(), &end);
         }
         else
         {
             static_assert(std::is_same_v<long double, T>);
-            result = std::stold(asString, &end);
+            result = std::stold(asString.data(), &end);
         }
     }
     catch (std::invalid_argument &)

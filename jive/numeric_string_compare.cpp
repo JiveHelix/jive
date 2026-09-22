@@ -19,7 +19,12 @@
 namespace jive
 {
 
-Chunk::Chunk(const std::string &valueAsString, bool isNumeric)
+
+namespace detail
+{
+
+
+Chunk::Chunk(std::string_view valueAsString, bool isNumeric)
     :
     isNumeric_(isNumeric),
     valueAsString_(valueAsString),
@@ -30,6 +35,7 @@ Chunk::Chunk(const std::string &valueAsString, bool isNumeric)
         this->valueAsInt_ = jive::ToInteger<int>(valueAsString);
     }
 }
+
 
 // Comparison operators compare as int only if both values are int.
 // Otherwise, compare as strings
@@ -43,6 +49,7 @@ bool Chunk::operator<(const Chunk &other) const
     return this->valueAsString_ < other.valueAsString_;
 }
 
+
 bool Chunk::operator>(const Chunk &other) const
 {
     if (this->isNumeric_ && other.isNumeric_)
@@ -53,7 +60,8 @@ bool Chunk::operator>(const Chunk &other) const
     return this->valueAsString_ > other.valueAsString_;
 }
 
-NumericString::NumericString(const std::string &value)
+
+NumericString::NumericString(std::string_view value)
     :
     value_(value)
 {
@@ -66,12 +74,13 @@ NumericString::NumericString(const std::string &value)
         while (it != value.end())
         {
             bool thisIsDigit = std::isdigit(*it);
+
             if (thisIsDigit != isDigit)
             {
                 // This character has a different type than the last.
                 // Store the last chunk, and begin a new one.
                 this->chunks_.emplace_back(
-                    std::string(chunkBegin, it),
+                    std::string_view(chunkBegin, it),
                     isDigit);
 
                 isDigit = thisIsDigit;
@@ -82,9 +91,10 @@ NumericString::NumericString(const std::string &value)
         }
 
         // Add the last chunk
-        this->chunks_.emplace_back(std::string(chunkBegin, it), isDigit);
+        this->chunks_.emplace_back(std::string_view(chunkBegin, it), isDigit);
     }
 }
+
 
 bool NumericString::operator<(const NumericString &other) const
 {
@@ -114,24 +124,32 @@ bool NumericString::operator<(const NumericString &other) const
     return (this->chunks_.size() < other.chunks_.size());
 }
 
+
 bool NumericString::operator==(const NumericString &other) const
 {
     return (this->value_ == other.value_);
+
 }
 
-bool NumericStringCompare::operator()(
-    const std::string &first,
-    const std::string &second) const
-{
-    return (NumericString(first) < NumericString(second));
-}
 
 std::ostream & operator<<(
     std::ostream &outputStream,
     const NumericString &numericString)
 {
-    return outputStream << static_cast<std::string>(numericString);
+    return outputStream << static_cast<std::string_view>(numericString);
 }
+
+
+} // end namespace detail
+
+
+bool NumericStringCompare::operator()(
+    std::string_view first,
+    std::string_view second) const
+{
+    return (detail::NumericString(first) < detail::NumericString(second));
+}
+
 
 } // namespace jive
 

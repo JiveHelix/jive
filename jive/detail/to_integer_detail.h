@@ -20,10 +20,10 @@ inline constexpr int base16 = 16;
 namespace detail
 {
 
-template<typename T, int base, typename String>
-auto ToInteger(const String &asString)
+template<typename T, int base, typename CharT>
+auto ToInteger(std::basic_string_view<CharT> asString)
 {
-    if constexpr (std::is_same_v<typename String::value_type, wchar_t>)
+    if constexpr (std::is_same_v<CharT, wchar_t>)
     {
         if constexpr (std::is_signed<T>::value)
         {

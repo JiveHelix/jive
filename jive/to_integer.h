@@ -30,17 +30,17 @@ namespace jive
 
 template<typename T, int base = base10>
 std::enable_if_t<std::is_integral<T>::value, T>
-ToInteger(const std::string &asString)
+ToInteger(std::string_view asString)
 {
 #ifndef NDEBUG
-    std::string trimmedInput = jive::strings::Trim(asString, " ");
+    std::string trimmedInput = jive::strings::Trim(std::string(asString), " ");
 
     if (!detail::ValidateDigits<T, base>(trimmedInput))
     {
         throw std::invalid_argument(
             std::string("Expected only digits: ")
             + std::string(detail::AllowedDigits<T, base>::value)
-            + ", found " + asString);
+            + ", found " + trimmedInput);
     }
 #endif
 
