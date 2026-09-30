@@ -19,6 +19,7 @@ add_catch2_test(
         time_value_tests.cpp
         to_integer_tests.cpp
         to_float_tests.cpp
+        type_traits_tests.cpp
         comparison_operator_tests.cpp
         revision_tests.cpp
     LINK jive)

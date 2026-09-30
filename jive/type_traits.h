@@ -69,6 +69,16 @@ struct IsString_<std::string>: std::true_type {};
 template<typename T>
 concept IsString = IsString_<T>::value;
 
+
+template<typename T>
+struct IsStringView_: std::false_type {};
+
+template<>
+struct IsStringView_<std::string_view>: std::true_type {};
+
+template<typename T>
+concept IsStringView = IsStringView_<T>::value;
+
 template<typename T>
 struct IsArray_: std::false_type {};
 
@@ -92,6 +102,7 @@ struct IsValueContainer_<
             && !IsArray<T>
             && !IsMapLike<T>
             && !IsString<T>
+            && !IsStringView<T>
         >,
         typename T::value_type
     >
@@ -173,7 +184,7 @@ concept TupleContains = TupleContains_<U, T>::value;
 
 
 template<typename T>
-concept ConstexprDefaultConstructible =
+concept ConstevalDefaultConstructible =
     requires
     {
         typename std::integral_constant<
