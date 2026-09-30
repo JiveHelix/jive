@@ -172,4 +172,19 @@ template<typename U, typename T>
 concept TupleContains = TupleContains_<U, T>::value;
 
 
+template<typename T>
+concept ConstexprDefaultConstructible =
+    requires
+    {
+        typename std::integral_constant<
+            bool,
+            []() consteval
+            {
+                T object{};
+
+                return true;
+            }()>;
+    };
+
+
 } // end namespace jive
