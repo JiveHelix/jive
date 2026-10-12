@@ -123,7 +123,7 @@ std::string Join(
 
 template<typename TokenT>
 std::string Join(
-    std::initializer_list<std::string> initializerList,
+    std::initializer_list<std::string_view> initializerList,
     const TokenT &token);
 
 
