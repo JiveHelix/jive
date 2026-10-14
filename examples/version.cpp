@@ -7,10 +7,10 @@ int main()
 {
     using namespace jive;
 
-    Version<int8_t> signed8(-2, 42, 0);
-    Version<uint8_t> unsigned8(2, 143, 9);
-    Version<int16_t> signed16(-22000, 19, -1000);
-    Version<uint16_t> unsigned16(4338, 65001, 1000);
+    Version<int8_t> signed8{-2, 42, 0};
+    Version<uint8_t> unsigned8{2, 143, 9};
+    Version<int16_t> signed16{-22000, 19, -1000};
+    Version<uint16_t> unsigned16{4338, 65001, 1000};
 
     std::cout << signed8.ToString() << std::endl;
     std::cout << unsigned8.ToString() << std::endl;
